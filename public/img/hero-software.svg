@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 330">
+  <!-- soporte del monitor -->
+  <rect x="170" y="250" width="70" height="12" rx="3" fill="#9a9a9a"/>
+  <path d="M188 232 h34 l8 22 h-50 z" fill="#8c8c8c"/>
+  <!-- cuerpo del monitor -->
+  <rect x="40" y="42" width="300" height="196" rx="10" fill="#7e7e7e"/>
+  <rect x="52" y="54" width="276" height="172" rx="5" fill="#ECEAE5"/>
+  <!-- barra de título -->
+  <rect x="52" y="54" width="276" height="26" rx="5" fill="#6B1621"/>
+  <rect x="52" y="70" width="276" height="10" fill="#6B1621"/>
+  <circle cx="68" cy="67" r="4" fill="#e7cfd3"/><circle cx="82" cy="67" r="4" fill="#e7cfd3"/><circle cx="96" cy="67" r="4" fill="#e7cfd3"/>
+  <!-- líneas de código -->
+  <rect x="70" y="98" width="40" height="8" rx="2" fill="#6B1621"/>
+  <rect x="118" y="98" width="90" height="8" rx="2" fill="#b7b3ac"/>
+  <rect x="86" y="116" width="120" height="8" rx="2" fill="#c9c5be"/>
+  <rect x="86" y="134" width="70" height="8" rx="2" fill="#6B1621"/>
+  <rect x="164" y="134" width="60" height="8" rx="2" fill="#c9c5be"/>
+  <rect x="70" y="152" width="30" height="8" rx="2" fill="#b7b3ac"/>
+  <rect x="70" y="182" width="150" height="8" rx="2" fill="#d3cfc8"/>
+  <rect x="70" y="198" width="100" height="8" rx="2" fill="#d3cfc8"/>
+  <!-- teléfono superpuesto -->
+  <rect x="256" y="150" width="104" height="160" rx="14" fill="#3a3a3a"/>
+  <rect x="264" y="160" width="88" height="140" rx="6" fill="#f4f2ee"/>
+  <rect x="264" y="160" width="88" height="30" rx="6" fill="#6B1621"/>
+  <rect x="264" y="176" width="88" height="14" fill="#6B1621"/>
+  <rect x="276" y="204" width="64" height="9" rx="2" fill="#c9c5be"/>
+  <rect x="276" y="222" width="48" height="9" rx="2" fill="#6B1621"/>
+  <rect x="276" y="240" width="64" height="9" rx="2" fill="#d3cfc8"/>
+  <rect x="276" y="258" width="40" height="9" rx="2" fill="#c9c5be"/>
+  <rect x="276" y="276" width="64" height="9" rx="2" fill="#d3cfc8"/>
+</svg>

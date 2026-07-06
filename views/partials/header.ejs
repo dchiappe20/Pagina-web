@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= titulo %> · RendApps Solutions</title>
+  <meta name="description" content="RendApps Solutions: desarrollo de software y aplicaciones a medida para empresas. Escritorio, web, móvil e integración de APIs.">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css?v=4">
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera">
+  <div class="contenedor cabecera-int">
+    <a class="logo" href="/">RendApps<span>Solutions</span></a>
+
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-principal" aria-label="Abrir menú">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    <nav id="nav-principal" class="nav" aria-label="Principal">
+      <ul>
+        <li><a href="/" class="<%= pagina === 'inicio' ? 'activo' : '' %>">Inicio</a></li>
+        <li class="con-sub">
+          <a href="/nosotros" class="<%= pagina === 'nosotros' ? 'activo' : '' %>" aria-haspopup="true">
+            Nosotros
+            <svg class="caret" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
+          <ul class="submenu">
+            <li><a href="/nosotros#historia">Nuestra historia</a></li>
+            <li><a href="/nosotros#valores">Cómo trabajamos</a></li>
+            <li><a href="/nosotros#equipo">El equipo</a></li>
+          </ul>
+        </li>
+        <li class="con-sub">
+          <a href="/productos" class="<%= pagina === 'productos' ? 'activo' : '' %>" aria-haspopup="true">
+            Productos
+            <svg class="caret" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
+          <ul class="submenu">
+            <li><a href="/productos">Todos los productos</a></li>
+            <% categorias.forEach(function (c) { %>
+              <li><a href="/productos?cat=<%= encodeURIComponent(c) %>"><%= c %></a></li>
+            <% }); %>
+          </ul>
+        </li>
+        <li><a href="/soporte" class="<%= pagina === 'soporte' ? 'activo' : '' %>">Soporte</a></li>
+        <li><a href="/contacto" class="<%= pagina === 'contacto' ? 'activo' : '' %>">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <form class="busqueda" action="/productos" method="get" role="search">
+      <input type="search" name="q" placeholder="Buscar productos" aria-label="Buscar productos">
+      <button type="submit" aria-label="Buscar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</header>
+
+<main id="contenido">

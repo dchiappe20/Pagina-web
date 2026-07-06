@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <h1>Contacto</h1>
+    <p>Cotizaciones, soporte técnico y consultas generales.</p>
+  </div>
+  <div class="franja" aria-hidden="true"></div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor contacto-int">
+    <div class="contacto-form">
+      <% if (enviado) { %>
+        <div class="alerta alerta-ok" role="status">
+          <h2>Mensaje enviado</h2>
+          <p>Gracias por escribirnos. Te respondemos dentro del día hábil al correo que indicaste.</p>
+        </div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alerta alerta-error" role="alert">
+          <p><%= error %></p>
+        </div>
+      <% } %>
+
+      <form action="/contacto" method="post" novalidate>
+        <div class="campo">
+          <label for="nombre">Nombre *</label>
+          <input type="text" id="nombre" name="nombre" required value="<%= datos.nombre || '' %>">
+        </div>
+        <div class="campo">
+          <label for="email">Correo electrónico *</label>
+          <input type="email" id="email" name="email" required value="<%= datos.email || '' %>">
+        </div>
+        <div class="campo">
+          <label for="asunto">Asunto</label>
+          <select id="asunto" name="asunto">
+            <option value="cotizacion" <%= datos.asunto === 'cotizacion' ? 'selected' : '' %>>Cotización</option>
+            <option value="soporte" <%= datos.asunto === 'soporte' ? 'selected' : '' %>>Soporte</option>
+            <option value="consulta" <%= datos.asunto === 'consulta' ? 'selected' : '' %>>Consulta general</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="mensaje">Mensaje *</label>
+          <textarea id="mensaje" name="mensaje" rows="6" required><%= datos.mensaje || '' %></textarea>
+        </div>
+        <button class="btn" type="submit">Enviar mensaje</button>
+      </form>
+    </div>
+
+    <aside class="contacto-datos">
+      <h2>Datos directos</h2>
+      <ul>
+        <li><strong>Consultas comerciales</strong><br><a class="placeholder-tag" href="mailto:<%= empresa.email %>"><%= empresa.email %></a></li>
+        <li><strong>Soporte técnico</strong><br><a class="placeholder-tag" href="mailto:<%= empresa.emailSoporte %>"><%= empresa.emailSoporte %></a></li>
+        <li><strong>Teléfono</strong><br><span class="placeholder-tag"><%= empresa.telefono %></span></li>
+        <li><strong>Ubicación</strong><br><%= empresa.ubicacion %></li>
+        <li><strong>Modalidad</strong><br>Trabajo remoto · <%= empresa.horario %></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

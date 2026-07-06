@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <h1>Productos</h1>
+    <p>Software, aplicaciones y servicios de desarrollo a medida.</p>
+  </div>
+  <div class="franja" aria-hidden="true"></div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="filtros" role="navigation" aria-label="Filtrar por categoría">
+      <a class="chip <%= !cat ? 'chip-activo' : '' %>" href="/productos<%= q ? '?q=' + encodeURIComponent(q) : '' %>">Todos</a>
+      <% categorias.forEach(function (c) { %>
+        <a class="chip <%= cat === c ? 'chip-activo' : '' %>"
+           href="/productos?cat=<%= encodeURIComponent(c) %><%= q ? '&q=' + encodeURIComponent(q) : '' %>"><%= c %></a>
+      <% }); %>
+    </div>
+
+    <% if (q) { %>
+      <p class="aviso-busqueda">Resultados para “<%= q %>” — <%= productos.length %> producto<%= productos.length === 1 ? '' : 's' %>.</p>
+    <% } %>
+
+    <% if (productos.length === 0) { %>
+      <div class="vacio">
+        <h2>No encontramos productos con ese criterio</h2>
+        <p>Prueba con otra palabra o revisa el catálogo completo.</p>
+        <a class="btn" href="/productos">Ver todo el catálogo</a>
+      </div>
+    <% } else { %>
+      <div class="grid grid-4">
+        <% productos.forEach(function (p) { %>
+          <article class="tarjeta producto">
+            <div class="producto-figura">
+              <img src="/img/<%= p.icono %>.svg" alt="">
+            </div>
+            <p class="producto-cat"><%= p.etiqueta %></p>
+            <h3 class="<%= p.placeholder ? 'placeholder-tag' : '' %>"><%= p.nombre %></h3>
+            <p class="producto-desc"><%= p.desc %></p>
+            <div class="producto-pie">
+              <span class="precio"><%= p.precio %></span>
+              <a class="btn btn-chico" href="/contacto">Cotizar</a>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

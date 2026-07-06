@@ -1,0 +1,47 @@
+</main>
+
+<footer class="pie">
+  <div class="franja" aria-hidden="true"></div>
+  <div class="contenedor pie-int">
+    <div class="pie-col pie-marca">
+      <p class="logo pie-logo">RendApps<span>Solutions</span></p>
+      <p>Software y aplicaciones a medida para empresas. Desde 2026.</p>
+    </div>
+    <div class="pie-col">
+      <h3>Navegación</h3>
+      <ul>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/nosotros">Nosotros</a></li>
+        <li><a href="/productos">Productos</a></li>
+        <li><a href="/soporte">Soporte</a></li>
+        <li><a href="/contacto">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="pie-col">
+      <h3>Productos</h3>
+      <ul>
+        <% categorias.forEach(function (c) { %>
+          <li><a href="/productos?cat=<%= encodeURIComponent(c) %>"><%= c %></a></li>
+        <% }); %>
+      </ul>
+    </div>
+    <div class="pie-col">
+      <h3>Contacto</h3>
+      <ul>
+        <li><%= empresa.ubicacion %></li>
+        <li><%= empresa.horario %></li>
+        <li><a href="mailto:<%= empresa.email %>"><%= empresa.email %></a></li>
+        <li><a href="tel:<%= empresa.telefono.replace(/\s/g, '') %>"><%= empresa.telefono %></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="pie-legal">
+    <div class="contenedor">
+      <p>© <%= new Date().getFullYear() %> <%= empresa.razon %> · RUT <%= empresa.rut %> · Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js?v=4"></script>
+</body>
+</html>
