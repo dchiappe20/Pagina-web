@@ -122,24 +122,25 @@ app.listen(PORT, () => {
 // KEEP ALIVE (AUTO-PING) — evita que Render duerma el servicio por inactividad
 // ==========================================
 function startKeepAlive() {
-  // Render expone la URL pública del servicio en RENDER_EXTERNAL_URL.
-  // En local no existe, así que el auto-ping solo se activa en producción.
-  const url = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
+  // Render inyecta automáticamente la URL pública del servicio en esta variable
+  // (p. ej. https://rendapps-solutions.onrender.com). En local no existe.
+  const url = process.env.RENDER_EXTERNAL_URL;
   if (!url) {
-    console.log('[Keep-Alive] Sin URL pública (entorno local): auto-ping desactivado.');
+    console.log('[Keep-Alive] RENDER_EXTERNAL_URL no definida (entorno local): auto-ping desactivado.');
     return;
   }
 
-  const INTERVALO_MS = 10 * 60 * 1000; // 10 minutos (Render duerme tras ~15 min de inactividad)
+  const INTERVALO_MS = 5 * 60 * 1000; // 5 minutos (Render duerme tras ~15 min de inactividad)
 
   setInterval(() => {
     https.get(url, (res) => {
-      // Consume la respuesta para liberar memoria; sin esto Render acumula RAM.
+      // Consume la respuesta y libera la memoria RAM.
+      // Sin esto, Render acumula RAM, se reinicia y pierde el estado en memoria.
       res.resume();
     }).on('error', (err) => {
       console.error(`[Keep-Alive] Error: ${err.message}`);
     });
   }, INTERVALO_MS);
 
-  console.log(`[Keep-Alive] Auto-ping activado cada 10 min a ${url}`);
+  console.log(`[Keep-Alive] Auto-ping activado cada 5 min a ${url}`);
 }
