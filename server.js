@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const https = require('https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -114,4 +115,31 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`RendApps Solutions escuchando en http://localhost:${PORT}`);
+  startKeepAlive();
 });
+
+// ==========================================
+// KEEP ALIVE (AUTO-PING) — evita que Render duerma el servicio por inactividad
+// ==========================================
+function startKeepAlive() {
+  // Render expone la URL pública del servicio en RENDER_EXTERNAL_URL.
+  // En local no existe, así que el auto-ping solo se activa en producción.
+  const url = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
+  if (!url) {
+    console.log('[Keep-Alive] Sin URL pública (entorno local): auto-ping desactivado.');
+    return;
+  }
+
+  const INTERVALO_MS = 10 * 60 * 1000; // 10 minutos (Render duerme tras ~15 min de inactividad)
+
+  setInterval(() => {
+    https.get(url, (res) => {
+      // Consume la respuesta para liberar memoria; sin esto Render acumula RAM.
+      res.resume();
+    }).on('error', (err) => {
+      console.error(`[Keep-Alive] Error: ${err.message}`);
+    });
+  }, INTERVALO_MS);
+
+  console.log(`[Keep-Alive] Auto-ping activado cada 10 min a ${url}`);
+}
