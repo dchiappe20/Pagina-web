@@ -2,63 +2,81 @@
 
 <section class="cabecera-pagina">
   <div class="contenedor">
-    <h1>Nosotros</h1>
-    <p>Software a medida construido por un Ingeniero Civil en Computación.</p>
+    <p class="eyebrow">Nosotros</p>
+    <h1>Tecnología con un objetivo: que tu negocio funcione mejor</h1>
+    <p class="cabecera-sub">Un estudio de desarrollo chileno enfocado en soluciones que generan valor real.</p>
   </div>
-  <div class="franja" aria-hidden="true"></div>
 </section>
 
 <section class="seccion" id="historia">
-  <div class="contenedor texto-ancho">
+  <div class="contenedor texto-ancho reveal">
     <h2>Nuestra historia</h2>
     <p>
-      Informática Daniel Chiappe Puebla E.I.R.L. nació en 2026 para construir software a medida
-      para empresas. El primer proyecto fue una aplicación de escritorio que filtra licitaciones
-      de Mercado Público, desarrollada para una empresa del rubro de insumos de laboratorio.
+      RendApps nació en 2026 con una convicción simple: las empresas no necesitan más
+      tecnología, necesitan la tecnología correcta. Nuestro primer proyecto lo demostró:
+      una aplicación que filtra licitaciones de Mercado Público en tiempo real y le ahorra
+      horas de revisión manual cada semana a una empresa de insumos de laboratorio.
     </p>
     <p>
-      Trabajamos de forma remota, por proyecto o por suscripción. El foco es simple: soluciones
-      que resuelven un problema real del negocio, con la mantención y el soporte que necesitan
-      para seguir funcionando en el tiempo.
+      Hoy desarrollamos software a medida, aplicaciones móviles e integraciones para
+      empresas que quieren automatizar procesos y crecer. Trabajamos de forma remota,
+      por proyecto o por suscripción, con un principio que no negociamos: entregar
+      soluciones que funcionan y acompañarlas en el tiempo.
     </p>
   </div>
 </section>
 
-<section class="seccion seccion-alterna" id="valores">
+<section class="seccion seccion-alterna" id="confianza">
   <div class="contenedor">
-    <h2 class="centrado">Cómo trabajamos</h2>
-    <div class="grid grid-3 ventajas">
-      <div class="ventaja">
-        <h3>Entender antes de codificar</h3>
-        <p>Levantamos el requerimiento real antes de escribir una línea. El software se adapta al proceso, no al revés.</p>
-      </div>
-      <div class="ventaja">
-        <h3>A medida, no genérico</h3>
-        <p>Cada solución se construye para tu operación específica, integrada con las herramientas que ya usas.</p>
-      </div>
-      <div class="ventaja">
-        <h3>Hablar claro</h3>
-        <p>Sin jerga innecesaria ni promesas infladas. Plazos, alcance y costos explicados de forma directa.</p>
-      </div>
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Confianza y seguridad</p>
+      <h2>Compromisos que asumimos contigo</h2>
+    </div>
+    <div class="grid-3 tarjetas-confianza">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'candado', t: 24 }) %></span>
+        <h3>Tu código, tu propiedad</h3>
+        <p>Al finalizar el proyecto recibes el código fuente y su documentación. Sin letras chicas ni dependencias forzadas.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'escudo', t: 24 }) %></span>
+        <h3>Confidencialidad desde el día uno</h3>
+        <p>Tu información y tus procesos se tratan con estricta reserva. Firmamos acuerdos de confidencialidad si tu empresa lo requiere.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'chat', t: 24 }) %></span>
+        <h3>Comunicación directa</h3>
+        <p>Hablas directamente con quien construye tu software: sin intermediarios, con respuestas en menos de 24 horas hábiles.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="seccion" id="equipo">
+<section class="seccion" id="valores">
   <div class="contenedor">
-    <h2 class="centrado">El equipo</h2>
-    <div class="grid grid-2 equipo equipo-chico">
-      <div class="persona">
-        <div class="avatar" aria-hidden="true">DC</div>
-        <h3>Daniel Chiappe Puebla</h3>
-        <p>Fundador · Desarrollador de Software</p>
-      </div>
-      <div class="persona">
-        <div class="avatar avatar-claro" aria-hidden="true">M</div>
-        <h3 class="placeholder-tag">Erick Novoa</h3>
-        <p>Marketing y difusión</p>
-      </div>
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Nuestro proceso</p>
+      <h2>Así trabajamos contigo</h2>
     </div>
+    <ol class="pasos">
+      <% proceso.forEach(function (paso) { %>
+        <li class="paso reveal">
+          <span class="paso-icono"><%- include('partials/icono', { n: paso.icono, t: 24 }) %></span>
+          <h3><%= paso.n %>. <%= paso.nombre %></h3>
+          <p><%= paso.desc %></p>
+        </li>
+      <% }); %>
+    </ol>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>Conversemos sobre tu proyecto</h2>
+      <p>Sin compromiso: escuchamos tu idea y te decimos con honestidad cómo abordarla.</p>
+    </div>
+    <a class="btn" href="/contacto">Agendar una conversación <span class="btn-flecha" aria-hidden="true">→</span></a>
   </div>
 </section>
 

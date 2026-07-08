@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Proyectos</p>
+    <h1>Trabajo real, resultados reales</h1>
+    <p class="cabecera-sub">Casos desarrollados para clientes y productos propios en camino.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="grid-proyectos">
+      <% proyectos.forEach(function (p) { %>
+        <article class="tarjeta-proyecto reveal" id="<%= p.id %>">
+          <div class="proyecto-media">
+            <img src="/img/<%= p.mockup %>.svg" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo"><%= p.tipo %></p>
+            <h3 class="<%= p.placeholder ? 'placeholder-tag' : '' %>"><%= p.nombre %></h3>
+            <p class="proyecto-desc"><%= p.desc %></p>
+            <p class="proyecto-cliente"><%= p.cliente %></p>
+            <div class="proyecto-pie">
+              <% if (p.estado) { %><span class="chip-estado"><%= p.estado %></span><% } %>
+              <a class="enlace" href="/contacto">Quiero algo así →</a>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>Tu proyecto puede ser el siguiente</h2>
+      <p>Cuéntanos qué necesitas y te respondemos con una propuesta concreta.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

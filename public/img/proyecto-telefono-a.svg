@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250">
+  <defs>
+    <clipPath id="pantallaA"><rect x="158" y="17" width="84" height="216" rx="12"/></clipPath>
+  </defs>
+
+  <circle cx="200" cy="128" r="95" fill="#DBEAFE" opacity="0.45"/>
+  <circle cx="295" cy="55" r="16" fill="#DBEAFE" opacity="0.6"/>
+  <circle cx="105" cy="200" r="10" fill="#DBEAFE" opacity="0.6"/>
+
+  <rect x="152" y="10" width="96" height="230" rx="18" fill="#111827"/>
+  <rect x="158" y="17" width="84" height="216" rx="12" fill="#FFFFFF"/>
+
+  <g clip-path="url(#pantallaA)">
+    <rect x="158" y="17" width="84" height="40" fill="#2563EB"/>
+    <rect x="166" y="28" width="38" height="7" rx="3.5" fill="#DBEAFE"/>
+    <rect x="166" y="40" width="26" height="5" rx="2.5" fill="#93C5FD"/>
+    <circle cx="230" cy="34" r="6" fill="#93C5FD"/>
+
+    <rect x="166" y="66" width="68" height="12" rx="6" fill="#F3F4F6"/>
+
+    <rect x="166" y="88" width="68" height="32" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+    <rect x="172" y="96" width="14" height="14" rx="4" fill="#DBEAFE"/>
+    <rect x="192" y="97" width="34" height="6" rx="3" fill="#374151"/>
+    <rect x="192" y="108" width="24" height="4" rx="2" fill="#D1D5DB"/>
+
+    <rect x="166" y="128" width="68" height="32" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+    <rect x="172" y="136" width="14" height="14" rx="4" fill="#FFEDD5"/>
+    <rect x="192" y="137" width="30" height="6" rx="3" fill="#374151"/>
+    <rect x="192" y="148" width="22" height="4" rx="2" fill="#D1D5DB"/>
+
+    <rect x="166" y="168" width="68" height="32" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+    <rect x="172" y="176" width="14" height="14" rx="4" fill="#DBEAFE"/>
+    <rect x="192" y="177" width="36" height="6" rx="3" fill="#374151"/>
+    <rect x="192" y="188" width="26" height="4" rx="2" fill="#D1D5DB"/>
+
+    <rect x="158" y="210" width="84" height="23" fill="#F8FAFC"/>
+    <circle cx="182" cy="221" r="3" fill="#CBD5E1"/>
+    <circle cx="200" cy="221" r="3" fill="#2563EB"/>
+    <circle cx="218" cy="221" r="3" fill="#CBD5E1"/>
+  </g>
+
+  <rect x="186" y="22" width="28" height="4" rx="2" fill="#111827"/>
+</svg>

@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 430">
+  <defs>
+    <clipPath id="pantallaLaptop"><rect x="94" y="30" width="432" height="282" rx="8"/></clipPath>
+    <clipPath id="pantallaMovil"><rect x="484" y="136" width="130" height="266" rx="16"/></clipPath>
+  </defs>
+
+  <!-- sombra -->
+  <ellipse cx="330" cy="412" rx="280" ry="13" fill="#111827" opacity="0.06"/>
+
+  <!-- laptop: tapa y pantalla -->
+  <rect x="80" y="16" width="460" height="310" rx="16" fill="#111827"/>
+  <rect x="94" y="30" width="432" height="282" rx="8" fill="#FFFFFF"/>
+
+  <g clip-path="url(#pantallaLaptop)">
+    <!-- barra lateral -->
+    <rect x="94" y="30" width="96" height="282" fill="#F8FAFC"/>
+    <line x1="190" y1="30" x2="190" y2="312" stroke="#EEF2F6" stroke-width="1.5"/>
+    <circle cx="112" cy="54" r="7" fill="#2563EB"/>
+    <rect x="124" y="49" width="46" height="9" rx="4.5" fill="#E5E7EB"/>
+    <rect x="104" y="78" width="76" height="22" rx="6" fill="#EFF6FF"/>
+    <rect x="112" y="85" width="42" height="8" rx="4" fill="#2563EB"/>
+    <rect x="112" y="116" width="52" height="8" rx="4" fill="#E5E7EB"/>
+    <rect x="112" y="140" width="60" height="8" rx="4" fill="#E5E7EB"/>
+    <rect x="112" y="164" width="44" height="8" rx="4" fill="#E5E7EB"/>
+    <rect x="112" y="188" width="56" height="8" rx="4" fill="#E5E7EB"/>
+    <circle cx="112" cy="290" r="8" fill="#E5E7EB"/>
+    <rect x="126" y="286" width="40" height="8" rx="4" fill="#E5E7EB"/>
+
+    <!-- encabezado del panel -->
+    <rect x="206" y="48" width="140" height="11" rx="5" fill="#111827"/>
+    <rect x="206" y="66" width="88" height="7" rx="3.5" fill="#CBD5E1"/>
+    <rect x="436" y="46" width="74" height="22" rx="11" fill="#F97316"/>
+    <rect x="449" y="54" width="48" height="6" rx="3" fill="#FFEDD5"/>
+
+    <!-- tarjetas de indicadores -->
+    <g>
+      <rect x="206" y="88" width="96" height="56" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+      <rect x="216" y="98" width="40" height="6" rx="3" fill="#CBD5E1"/>
+      <rect x="216" y="112" width="56" height="10" rx="5" fill="#111827"/>
+      <rect x="216" y="130" width="26" height="6" rx="3" fill="#DBEAFE"/>
+    </g>
+    <g>
+      <rect x="310" y="88" width="96" height="56" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+      <rect x="320" y="98" width="44" height="6" rx="3" fill="#CBD5E1"/>
+      <rect x="320" y="112" width="48" height="10" rx="5" fill="#111827"/>
+      <rect x="320" y="130" width="26" height="6" rx="3" fill="#DBEAFE"/>
+    </g>
+    <g>
+      <rect x="414" y="88" width="96" height="56" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+      <rect x="424" y="98" width="36" height="6" rx="3" fill="#CBD5E1"/>
+      <rect x="424" y="112" width="52" height="10" rx="5" fill="#111827"/>
+      <rect x="424" y="130" width="26" height="6" rx="3" fill="#FFEDD5"/>
+    </g>
+
+    <!-- gráfico de líneas -->
+    <rect x="206" y="156" width="196" height="110" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+    <rect x="218" y="168" width="60" height="7" rx="3.5" fill="#CBD5E1"/>
+    <path d="M218 236 L240 228 L262 238 L284 214 L306 222 L328 200 L350 208 L372 190 L388 196 L388 252 L218 252 Z" fill="#DBEAFE"/>
+    <polyline points="218 236 240 228 262 238 284 214 306 222 328 200 350 208 372 190 388 196" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="284" cy="214" r="3" fill="#2563EB"/>
+    <circle cx="372" cy="190" r="3" fill="#2563EB"/>
+
+    <!-- gráfico de dona -->
+    <rect x="414" y="156" width="96" height="110" rx="8" fill="#F8FAFC" stroke="#EEF2F6"/>
+    <circle cx="462" cy="202" r="22" fill="none" stroke="#E5E7EB" stroke-width="8"/>
+    <circle cx="462" cy="202" r="22" fill="none" stroke="#2563EB" stroke-width="8" stroke-dasharray="90 138" transform="rotate(-90 462 202)" stroke-linecap="round"/>
+    <circle cx="462" cy="202" r="22" fill="none" stroke="#F97316" stroke-width="8" stroke-dasharray="18 138" stroke-dashoffset="-94" transform="rotate(-90 462 202)" stroke-linecap="round"/>
+    <circle cx="434" cy="244" r="3" fill="#2563EB"/>
+    <rect x="442" y="241" width="30" height="6" rx="3" fill="#CBD5E1"/>
+    <circle cx="434" cy="256" r="3" fill="#F97316"/>
+    <rect x="442" y="253" width="24" height="6" rx="3" fill="#CBD5E1"/>
+
+    <!-- filas inferiores -->
+    <rect x="206" y="278" width="304" height="10" rx="5" fill="#EEF2F6"/>
+    <rect x="206" y="296" width="220" height="10" rx="5" fill="#EEF2F6"/>
+  </g>
+
+  <!-- base del laptop -->
+  <rect x="52" y="326" width="556" height="16" rx="8" fill="#E5E7EB"/>
+  <rect x="296" y="326" width="68" height="8" rx="4" fill="#CBD5E1"/>
+
+  <!-- teléfono -->
+  <rect x="474" y="124" width="150" height="290" rx="24" fill="#111827"/>
+  <rect x="484" y="136" width="130" height="266" rx="16" fill="#FFFFFF"/>
+
+  <g clip-path="url(#pantallaMovil)">
+    <rect x="484" y="136" width="130" height="58" fill="#2563EB"/>
+    <rect x="496" y="150" width="56" height="8" rx="4" fill="#DBEAFE"/>
+    <rect x="496" y="164" width="36" height="6" rx="3" fill="#93C5FD"/>
+    <circle cx="594" cy="158" r="9" fill="#93C5FD"/>
+
+    <!-- tarjeta principal -->
+    <rect x="496" y="182" width="106" height="46" rx="10" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <rect x="506" y="192" width="34" height="6" rx="3" fill="#CBD5E1"/>
+    <rect x="506" y="204" width="58" height="11" rx="5" fill="#111827"/>
+
+    <!-- filas -->
+    <g>
+      <circle cx="500" cy="250" r="8" fill="#EFF6FF" stroke="#DBEAFE"/>
+      <rect x="514" y="243" width="44" height="7" rx="3.5" fill="#4B5563"/>
+      <rect x="514" y="254" width="30" height="5" rx="2.5" fill="#D1D5DB"/>
+      <rect x="574" y="244" width="28" height="12" rx="6" fill="#DBEAFE"/>
+    </g>
+    <g>
+      <circle cx="500" cy="282" r="8" fill="#FFF7ED" stroke="#FED7AA"/>
+      <rect x="514" y="275" width="38" height="7" rx="3.5" fill="#4B5563"/>
+      <rect x="514" y="286" width="26" height="5" rx="2.5" fill="#D1D5DB"/>
+      <rect x="574" y="276" width="28" height="12" rx="6" fill="#FFEDD5"/>
+    </g>
+    <g>
+      <circle cx="500" cy="314" r="8" fill="#EFF6FF" stroke="#DBEAFE"/>
+      <rect x="514" y="307" width="48" height="7" rx="3.5" fill="#4B5563"/>
+      <rect x="514" y="318" width="32" height="5" rx="2.5" fill="#D1D5DB"/>
+      <rect x="574" y="308" width="28" height="12" rx="6" fill="#DBEAFE"/>
+    </g>
+
+    <!-- mini barras -->
+    <rect x="496" y="352" width="12" height="18" rx="3" fill="#93C5FD"/>
+    <rect x="516" y="344" width="12" height="26" rx="3" fill="#2563EB"/>
+    <rect x="536" y="356" width="12" height="14" rx="3" fill="#93C5FD"/>
+    <rect x="556" y="338" width="12" height="32" rx="3" fill="#2563EB"/>
+    <rect x="576" y="348" width="12" height="22" rx="3" fill="#93C5FD"/>
+
+    <!-- barra inferior -->
+    <rect x="484" y="376" width="130" height="26" fill="#F8FAFC"/>
+    <circle cx="524" cy="389" r="3.5" fill="#CBD5E1"/>
+    <circle cx="549" cy="389" r="3.5" fill="#2563EB"/>
+    <circle cx="574" cy="389" r="3.5" fill="#CBD5E1"/>
+  </g>
+
+  <rect x="534" y="142" width="30" height="5" rx="2.5" fill="#111827"/>
+</svg>

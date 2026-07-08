@@ -1,47 +1,76 @@
 </main>
 
 <footer class="pie">
-  <div class="franja" aria-hidden="true"></div>
   <div class="contenedor pie-int">
-    <div class="pie-col pie-marca">
-      <p class="logo pie-logo">RendApps<span>Solutions</span></p>
-      <p>Software y aplicaciones a medida para empresas. Desde 2026.</p>
+    <div class="pie-marca">
+      <a class="logo" href="/" aria-label="RendApps, inicio">
+        <svg class="logo-icono" width="30" height="30" viewBox="0 0 34 34" aria-hidden="true">
+          <defs>
+            <linearGradient id="gradLogoPie" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2563EB"/>
+              <stop offset="1" stop-color="#1E3A8A"/>
+            </linearGradient>
+          </defs>
+          <path d="M17 1.5l12.5 7v17L17 32.5l-12.5-7v-17z" fill="url(#gradLogoPie)"/>
+          <text x="17" y="23" text-anchor="middle" font-family="'Space Grotesk','Arial',sans-serif" font-size="16" font-weight="700" fill="#fff">R</text>
+        </svg>
+        <span class="logo-texto">RENDAPPS</span>
+      </a>
+      <p>Desarrollamos soluciones de software a medida que impulsan negocios y transforman ideas en productos digitales de alto impacto.</p>
     </div>
-    <div class="pie-col">
+
+    <nav class="pie-col" aria-label="Navegación del sitio">
       <h3>Navegación</h3>
       <ul>
         <li><a href="/">Inicio</a></li>
+        <li><a href="/servicios">Servicios</a></li>
+        <li><a href="/proyectos">Proyectos</a></li>
         <li><a href="/nosotros">Nosotros</a></li>
-        <li><a href="/productos">Productos</a></li>
         <li><a href="/soporte">Soporte</a></li>
         <li><a href="/contacto">Contacto</a></li>
       </ul>
-    </div>
-    <div class="pie-col">
-      <h3>Productos</h3>
+    </nav>
+
+    <nav class="pie-col" aria-label="Servicios">
+      <h3>Servicios</h3>
       <ul>
-        <% categorias.forEach(function (c) { %>
-          <li><a href="/productos?cat=<%= encodeURIComponent(c) %>"><%= c %></a></li>
+        <% servicios.forEach(function (s) { %>
+          <li><a href="/servicios#<%= s.id %>"><%= s.nombre %></a></li>
         <% }); %>
       </ul>
-    </div>
-    <div class="pie-col">
+    </nav>
+
+    <div class="pie-col pie-contacto">
       <h3>Contacto</h3>
       <ul>
-        <li><%= empresa.ubicacion %></li>
-        <li><%= empresa.horario %></li>
-        <li><a href="mailto:<%= empresa.email %>"><%= empresa.email %></a></li>
-        <li><a href="tel:<%= empresa.telefono.replace(/\s/g, '') %>"><%= empresa.telefono %></a></li>
+        <li>
+          <span class="pie-icono"><%- include('icono', { n: 'mail', t: 17 }) %></span>
+          <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a>
+        </li>
+        <li>
+          <span class="pie-icono"><%- include('icono', { n: 'fono', t: 17 }) %></span>
+          <a href="tel:<%= empresa.telefono.replace(/\s/g, '') %>"><%= empresa.telefono %></a>
+        </li>
+        <li>
+          <span class="pie-icono"><%- include('icono', { n: 'pin', t: 17 }) %></span>
+          <span><%= empresa.ubicacion %></span>
+        </li>
+        <li>
+          <span class="pie-icono"><%- include('icono', { n: 'reloj', t: 17 }) %></span>
+          <span><%= empresa.horario %></span>
+        </li>
       </ul>
     </div>
   </div>
+
   <div class="pie-legal">
-    <div class="contenedor">
-      <p>© <%= new Date().getFullYear() %> <%= empresa.razon %> · RUT <%= empresa.rut %> · Todos los derechos reservados.</p>
+    <div class="contenedor pie-legal-int">
+      <p>© <%= new Date().getFullYear() %> RendApps · <%= empresa.razon %> · RUT <%= empresa.rut %></p>
+      <p>Todos los derechos reservados.</p>
     </div>
   </div>
 </footer>
 
-<script src="/js/main.js?v=4"></script>
+<script src="/js/main.js?v=5"></script>
 </body>
 </html>

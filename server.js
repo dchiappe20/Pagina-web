@@ -19,22 +19,93 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public'), { etag: false, lastModified: false }));
 app.use(express.urlencoded({ extended: true }));
 
-const productos = [
-  { id: 'filtro-licitaciones', nombre: 'Filtro de Licitaciones', categoria: 'Escritorio', etiqueta: 'Software de escritorio', icono: 'escritorio', precio: 'Proyecto a medida', desc: 'Filtra y gestiona licitaciones desde la API de Mercado Público. Desarrollada en Python para Amilab.' },
-  { id: 'app-1', nombre: 'Aplicación 1', categoria: 'Móvil', etiqueta: 'Aplicación móvil', icono: 'movil', precio: 'Suscripción mensual', desc: 'Reemplazar con el nombre y la descripción reales. Modelo SaaS por suscripción.', placeholder: true },
-  { id: 'app-2', nombre: 'Aplicación 2', categoria: 'Móvil', etiqueta: 'Aplicación móvil', icono: 'movil', precio: 'Suscripción mensual', desc: 'Reemplazar con el nombre y la descripción reales. Modelo SaaS por suscripción.', placeholder: true },
-  { id: 'desarrollo-web', nombre: 'Desarrollo web a medida', categoria: 'Web', etiqueta: 'Desarrollo web', icono: 'web', precio: 'Proyecto a medida', desc: 'Sitios y aplicaciones web construidas según la necesidad específica de tu negocio.' },
-  { id: 'integracion-apis', nombre: 'Integración de APIs', categoria: 'Servicios', etiqueta: 'Servicios', icono: 'integracion', precio: 'Por proyecto', desc: 'Conexión de tus sistemas con plataformas y servicios externos vía API.' },
-  { id: 'mantencion-soporte', nombre: 'Mantención y soporte', categoria: 'Servicios', etiqueta: 'Servicios', icono: 'mantencion', precio: 'Plan mensual', desc: 'Actualización, corrección de errores y soporte del software ya desarrollado.' }
+// ================================
+// Datos del sitio
+// ================================
+const servicios = [
+  {
+    id: 'apps-moviles',
+    nombre: 'Apps móviles',
+    icono: 'movil',
+    desc: 'Desarrollamos aplicaciones nativas e híbridas para iOS y Android, con foco en experiencia y rendimiento.',
+    puntos: ['iOS y Android desde un solo código', 'Publicación en las tiendas incluida', 'Diseño centrado en el usuario']
+  },
+  {
+    id: 'software-a-medida',
+    nombre: 'Desarrollo de software',
+    icono: 'codigo',
+    desc: 'Creamos software a medida escalable, seguro y adaptado a las necesidades de tu negocio.',
+    puntos: ['Aplicaciones de escritorio y sistemas internos', 'Automatización de procesos manuales', 'Código documentado y de tu propiedad']
+  },
+  {
+    id: 'integraciones',
+    nombre: 'Integraciones',
+    icono: 'integracion',
+    desc: 'Conectamos tus sistemas y automatizamos flujos para que tu operación sea más eficiente.',
+    puntos: ['APIs públicas y privadas (ej. Mercado Público)', 'Sincronización entre plataformas', 'Reportes y alertas automáticas']
+  },
+  {
+    id: 'desarrollo-web',
+    nombre: 'Desarrollo web',
+    icono: 'web',
+    desc: 'Diseñamos y desarrollamos sitios y plataformas web modernas, rápidas y optimizadas.',
+    puntos: ['Sitios corporativos y plataformas', 'Rápidos y optimizados para buscadores', 'Administrables por tu equipo']
+  },
+  {
+    id: 'consultoria',
+    nombre: 'Consultoría tecnológica',
+    icono: 'consultoria',
+    desc: 'Te ayudamos a definir la mejor estrategia tecnológica para alcanzar tus objetivos.',
+    puntos: ['Diagnóstico de procesos y sistemas', 'Propuesta con alcance, plazos y costos', 'Acompañamiento en la implementación']
+  },
+  {
+    id: 'mantencion',
+    nombre: 'Mantención y soporte',
+    icono: 'mantencion',
+    desc: 'Acompañamiento continuo tras la entrega: monitoreo, actualizaciones y mejoras.',
+    puntos: ['Corrección de errores garantizada', 'Actualizaciones y nuevas funciones', 'Soporte remoto en horario hábil']
+  }
 ];
 
-// Normaliza texto para búsquedas sin distinguir mayúsculas ni tildes
-function normalizar(texto) {
-  return texto.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-}
+const proyectos = [
+  {
+    id: 'filtro-licitaciones',
+    nombre: 'Filtro de Licitaciones',
+    tipo: 'Software a medida',
+    mockup: 'proyecto-ventana',
+    desc: 'Aplicación de escritorio que filtra y clasifica licitaciones de Mercado Público en tiempo real, integrada con su API oficial.',
+    estado: null
+  },
+  {
+    id: 'aplicacion-1',
+    nombre: 'Aplicación 1',
+    tipo: 'App móvil · SaaS',
+    mockup: 'proyecto-telefono-a',
+    desc: 'Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.',
+    estado: 'En desarrollo',
+    placeholder: true
+  },
+  {
+    id: 'aplicacion-2',
+    nombre: 'Aplicación 2',
+    tipo: 'App móvil · SaaS',
+    mockup: 'proyecto-telefono-b',
+    desc: 'Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.',
+    estado: 'En desarrollo',
+    placeholder: true
+  }
+];
 
-const categorias = [...new Set(productos.map((p) => p.categoria))];
-app.locals.categorias = categorias;
+const proceso = [
+  { n: 1, nombre: 'Entendemos', icono: 'chat', desc: 'Escuchamos tu idea y entendemos tus objetivos y necesidades.' },
+  { n: 2, nombre: 'Diseñamos', icono: 'diseno', desc: 'Proponemos la mejor solución tecnológica y planificamos cada etapa.' },
+  { n: 3, nombre: 'Desarrollamos', icono: 'codigo', desc: 'Construimos tu solución con metodologías ágiles y altos estándares de calidad.' },
+  { n: 4, nombre: 'Entregamos', icono: 'rocket', desc: 'Probamos, lanzamos y aseguramos que todo funcione perfecto.' },
+  { n: 5, nombre: 'Acompañamos', icono: 'headset', desc: 'Te acompañamos después del lanzamiento para seguir impulsando tu negocio.' }
+];
+
+app.locals.servicios = servicios;
+app.locals.proceso = proceso;
 app.locals.empresa = {
   marca: 'RendApps',
   sub: 'Solutions',
@@ -47,40 +118,28 @@ app.locals.empresa = {
   horario: 'Lun a Vie, 9:00 – 18:00'
 };
 
+// ================================
+// Rutas
+// ================================
 app.get('/', (req, res) => {
-  res.render('index', {
-    titulo: 'Inicio',
-    pagina: 'inicio',
-    destacados: productos.slice(0, 3)
-  });
+  res.render('index', { titulo: 'Desarrollo de software a medida', pagina: 'inicio', proyectos });
+});
+
+app.get('/servicios', (req, res) => {
+  res.render('servicios', { titulo: 'Servicios', pagina: 'servicios' });
+});
+
+// Compatibilidad con la ruta antigua
+app.get('/productos', (req, res) => {
+  res.redirect(301, '/servicios');
+});
+
+app.get('/proyectos', (req, res) => {
+  res.render('proyectos', { titulo: 'Proyectos', pagina: 'proyectos', proyectos });
 });
 
 app.get('/nosotros', (req, res) => {
   res.render('nosotros', { titulo: 'Nosotros', pagina: 'nosotros' });
-});
-
-app.get('/productos', (req, res) => {
-  const q = (req.query.q || '').trim();
-  const cat = (req.query.cat || '').trim();
-
-  let lista = productos;
-  if (cat) {
-    lista = lista.filter((p) => p.categoria === cat);
-  }
-  if (q) {
-    const qNorm = normalizar(q);
-    lista = lista.filter(
-      (p) => normalizar(p.nombre).includes(qNorm) || normalizar(p.desc).includes(qNorm)
-    );
-  }
-
-  res.render('productos', {
-    titulo: 'Productos',
-    pagina: 'productos',
-    productos: lista,
-    q,
-    cat
-  });
 });
 
 app.get('/soporte', (req, res) => {

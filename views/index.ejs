@@ -2,45 +2,58 @@
 
 <section class="hero">
   <div class="contenedor hero-int">
-    <div class="hero-texto">
-      <p class="eyebrow">Desarrollo de software y aplicaciones móviles</p>
-      <h1>Software hecho a tu medida.</h1>
+    <div class="hero-texto reveal">
+      <p class="eyebrow">Desarrollamos soluciones digitales</p>
+      <h1>Convertimos ideas en software que <span class="acento">impulsa tu negocio</span></h1>
       <p class="hero-sub">
-        Aplicaciones de escritorio, web y móviles construidas para tu proceso real.
-        Integración con APIs, mantención y soporte continuo.
+        Desarrollamos aplicaciones móviles, software a medida, integraciones y
+        soluciones web que optimizan procesos y generan valor real.
       </p>
       <div class="hero-acciones">
-        <a class="btn" href="/productos">Ver productos</a>
-        <a class="btn btn-secundario" href="/contacto">Hablemos</a>
+        <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+        <a class="btn btn-suave" href="#proceso">
+          <span class="btn-play"><%- include('partials/icono', { n: 'play', t: 20 }) %></span>
+          Ver cómo trabajamos
+        </a>
       </div>
+      <ul class="hero-checks">
+        <li><%- include('partials/icono', { n: 'check', t: 17 }) %> Soluciones a medida</li>
+        <li><%- include('partials/icono', { n: 'check', t: 17 }) %> Entregas ágiles</li>
+        <li><%- include('partials/icono', { n: 'check', t: 17 }) %> Acompañamiento continuo</li>
+      </ul>
     </div>
-    <div class="hero-figura" aria-hidden="true">
-      <img src="/img/hero-software.svg" alt="">
+    <div class="hero-figura reveal" aria-hidden="true">
+      <img src="/img/hero-mockup.svg" alt="" width="660" height="430">
     </div>
   </div>
-  <div class="franja" aria-hidden="true"></div>
+</section>
+
+<section class="banda-confianza">
+  <div class="contenedor">
+    <p class="banda-titulo">Tu proyecto en buenas manos</p>
+    <ul class="banda-items">
+      <li><%- include('partials/icono', { n: 'candado', t: 19 }) %> Código de tu propiedad</li>
+      <li><%- include('partials/icono', { n: 'escudo', t: 19 }) %> Confidencialidad garantizada</li>
+      <li><%- include('partials/icono', { n: 'reloj', t: 19 }) %> Respuesta en menos de 24 h</li>
+      <li><%- include('partials/icono', { n: 'headset', t: 19 }) %> Acompañamiento continuo</li>
+    </ul>
+  </div>
 </section>
 
 <section class="seccion">
   <div class="contenedor">
-    <div class="seccion-cabeza">
-      <h2>Nuestros productos</h2>
-      <a class="enlace-mas" href="/productos">Ver todos los productos →</a>
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Lo que hacemos</p>
+      <h2>Soluciones tecnológicas a la medida</h2>
     </div>
-    <div class="grid grid-3">
-      <% destacados.forEach(function (p) { %>
-        <article class="tarjeta producto">
-          <div class="producto-figura">
-            <img src="/img/<%= p.icono %>.svg" alt="">
-          </div>
-          <p class="producto-cat"><%= p.etiqueta %></p>
-          <h3 class="<%= p.placeholder ? 'placeholder-tag' : '' %>"><%= p.nombre %></h3>
-          <p class="producto-desc"><%= p.desc %></p>
-          <div class="producto-pie">
-            <span class="precio"><%= p.precio %></span>
-            <a class="btn btn-chico" href="/contacto">Cotizar</a>
-          </div>
-        </article>
+    <div class="grid-servicios">
+      <% servicios.forEach(function (s) { %>
+        <a class="tarjeta-servicio reveal" href="/servicios#<%= s.id %>">
+          <span class="icono-caja"><%- include('partials/icono', { n: s.icono, t: 24 }) %></span>
+          <h3><%= s.nombre %></h3>
+          <p><%= s.desc %></p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
       <% }); %>
     </div>
   </div>
@@ -48,29 +61,59 @@
 
 <section class="seccion seccion-alterna">
   <div class="contenedor">
-    <h2 class="centrado">Por qué trabajar con RendApps</h2>
-    <div class="grid grid-3 ventajas">
-      <div class="ventaja">
-        <h3>Soporte y mantención</h3>
-        <p>Corrección de errores y actualizaciones incluidas tras la entrega del software, según lo acordado.</p>
+    <div class="seccion-cabeza reveal">
+      <div>
+        <p class="eyebrow">Proyectos que generan impacto</p>
+        <h2>Algunos de nuestros trabajos</h2>
       </div>
-      <div class="ventaja">
-        <h3>Integración con tus sistemas</h3>
-        <p>Conectamos con las APIs y plataformas que ya usas, como la API de Mercado Público.</p>
-      </div>
-      <div class="ventaja">
-        <h3>Código a tu medida</h3>
-        <p>Cada solución se construye para tu proceso específico, no un producto genérico forzado.</p>
-      </div>
+      <a class="btn btn-blanco" href="/proyectos">Ver todos los proyectos <span class="btn-flecha" aria-hidden="true">→</span></a>
+    </div>
+    <div class="grid-proyectos">
+      <% proyectos.forEach(function (p) { %>
+        <article class="tarjeta-proyecto reveal">
+          <div class="proyecto-media">
+            <img src="/img/<%= p.mockup %>.svg" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo"><%= p.tipo %></p>
+            <h3 class="<%= p.placeholder ? 'placeholder-tag' : '' %>"><%= p.nombre %></h3>
+            <p class="proyecto-desc"><%= p.desc %></p>
+            <div class="proyecto-pie">
+              <% if (p.estado) { %><span class="chip-estado"><%= p.estado %></span><% } %>
+              <a class="enlace" href="/proyectos#<%= p.id %>">Ver proyecto →</a>
+            </div>
+          </div>
+        </article>
+      <% }); %>
     </div>
   </div>
 </section>
 
-<section class="cta">
-  <div class="contenedor cta-int">
-    <h2>¿Tienes un proceso que automatizar?</h2>
-    <p>Cuéntanos qué necesitas y te armamos una propuesta con alcance, plazos y costos.</p>
-    <a class="btn btn-claro" href="/contacto">Pedir propuesta</a>
+<section class="seccion" id="proceso">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Nuestro proceso</p>
+      <h2>Así trabajamos contigo</h2>
+    </div>
+    <ol class="pasos">
+      <% proceso.forEach(function (paso) { %>
+        <li class="paso reveal">
+          <span class="paso-icono"><%- include('partials/icono', { n: paso.icono, t: 24 }) %></span>
+          <h3><%= paso.n %>. <%= paso.nombre %></h3>
+          <p><%= paso.desc %></p>
+        </li>
+      <% }); %>
+    </ol>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿Tienes un proyecto en mente?</h2>
+      <p>Hablemos y llevemos tu idea al siguiente nivel.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
   </div>
 </section>
 

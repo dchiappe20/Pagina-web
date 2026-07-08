@@ -1,0 +1,41 @@
+<%- include('partials/header') %>
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Servicios</p>
+    <h1>Soluciones tecnológicas a la medida</h1>
+    <p class="cabecera-sub">Del levantamiento a la puesta en marcha: nos hacemos cargo de tu proyecto de principio a fin.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="grid-servicios-detalle">
+      <% servicios.forEach(function (s) { %>
+        <article class="tarjeta-servicio-detalle reveal" id="<%= s.id %>">
+          <span class="icono-caja"><%- include('partials/icono', { n: s.icono, t: 24 }) %></span>
+          <h2><%= s.nombre %></h2>
+          <p><%= s.desc %></p>
+          <ul class="lista-check">
+            <% s.puntos.forEach(function (punto) { %>
+              <li><%- include('partials/icono', { n: 'check', t: 16 }) %> <%= punto %></li>
+            <% }); %>
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿No sabes por dónde empezar?</h2>
+      <p>Cuéntanos tu problema y te proponemos la solución con alcance, plazos y costos claros.</p>
+    </div>
+    <a class="btn" href="/contacto">Pedir una propuesta <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

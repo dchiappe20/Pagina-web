@@ -2,15 +2,15 @@
 
 <section class="cabecera-pagina">
   <div class="contenedor">
-    <h1>Contacto</h1>
-    <p>Cotizaciones, soporte técnico y consultas generales.</p>
+    <p class="eyebrow">Contacto</p>
+    <h1>Hablemos de tu proyecto</h1>
+    <p class="cabecera-sub">Cuéntanos qué necesitas y te respondemos dentro del día hábil con los siguientes pasos.</p>
   </div>
-  <div class="franja" aria-hidden="true"></div>
 </section>
 
 <section class="seccion">
   <div class="contenedor contacto-int">
-    <div class="contacto-form">
+    <div class="contacto-form reveal">
       <% if (enviado) { %>
         <div class="alerta alerta-ok" role="status">
           <h2>Mensaje enviado</h2>
@@ -26,11 +26,11 @@
       <form action="/contacto" method="post" novalidate>
         <div class="campo">
           <label for="nombre">Nombre *</label>
-          <input type="text" id="nombre" name="nombre" required value="<%= datos.nombre || '' %>">
+          <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" value="<%= datos.nombre || '' %>">
         </div>
         <div class="campo">
           <label for="email">Correo electrónico *</label>
-          <input type="email" id="email" name="email" required value="<%= datos.email || '' %>">
+          <input type="email" id="email" name="email" required placeholder="nombre@empresa.com" value="<%= datos.email || '' %>">
         </div>
         <div class="campo">
           <label for="asunto">Asunto</label>
@@ -42,20 +42,39 @@
         </div>
         <div class="campo">
           <label for="mensaje">Mensaje *</label>
-          <textarea id="mensaje" name="mensaje" rows="6" required><%= datos.mensaje || '' %></textarea>
+          <textarea id="mensaje" name="mensaje" rows="6" required placeholder="Cuéntanos sobre tu proyecto o necesidad"><%= datos.mensaje || '' %></textarea>
         </div>
-        <button class="btn" type="submit">Enviar mensaje</button>
+        <button class="btn" type="submit">Enviar mensaje <span class="btn-flecha" aria-hidden="true">→</span></button>
+        <p class="nota-confianza">
+          <%- include('partials/icono', { n: 'escudo', t: 16 }) %>
+          Tu información es confidencial y solo se usa para responderte.
+        </p>
       </form>
     </div>
 
-    <aside class="contacto-datos">
+    <aside class="contacto-datos reveal">
       <h2>Datos directos</h2>
       <ul>
-        <li><strong>Consultas comerciales</strong><br><a class="placeholder-tag" href="mailto:<%= empresa.email %>"><%= empresa.email %></a></li>
-        <li><strong>Soporte técnico</strong><br><a class="placeholder-tag" href="mailto:<%= empresa.emailSoporte %>"><%= empresa.emailSoporte %></a></li>
-        <li><strong>Teléfono</strong><br><span class="placeholder-tag"><%= empresa.telefono %></span></li>
-        <li><strong>Ubicación</strong><br><%= empresa.ubicacion %></li>
-        <li><strong>Modalidad</strong><br>Trabajo remoto · <%= empresa.horario %></li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><%- include('partials/icono', { n: 'mail', t: 19 }) %></span>
+          <div><strong>Consultas comerciales</strong><a class="placeholder-tag" href="mailto:<%= empresa.email %>"><%= empresa.email %></a></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><%- include('partials/icono', { n: 'headset', t: 19 }) %></span>
+          <div><strong>Soporte técnico</strong><a class="placeholder-tag" href="mailto:<%= empresa.emailSoporte %>"><%= empresa.emailSoporte %></a></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><%- include('partials/icono', { n: 'fono', t: 19 }) %></span>
+          <div><strong>Teléfono</strong><span class="placeholder-tag"><%= empresa.telefono %></span></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><%- include('partials/icono', { n: 'pin', t: 19 }) %></span>
+          <div><strong>Ubicación</strong><span><%= empresa.ubicacion %></span></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><%- include('partials/icono', { n: 'reloj', t: 19 }) %></span>
+          <div><strong>Modalidad</strong><span>Trabajo remoto · <%= empresa.horario %></span></div>
+        </li>
       </ul>
     </aside>
   </div>
