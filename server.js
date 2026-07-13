@@ -71,9 +71,11 @@ const proyectos = [
   {
     id: 'filtro-licitaciones',
     nombre: 'Filtro de Licitaciones',
-    tipo: 'Software a medida',
+    tipo: 'Software de escritorio',
     mockup: 'proyecto-ventana',
     desc: 'Aplicación de escritorio que filtra y clasifica licitaciones de Mercado Público en tiempo real, integrada con su API oficial.',
+    cliente: 'Producto RendApps',
+    url: '/proyectos/filtro-licitaciones',
     estado: null
   },
   {
@@ -82,6 +84,7 @@ const proyectos = [
     tipo: 'App móvil · SaaS',
     mockup: 'proyecto-telefono-a',
     desc: 'Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.',
+    cliente: 'Producto RendApps',
     estado: 'En desarrollo',
     placeholder: true
   },
@@ -91,6 +94,7 @@ const proyectos = [
     tipo: 'App móvil · SaaS',
     mockup: 'proyecto-telefono-b',
     desc: 'Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.',
+    cliente: 'Producto RendApps',
     estado: 'En desarrollo',
     placeholder: true
   }
@@ -111,10 +115,9 @@ app.locals.empresa = {
   sub: 'Solutions',
   razon: 'Informática Daniel Chiappe Puebla E.I.R.L.',
   rut: '78.447.904-8',
-  email: 'contacto@rendapps.dev',
-  emailSoporte: 'soporte@rendapps.dev',
-  telefono: '+56 9 XXXX XXXX',
-  ubicacion: 'Puente Alto, Región Metropolitana',
+  email: 'contacto@rendapps.cl',
+  emailSoporte: 'soporte@rendapps.cl',
+  ubicacion: 'Santiago, Región Metropolitana',
   horario: 'Lun a Vie, 9:00 – 18:00'
 };
 
@@ -136,6 +139,10 @@ app.get('/productos', (req, res) => {
 
 app.get('/proyectos', (req, res) => {
   res.render('proyectos', { titulo: 'Proyectos', pagina: 'proyectos', proyectos });
+});
+
+app.get('/proyectos/filtro-licitaciones', (req, res) => {
+  res.render('proyecto-filtro', { titulo: 'Filtro de Licitaciones', pagina: 'proyectos' });
 });
 
 app.get('/nosotros', (req, res) => {

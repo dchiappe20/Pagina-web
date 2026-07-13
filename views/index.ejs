@@ -80,7 +80,7 @@
             <p class="proyecto-desc"><%= p.desc %></p>
             <div class="proyecto-pie">
               <% if (p.estado) { %><span class="chip-estado"><%= p.estado %></span><% } %>
-              <a class="enlace" href="/proyectos#<%= p.id %>">Ver proyecto →</a>
+              <a class="enlace" href="<%= p.url || '/proyectos#' + p.id %>">Ver proyecto →</a>
             </div>
           </div>
         </article>

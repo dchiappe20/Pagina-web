@@ -23,7 +23,11 @@
             <p class="proyecto-cliente"><%= p.cliente %></p>
             <div class="proyecto-pie">
               <% if (p.estado) { %><span class="chip-estado"><%= p.estado %></span><% } %>
-              <a class="enlace" href="/contacto">Quiero algo así →</a>
+              <% if (p.url) { %>
+                <a class="enlace" href="<%= p.url %>">Ver proyecto →</a>
+              <% } else { %>
+                <a class="enlace" href="/contacto">Quiero algo así →</a>
+              <% } %>
             </div>
           </div>
         </article>

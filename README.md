@@ -28,7 +28,8 @@ Luego abre <http://localhost:3000> en el navegador.
 | ------------ | ---------------------------------------------------------------- |
 | `/`          | Inicio: héroe con mockup, servicios, proyectos, proceso y CTA     |
 | `/servicios` | Detalle de los 6 servicios con puntos incluidos                   |
-| `/proyectos` | Portafolio: caso real (Amilab) y productos propios en desarrollo  |
+| `/proyectos` | Portafolio: la Filtradora de Licitaciones y productos en desarrollo |
+| `/proyectos/filtro-licitaciones` | Detalle del proyecto con demo interactiva de la app |
 | `/nosotros`  | Historia, compromisos de confianza y seguridad, proceso           |
 | `/soporte`   | Soporte, documentación y preguntas frecuentes                     |
 | `/contacto`  | Formulario de contacto (POST) con validación y datos directos     |
@@ -55,8 +56,9 @@ se auto-pinguea cada 5 minutos para no dormirse por inactividad. En local queda 
 Marcados en el sitio con un borde punteado naranja (clase `placeholder-tag`):
 
 - Nombre y descripción reales de **Aplicación 1** y **Aplicación 2** (arreglo `proyectos` en `server.js`).
-- Correos y teléfono definitivos (`contacto@rendapps.dev`, `soporte@rendapps.dev`, `+56 9 XXXX XXXX`),
-  definidos en `app.locals.empresa` dentro de `server.js`.
+
+Los correos (`contacto@rendapps.cl`, `soporte@rendapps.cl`) requieren tener sus reglas de
+reenvío creadas en Cloudflare → Email → Routing para recibir mensajes.
 
 Para cambiar la paleta, edita las variables al inicio de `public/css/styles.css`.
 Los servicios, proyectos y datos de la empresa se editan en `server.js`.
