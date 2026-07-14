@@ -73,27 +73,29 @@
   };
   var TIPO_NOMBRE = { P: 'Palabra', D: 'Derivados', C: 'Combinación' };
 
+  // Organismos e IDs ficticios: mantienen el formato de Mercado Público
+  // pero no corresponden a licitaciones ni instituciones reales.
   var FOROS = [
-    { id: '1075963-148-LP26', cliente: 'SERVICIO DE SALUD ARICA HOSP DR JUAN NOE CREVANI', fecha: '2026-05-18 09:16', estado: 'Respondida' },
-    { id: '1075963-148-LP26', cliente: 'SERVICIO DE SALUD ARICA HOSP DR JUAN NOE CREVANI', fecha: '2026-06-01 12:58', estado: 'Respondida' },
-    { id: '4309-141-LP26', cliente: 'HOSPITAL GUILLERMO GRANT BENAVENTE', fecha: '2026-06-26 14:40', estado: 'Respondida' },
-    { id: '1057049-157-LP26', cliente: 'HOSPITAL CLINICO SAN BORJA ARRIARAN', fecha: '2026-06-17 09:30', estado: 'Respondida' },
-    { id: '948355-44-LP26', cliente: 'FONDO HOSPITAL DIPRECA', fecha: '2026-07-06 15:05', estado: 'Respondida' },
-    { id: '948355-44-LP26', cliente: 'FONDO HOSPITAL DIPRECA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
-    { id: '948355-44-LP26', cliente: 'FONDO HOSPITAL DIPRECA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
-    { id: '1274285-26-LE26', cliente: 'CORSABER', fecha: '2026-06-12 12:59', estado: 'Respondida' }
+    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-05-18 09:16', estado: 'Respondida' },
+    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-06-01 12:58', estado: 'Respondida' },
+    { id: '4210-141-LP26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-06-26 14:40', estado: 'Respondida' },
+    { id: '105811-157-LP26', cliente: 'CENTRO CLÍNICO LAGUNA GRANDE', fecha: '2026-06-17 09:30', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:05', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
+    { id: '127900-26-LE26', cliente: 'CORPOSALUD BAHÍA NEGRA', fecha: '2026-06-12 12:59', estado: 'Respondida' }
   ];
 
   var HISTORIAL = [
-    { id: '1057491-100-LP26', cliente: 'HOSPITAL LUIS CALVO MACKENNA', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
-    { id: '2307-21-LP26', cliente: 'I MUNICIPALIDAD DE OSORNO', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
-    { id: '1398-47-LE26', cliente: 'SERVICIO DE SALUD LIBERTADOR BDO OHIGGINS', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
-    { id: '3191-58-LE26', cliente: 'HOSPITAL NAVAL ALMIRANTE NEF', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
-    { id: '948355-44-LP26', cliente: 'FONDO HOSPITAL DIPRECA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
-    { id: '948355-44-LP26', cliente: 'FONDO HOSPITAL DIPRECA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
-    { id: '2777-10-LE26', cliente: 'I MUNICIPALIDAD DE RENGO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
-    { id: '4309-139-LE26', cliente: 'HOSPITAL GUILLERMO GRANT BENAVENTE', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
-    { id: '1057494-37-LP26', cliente: 'HOSPITAL EXEQUIEL GONZALEZ CORTES', fecha: '2026-07-10 09:43', estado: 'Sin foro' }
+    { id: '105733-100-LP26', cliente: 'HOSPITAL DE NIÑOS RÍO BLANCO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
+    { id: '2307-21-LP26', cliente: 'I MUNICIPALIDAD DE BAHÍA NEGRA', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
+    { id: '1398-47-LE26', cliente: 'SERVICIO DE SALUD VALLE CLARO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
+    { id: '3191-58-LE26', cliente: 'HOSPITAL COSTA AZUL', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
+    { id: '2777-10-LE26', cliente: 'I MUNICIPALIDAD DE PUERTO ALERCE', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
+    { id: '4210-139-LE26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
+    { id: '105744-37-LP26', cliente: 'CENTRO DE SALUD LOMA VERDE', fecha: '2026-07-10 09:43', estado: 'Sin foro' }
   ];
 
   // ============ Utilidades ============
