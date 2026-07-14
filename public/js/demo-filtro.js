@@ -8,67 +8,64 @@
 
   // ============ Datos de ejemplo ============
 
-  // Filtros reales de la aplicación (por categoría). t: P = palabra, D = derivados, C = combinación
+  // Filtros de ejemplo para un rubro ficticio (artículos de oficina e impresión).
+  // No corresponden a reglas reales de ningún cliente.
+  // t: P = palabra, D = derivados, C = combinación
   var FILTROS = {
     'CONVENIOS': [
-      { t: 'C', q: '(convenio o comodato o contrato o suministro) + (química o reactivos o hematología o orina o laboratorio o TBC o muestra)' }
+      { t: 'C', q: '(convenio o contrato o suministro) + (oficina o papelería o impresión o mobiliario o escritorio)' }
     ],
-    'ELECTROLITOS': [
-      { t: 'C', q: 'electrolitos + plasmáticos' },
-      { t: 'C', q: 'electrodos + (referencia o sodio o cloro o potasio)' },
-      { t: 'C', q: 'filling + solution' },
-      { t: 'C', q: 'refill + solution' }
+    'PAPELERIA': [
+      { t: 'P', q: 'La palabra «resma»' },
+      { t: 'P', q: 'La palabra «carpeta»' },
+      { t: 'D', q: 'Palabras que empiezan con «papel»' },
+      { t: 'C', q: 'sobre + (carta o oficio)' },
+      { t: 'P', q: 'La palabra «etiquetas»' }
     ],
-    'EQUIPAMIENTO': [
-      { t: 'C', q: 'cintas + orina' },
-      { t: 'P', q: 'La palabra «dirui»' },
-      { t: 'C', q: 'lector + (cintas o tiras)' },
-      { t: 'D', q: 'Palabras que empiezan con «autoanaliz»' },
-      { t: 'C', q: 'contador + hematológico' },
-      { t: 'P', q: 'La palabra «centrífuga»' },
-      { t: 'C', q: 'analizador + (sangre o plasma o suero)' },
-      { t: 'P', q: 'La palabra «microscopio»' }
+    'IMPRESION': [
+      { t: 'C', q: 'cartucho + (tinta o tóner)' },
+      { t: 'P', q: 'La palabra «tóner»' },
+      { t: 'D', q: 'Palabras que empiezan con «impres»' },
+      { t: 'P', q: 'La palabra «plotter»' },
+      { t: 'P', q: 'La palabra «multifuncional»' },
+      { t: 'C', q: 'cinta + (etiquetadora o rotuladora)' }
     ],
-    'HEMATOLOGIA': [
-      { t: 'D', q: 'Palabras que empiezan con «hematol»' }
+    'MOBILIARIO': [
+      { t: 'C', q: 'silla + (ergonómica o giratoria o visita)' },
+      { t: 'P', q: 'La palabra «escritorio»' },
+      { t: 'P', q: 'La palabra «estante»' },
+      { t: 'P', q: 'La palabra «kardex»' },
+      { t: 'C', q: 'mesa + (reunión o trabajo)' },
+      { t: 'D', q: 'Palabras que empiezan con «mobiliar»' }
     ],
-    'INSUMOS': [
-      { t: 'P', q: 'La palabra «inmuno»' },
-      { t: 'D', q: 'Palabras que empiezan con «parasi»' },
-      { t: 'P', q: 'La palabra «paf»' },
-      { t: 'D', q: 'Palabras que empiezan con «teleman»' },
-      { t: 'P', q: 'La palabra «graham»' }
+    'TECNOLOGIA': [
+      { t: 'P', q: 'La palabra «notebook»' },
+      { t: 'P', q: 'La palabra «monitor»' },
+      { t: 'C', q: 'computador + (escritorio o portátil)' },
+      { t: 'D', q: 'Palabras que empiezan con «proyect»' },
+      { t: 'P', q: 'La palabra «teclado»' },
+      { t: 'C', q: 'disco + (duro o ssd o externo)' }
     ],
-    'MEDIOS DE CULTIVO': [
-      { t: 'C', q: '(caldo o medio o agar o placa o tubo) + (hinton o conkey o sangre o columbia o cordero o cromo o chrom…)' },
-      { t: 'P', q: 'La palabra «lia»' },
-      { t: 'P', q: 'La palabra «tsi»' },
-      { t: 'P', q: 'La palabra «mio»' },
-      { t: 'P', q: 'La palabra «urea»' },
-      { t: 'P', q: 'La palabra «bilis»' },
-      { t: 'P', q: 'La palabra «esculina»' },
-      { t: 'D', q: 'Palabras que empiezan con «thiog»' },
-      { t: 'P', q: 'La palabra «glucosa»' },
-      { t: 'P', q: 'La palabra «thayer»' }
+    'ESCRITURA': [
+      { t: 'P', q: 'La palabra «lápiz»' },
+      { t: 'P', q: 'La palabra «bolígrafo»' },
+      { t: 'P', q: 'La palabra «plumón»' },
+      { t: 'P', q: 'La palabra «destacador»' },
+      { t: 'C', q: 'tinta + timbre' }
     ],
-    'ORINAS': [
-      { t: 'P', q: 'La palabra «orina»' },
-      { t: 'P', q: 'La palabra «fus»' },
-      { t: 'P', q: 'La palabra «urs»' },
-      { t: 'P', q: 'La palabra «sheath»' },
-      { t: 'C', q: '(cintas o tiras) + reactivas' }
+    'ARCHIVO': [
+      { t: 'D', q: 'Palabras que empiezan con «archiv»' },
+      { t: 'C', q: 'caja + (archivo o almacenaje)' },
+      { t: 'P', q: 'La palabra «separadores»' },
+      { t: 'P', q: 'La palabra «fundas»' },
+      { t: 'P', q: 'La palabra «clips»' }
     ],
-    'QUIMICA Y REACTIVOS': [
-      { t: 'P', q: 'La palabra «alat»' },
-      { t: 'D', q: 'Palabras que empiezan con «transam»' },
-      { t: 'D', q: 'Palabras que empiezan con «creatin»' },
-      { t: 'P', q: 'La palabra «glicemia»' },
-      { t: 'P', q: 'La palabra «triglicéridos»' },
-      { t: 'P', q: 'La palabra «vdrl»' },
-      { t: 'C', q: 'control + (suero o bioquímico o nivel o normal o patológico)' },
-      { t: 'P', q: 'La palabra «bilirrubina»' },
-      { t: 'P', q: 'La palabra «colesterol»' },
-      { t: 'C', q: 'reactivo + coagulación' }
+    'ESCOLAR': [
+      { t: 'P', q: 'La palabra «cuaderno»' },
+      { t: 'P', q: 'La palabra «témpera»' },
+      { t: 'D', q: 'Palabras que empiezan con «escol»' },
+      { t: 'C', q: 'set + (geometría o arte)' },
+      { t: 'P', q: 'La palabra «mochila»' }
     ]
   };
   var TIPO_NOMBRE = { P: 'Palabra', D: 'Derivados', C: 'Combinación' };
@@ -215,7 +212,7 @@
     li.appendChild(boton);
     listaCat.appendChild(li);
   });
-  pintarCategoria('MEDIOS DE CULTIVO');
+  pintarCategoria('IMPRESION');
 
   // ============ Pantalla Foros ============
 

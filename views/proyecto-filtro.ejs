@@ -126,10 +126,10 @@
               <table class="demo-tabla demo-tabla-lic">
                 <thead><tr><th></th><th>ID</th><th>Nombre</th><th>Comprador</th><th>Publicación</th><th>Cierre</th></tr></thead>
                 <tbody>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 1001-24-LE26</td><td>ADQUISICIÓN DE INSUMOS DE LABORATORIO CLÍNICO</td><td class="demo-link">HOSPITAL DE VALLE CLARO</td><td>10-07-2026 14:20</td><td>20-07-2026 15:30</td></tr>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 2045-95-LP26</td><td>SUMINISTRO DE REACTIVOS QUÍMICOS PARA TOMA DE MUESTRAS</td><td class="demo-link">I MUNICIPALIDAD DE PUERTO ALERCE</td><td>10-07-2026 15:55</td><td>21-07-2026 15:08</td></tr>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 3310-10-LE26</td><td>EQUIPAMIENTO PARA LABORATORIO DOCENTE</td><td class="demo-link">INSTITUTO TÉCNICO COSTA AZUL</td><td>10-07-2026 11:27</td><td>22-07-2026 15:00</td></tr>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 4471-71-LE26</td><td>SERVICIO DE MANTENCIÓN PREVENTIVA DE EQUIPOS MÉDICOS</td><td class="demo-link">CENTRO DE SALUD RÍO BLANCO</td><td>10-07-2026 14:12</td><td>22-07-2026 15:00</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 1001-24-LE26</td><td>ADQUISICIÓN DE ARTÍCULOS DE OFICINA Y PAPELERÍA</td><td class="demo-link">HOSPITAL DE VALLE CLARO</td><td>10-07-2026 14:20</td><td>20-07-2026 15:30</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 2045-95-LP26</td><td>SUMINISTRO DE TÓNER E INSUMOS DE IMPRESIÓN</td><td class="demo-link">I MUNICIPALIDAD DE PUERTO ALERCE</td><td>10-07-2026 15:55</td><td>21-07-2026 15:08</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 3310-10-LE26</td><td>MOBILIARIO PARA DEPENDENCIAS ADMINISTRATIVAS</td><td class="demo-link">INSTITUTO TÉCNICO COSTA AZUL</td><td>10-07-2026 11:27</td><td>22-07-2026 15:00</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 4471-71-LE26</td><td>SERVICIO DE ARRIENDO DE IMPRESORAS MULTIFUNCIONALES</td><td class="demo-link">CENTRO DE SALUD RÍO BLANCO</td><td>10-07-2026 14:12</td><td>22-07-2026 15:00</td></tr>
                 </tbody>
               </table>
             </div>
@@ -142,11 +142,11 @@
               <table class="demo-tabla demo-tabla-prod">
                 <thead><tr><th>Cantidad</th><th>Producto</th><th>Filtro</th></tr></thead>
                 <tbody>
-                  <tr class="demo-match"><td>1.0</td><td>☑ MECHERO VIDRIO — mechero de mesa para laboratorio clínico, vidrio grueso</td><td>laboratorio + suministro</td></tr>
-                  <tr class="demo-match"><td>1.0</td><td>☑ ESPATULA DE IONOMERO PLASTICA — espátula manual de material plástico</td><td>suministro + química</td></tr>
-                  <tr class="demo-match"><td>2.0</td><td>☑ AGAR MUELLER HINTON — medio de cultivo placa 90 mm</td><td>medios de cultivo</td></tr>
-                  <tr><td>1.0</td><td>◯ CONOS DE PAPEL ESTÉRILES #50 — puntas de papel absorbente</td><td>---</td></tr>
-                  <tr><td>1.0</td><td>◯ ARCO DE YOUNG PLASTICO ADULTO</td><td>---</td></tr>
+                  <tr class="demo-match"><td>10.0</td><td>☑ RESMA PAPEL CARTA 75G — papel multipropósito para impresión y copiado</td><td>papelería + suministro</td></tr>
+                  <tr class="demo-match"><td>4.0</td><td>☑ TÓNER LÁSER NEGRO — cartucho compatible para impresora multifuncional</td><td>impresión</td></tr>
+                  <tr class="demo-match"><td>6.0</td><td>☑ SILLA ERGONÓMICA GIRATORIA — respaldo alto con apoyo lumbar regulable</td><td>mobiliario</td></tr>
+                  <tr><td>2.0</td><td>◯ PIZARRA DE CORCHO 60×90 — panel mural con marco de madera</td><td>---</td></tr>
+                  <tr><td>1.0</td><td>◯ DISPENSADOR DE AGUA FRÍA/CALIENTE</td><td>---</td></tr>
                 </tbody>
               </table>
             </div>
@@ -165,7 +165,7 @@
               </div>
             </div>
             <div class="demo-filtros-panel">
-              <b class="demo-filtros-titulo">Filtros de MEDIOS DE CULTIVO</b>
+              <b class="demo-filtros-titulo">Filtros de IMPRESION</b>
               <table class="demo-tabla demo-tabla-filtros">
                 <thead><tr><th>Tipo</th><th>Qué busca</th></tr></thead>
                 <tbody></tbody>
@@ -180,7 +180,7 @@
           <div class="demo-explicacion">
             <b>✦ ¿Cómo funcionan los filtros?</b>
             <p>Cada categoría agrupa filtros; una licitación aparece en los resultados si cumple CUALQUIERA de ellos.</p>
-            <p>· <b>Palabra exacta</b>: encuentra esa palabra tal cual (glucosa). · <b>Palabra y derivados</b>: encuentra la raíz y sus variantes (hematol… → hematología, hematológico). · <b>Combinación</b>: exige varias condiciones a la vez.</p>
+            <p>· <b>Palabra exacta</b>: encuentra esa palabra tal cual (tóner). · <b>Palabra y derivados</b>: encuentra la raíz y sus variantes (impres… → impresora, impresión). · <b>Combinación</b>: exige varias condiciones a la vez.</p>
           </div>
         </div>
 
