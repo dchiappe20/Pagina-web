@@ -1,0 +1,2968 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  RÉPLICA ESTÁTICA DE https://rendapps.cl PARA REVISIÓN DE DISEÑO
+  Sitio real: Node.js + Express + EJS (multipágina). Esta réplica une
+  las 7 vistas en un solo archivo con navegación simulada por JS.
+  Identidad: blanco/#F8FAFC · azul #2563EB/#1E3A8A · naranja CTA #F97316
+  Tipografías: Space Grotesk (títulos) + Inter (texto)
+  Incluye la demo interactiva de la Filtradora de Licitaciones
+  (página Proyectos → Ver proyecto), con datos 100% ficticios.
+============================================================ -->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RendApps — Réplica para revisión de diseño</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMjU2M0VCIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFFM0E4QSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHBhdGggZD0iTTE2IDEuNWwxMS41IDYuNXYxNkwxNiAzMC41IDQuNSAyNFY4eiIgZmlsbD0idXJsKCNnKSIvPgogIDx0ZXh0IHg9IjE2IiB5PSIyMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjZmZmZmZmIj5SPC90ZXh0Pgo8L3N2Zz4K" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================================
+   RendApps — hoja de estilos
+   Minimalista, mucho blanco, azul #2563EB, CTA naranja #F97316
+   Tipos: Space Grotesk (títulos) + Inter (texto)
+   ============================================================ */
+
+:root {
+  --blanco: #FFFFFF;
+  --fondo-alt: #F8FAFC;
+  --tinta: #111827;        /* titulares y texto fuerte */
+  --texto: #4B5563;        /* párrafos */
+  --texto-suave: #6B7280;  /* secundario */
+  --azul: #2563EB;
+  --azul-oscuro: #1E3A8A;
+  --azul-claro: #EFF6FF;   /* fondos de íconos y acentos suaves */
+  --azul-borde: #BFDBFE;
+  --naranja: #F97316;
+  --naranja-hover: #EA580C;
+  --borde: #E5E7EB;
+  --borde-suave: #EEF2F6;
+
+  --fuente-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --fuente-texto: "Inter", "Segoe UI", sans-serif;
+
+  --radio: 12px;
+  --radio-g: 16px;
+  --sombra-suave: 0 1px 2px rgba(17, 24, 39, 0.05);
+  --sombra-media: 0 14px 34px -16px rgba(17, 24, 39, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--texto);
+  background: var(--blanco);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+h1, h2, h3 {
+  font-family: var(--fuente-display);
+  color: var(--tinta);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); font-weight: 700; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; }
+h3 { font-size: 1.06rem; font-weight: 600; }
+
+p + p { margin-top: 0.9rem; }
+
+a { color: var(--azul); text-decoration: none; }
+a:hover { color: var(--azul-oscuro); }
+
+.contenedor {
+  width: min(1160px, 100% - 3rem);
+  margin-inline: auto;
+}
+
+.texto-ancho { max-width: 720px; }
+.centrado-flex { justify-content: center; }
+
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.45);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.saltar {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--azul);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 var(--radio) 0;
+  z-index: 100;
+}
+.saltar:focus { left: 0; color: #fff; }
+
+/* ---------- Utilidades de sección ---------- */
+
+.eyebrow {
+  font-family: var(--fuente-display);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--azul);
+  margin-bottom: 0.9rem;
+}
+
+.seccion { padding: 5.5rem 0; }
+.seccion-alterna { background: var(--fondo-alt); }
+
+.seccion-cabeza {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.6rem;
+}
+.seccion-cabeza.centrada {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.seccion-cabeza.centrada .eyebrow { margin-bottom: 0.5rem; }
+
+.enlace {
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+
+/* ---------- Botones ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  background: var(--naranja);
+  border: none;
+  border-radius: var(--radio);
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px -10px rgba(249, 115, 22, 0.55);
+  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+.btn:hover {
+  background: var(--naranja-hover);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-flecha { font-weight: 500; transition: transform 0.18s ease; }
+.btn:hover .btn-flecha { transform: translateX(3px); }
+
+.btn-chico { padding: 0.5rem 1rem; font-size: 0.88rem; box-shadow: none; }
+
+.btn-contorno {
+  background: transparent;
+  color: var(--azul);
+  box-shadow: inset 0 0 0 1.5px var(--azul-borde);
+}
+.btn-contorno:hover { background: var(--azul-claro); color: var(--azul); transform: none; }
+
+.btn-suave {
+  background: var(--blanco);
+  color: var(--tinta);
+  box-shadow: inset 0 0 0 1.5px var(--borde);
+}
+.btn-suave:hover { background: var(--fondo-alt); color: var(--tinta); }
+
+.btn-blanco {
+  background: var(--blanco);
+  color: var(--azul);
+  box-shadow: inset 0 0 0 1.5px var(--borde);
+}
+.btn-blanco:hover { background: var(--azul-claro); color: var(--azul); }
+
+.btn-play { display: inline-flex; color: var(--naranja); }
+
+/* ---------- Cabecera ---------- */
+
+.cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--borde-suave);
+  transition: box-shadow 0.2s ease;
+}
+.cabecera.con-sombra { box-shadow: 0 6px 24px -18px rgba(17, 24, 39, 0.35); }
+
+.cabecera-int {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 72px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.logo-texto {
+  font-family: var(--fuente-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  color: var(--tinta);
+}
+
+.nav-lista {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nav-enlace {
+  font-weight: 500;
+  font-size: 0.93rem;
+  color: var(--texto);
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  position: relative;
+}
+.nav-enlace:hover { color: var(--tinta); background: var(--fondo-alt); }
+
+.nav-enlace.activo { color: var(--azul); font-weight: 600; }
+.nav-enlace.activo::after {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  right: 0.8rem;
+  bottom: 0.15rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--azul);
+}
+
+.nav-cta-item { margin-left: 0.7rem; }
+
+.menu-btn {
+  display: none;
+  background: transparent;
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  color: var(--tinta);
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+}
+
+/* ---------- Héroe ---------- */
+
+.hero { padding: 5.5rem 0 4.5rem; background: var(--blanco); }
+
+.hero-int {
+  display: grid;
+  grid-template-columns: 1.02fr 0.98fr;
+  align-items: center;
+  gap: 3rem;
+}
+
+.hero h1 { margin-bottom: 1.3rem; }
+.hero .acento { color: var(--azul); }
+
+.hero-sub {
+  font-size: 1.08rem;
+  max-width: 30rem;
+  margin-bottom: 2rem;
+}
+
+.hero-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.hero-checks {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2.2rem;
+}
+.hero-checks li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--texto);
+}
+.hero-checks svg { color: var(--azul); flex-shrink: 0; }
+
+.hero-figura img { width: 100%; height: auto; }
+
+/* ---------- Banda de confianza ---------- */
+
+.banda-confianza {
+  background: var(--fondo-alt);
+  border-block: 1px solid var(--borde-suave);
+  padding: 2.2rem 0;
+  text-align: center;
+}
+
+.banda-titulo {
+  font-family: var(--fuente-display);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  margin-bottom: 1.1rem;
+}
+
+.banda-items {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 3rem;
+}
+.banda-items li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.93rem;
+  font-weight: 500;
+  color: var(--texto);
+}
+.banda-items svg { color: var(--azul); flex-shrink: 0; }
+
+/* ---------- Tarjetas de servicio ---------- */
+
+.icono-caja {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radio);
+  background: var(--azul-claro);
+  color: var(--azul);
+  flex-shrink: 0;
+}
+.icono-caja-chica { width: 38px; height: 38px; border-radius: 10px; }
+
+.grid-servicios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.tarjeta-servicio {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  padding: 1.7rem;
+  color: var(--texto);
+  box-shadow: var(--sombra-suave);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.tarjeta-servicio:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-media);
+  border-color: var(--azul-borde);
+  color: var(--texto);
+}
+.tarjeta-servicio h3 { margin-top: 0.4rem; }
+.tarjeta-servicio p { font-size: 0.92rem; flex-grow: 1; }
+
+.enlace-flecha {
+  color: var(--azul);
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+.tarjeta-servicio:hover .enlace-flecha { transform: translateX(4px); }
+
+/* Servicios: página de detalle */
+
+.grid-servicios-detalle {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.tarjeta-servicio-detalle {
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  padding: 1.8rem;
+  box-shadow: var(--sombra-suave);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  scroll-margin-top: 90px;
+}
+.tarjeta-servicio-detalle h2 { font-size: 1.15rem; margin-top: 0.3rem; }
+.tarjeta-servicio-detalle > p { font-size: 0.93rem; }
+
+.lista-check {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.3rem 0 0.5rem;
+  flex-grow: 1;
+}
+.lista-check li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.lista-check svg { color: var(--azul); flex-shrink: 0; margin-top: 0.2rem; }
+
+/* ---------- Proyectos ---------- */
+
+.grid-proyectos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.tarjeta-proyecto {
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  overflow: hidden;
+  box-shadow: var(--sombra-suave);
+  display: flex;
+  flex-direction: column;
+  scroll-margin-top: 90px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tarjeta-proyecto:hover { transform: translateY(-4px); box-shadow: var(--sombra-media); }
+
+.proyecto-media {
+  background: linear-gradient(140deg, var(--azul-claro), #F5F9FF 60%, var(--fondo-alt));
+  border-bottom: 1px solid var(--borde-suave);
+  padding: 1.3rem 1.3rem 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 185px;
+}
+.proyecto-media img { width: 100%; max-width: 300px; height: auto; }
+
+.proyecto-cuerpo {
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.proyecto-tipo {
+  font-family: var(--fuente-display);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--azul);
+}
+
+.proyecto-desc { font-size: 0.92rem; flex-grow: 1; }
+.proyecto-cliente { font-size: 0.84rem; color: var(--texto-suave); }
+
+.proyecto-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.chip-estado {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--naranja-hover);
+  background: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  white-space: nowrap;
+}
+
+/* ---------- Proceso ---------- */
+
+.pasos {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.2rem;
+  counter-reset: paso;
+}
+
+.paso {
+  text-align: center;
+  padding: 0 0.4rem;
+  position: relative;
+}
+
+.paso-icono {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--azul-claro);
+  border: 1px solid var(--azul-borde);
+  color: var(--azul);
+}
+
+.paso:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 29px;
+  left: calc(50% + 40px);
+  width: calc(100% - 80px);
+  border-top: 2px dashed var(--azul-borde);
+}
+
+.paso h3 { font-size: 0.98rem; margin-bottom: 0.4rem; }
+.paso p { font-size: 0.86rem; color: var(--texto-suave); }
+
+/* ---------- Banda CTA ---------- */
+
+.banda-cta {
+  background: linear-gradient(120deg, var(--azul), var(--azul-oscuro));
+  color: #fff;
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.banda-cta::before {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: -140px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.banda-cta-int {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.banda-cta h2 { color: #fff; margin-bottom: 0.4rem; }
+.banda-cta p { color: #DBEAFE; max-width: 34rem; }
+
+/* ---------- Cabecera de página interior ---------- */
+
+.cabecera-pagina {
+  background: var(--fondo-alt);
+  border-bottom: 1px solid var(--borde-suave);
+  padding: 4.2rem 0;
+}
+.cabecera-pagina h1 { max-width: 48rem; }
+.cabecera-sub {
+  margin-top: 0.9rem;
+  font-size: 1.05rem;
+  color: var(--texto);
+  max-width: 38rem;
+}
+
+/* ---------- Confianza (tarjetas) ---------- */
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.tarjeta-confianza {
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  padding: 1.8rem;
+  box-shadow: var(--sombra-suave);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.tarjeta-confianza h3 { margin-top: 0.3rem; }
+.tarjeta-confianza p { font-size: 0.93rem; flex-grow: 1; }
+
+/* ---------- FAQ ---------- */
+
+.faq {
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio);
+  margin-top: 0.8rem;
+  box-shadow: var(--sombra-suave);
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--tinta);
+  font-size: 0.97rem;
+  padding: 1rem 1.2rem;
+  list-style: none;
+  position: relative;
+  padding-right: 2.8rem;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+";
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--fuente-display);
+  font-size: 1.25rem;
+  color: var(--azul);
+}
+.faq[open] summary::after { content: "–"; }
+.faq[open] summary { border-bottom: 1px solid var(--borde-suave); }
+.faq p { padding: 0.9rem 1.2rem 1.1rem; font-size: 0.93rem; }
+
+/* ---------- Contacto ---------- */
+
+.contacto-int {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 2.4rem;
+  align-items: start;
+}
+
+.campo { margin-bottom: 1.15rem; }
+
+.campo label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--tinta);
+  margin-bottom: 0.4rem;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  background: var(--blanco);
+  padding: 0.7rem 0.9rem;
+  font-family: var(--fuente-texto);
+  font-size: 0.95rem;
+  color: var(--tinta);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.campo input::placeholder,
+.campo textarea::placeholder { color: #9CA3AF; }
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.nota-confianza {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+}
+.nota-confianza svg { color: var(--azul); flex-shrink: 0; }
+
+.alerta {
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.4rem;
+  border-radius: var(--radio);
+  border: 1px solid;
+}
+.alerta-ok { background: #ECFDF5; border-color: #A7F3D0; }
+.alerta-ok h2 { font-size: 1.05rem; color: #065F46; margin-bottom: 0.2rem; }
+.alerta-ok p { color: #047857; font-size: 0.93rem; }
+.alerta-error { background: #FEF2F2; border-color: #FECACA; }
+.alerta-error p { color: #B91C1C; font-size: 0.93rem; }
+
+.contacto-datos {
+  background: var(--fondo-alt);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  padding: 1.7rem;
+}
+.contacto-datos h2 { font-size: 1.1rem; margin-bottom: 1.2rem; }
+.contacto-datos ul { list-style: none; display: flex; flex-direction: column; gap: 1.1rem; }
+.contacto-datos li { display: flex; gap: 0.8rem; align-items: flex-start; }
+.contacto-datos li div { display: flex; flex-direction: column; gap: 0.1rem; font-size: 0.92rem; }
+.contacto-datos strong { color: var(--tinta); font-size: 0.88rem; }
+
+/* ---------- 404 ---------- */
+
+.pagina-404 { text-align: center; padding: 3rem 0; }
+.pagina-404 h1 { margin-bottom: 0.8rem; }
+.pagina-404 .cabecera-sub { margin-inline: auto; margin-bottom: 1.8rem; }
+.pagina-404 .hero-acciones { justify-content: center; }
+
+/* ---------- Marca de dato pendiente ---------- */
+
+.placeholder-tag {
+  outline: 1px dashed rgba(249, 115, 22, 0.55);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- Pie de página ---------- */
+
+.pie {
+  background: var(--blanco);
+  border-top: 1px solid var(--borde-suave);
+}
+
+.pie-int {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
+  gap: 2.5rem;
+  padding: 3.8rem 0 3rem;
+}
+
+.pie-marca p {
+  margin-top: 1rem;
+  font-size: 0.92rem;
+  max-width: 17rem;
+}
+
+.pie-col h3 {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--tinta);
+  margin-bottom: 1rem;
+}
+
+.pie-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+.pie-col a { color: var(--texto); font-size: 0.92rem; }
+.pie-col a:hover { color: var(--azul); }
+
+.pie-contacto li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  color: var(--texto);
+}
+.pie-icono { color: var(--azul); display: inline-flex; flex-shrink: 0; }
+
+.pie-legal {
+  border-top: 1px solid var(--borde-suave);
+  padding: 1.1rem 0;
+}
+.pie-legal-int {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pie-legal p { font-size: 0.82rem; color: var(--texto-suave); }
+
+/* ---------- Animaciones discretas ---------- */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.js .reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1020px) {
+  .grid-servicios,
+  .grid-servicios-detalle,
+  .grid-proyectos,
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+
+  .pasos { grid-template-columns: repeat(2, 1fr); row-gap: 2rem; }
+  .paso:not(:last-child)::after { display: none; }
+
+  .pie-int { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 860px) {
+  .hero-int { grid-template-columns: 1fr; gap: 2.4rem; }
+  .hero { padding: 3.5rem 0 3rem; }
+  .hero-figura { order: -1; }
+  .hero-figura img { width: min(480px, 100%); margin-inline: auto; }
+
+  .contacto-int { grid-template-columns: 1fr; }
+
+  .menu-btn { display: inline-flex; }
+
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--blanco);
+    border-bottom: 1px solid var(--borde-suave);
+    box-shadow: 0 18px 30px -20px rgba(17, 24, 39, 0.25);
+    padding: 0.8rem 1.5rem 1.2rem;
+  }
+  .nav.abierta { display: block; }
+
+  .nav-lista { flex-direction: column; align-items: stretch; gap: 0.15rem; }
+  .nav-enlace { display: block; padding: 0.7rem 0.6rem; }
+  .nav-enlace.activo::after { display: none; }
+  .nav-cta-item { margin: 0.6rem 0 0; }
+  .nav-cta-item .btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 640px) {
+  .seccion { padding: 3.6rem 0; }
+  .cabecera-pagina { padding: 3rem 0; }
+
+  .grid-servicios,
+  .grid-servicios-detalle,
+  .grid-proyectos,
+  .grid-3,
+  .pasos { grid-template-columns: 1fr; }
+
+  .paso { max-width: 300px; margin-inline: auto; }
+
+  .banda-items { flex-direction: column; align-items: center; gap: 0.8rem; }
+
+  .banda-cta-int { flex-direction: column; align-items: flex-start; }
+
+  .pie-int { grid-template-columns: 1fr; gap: 2rem; }
+  .pie-legal-int { flex-direction: column; gap: 0.2rem; }
+}
+
+/* ---------- Movimiento reducido ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------- Demo Filtradora ---------- */
+/* ============================================================
+   Demo interactiva: Filtradora de Licitaciones
+   Réplica visual de la app de escritorio (tema oscuro / claro sepia)
+   Todo va con prefijo .demo- para no chocar con los estilos del sitio.
+   ============================================================ */
+
+.proyecto-detalle {
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr;
+  gap: 2.4rem;
+  align-items: start;
+}
+.proyecto-detalle h2 { margin-bottom: 1rem; }
+
+.ficha-proyecto {
+  background: var(--fondo-alt);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  padding: 1.6rem;
+}
+.ficha-proyecto h3 { margin-bottom: 1rem; }
+.ficha-proyecto ul { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+.ficha-proyecto li { display: flex; flex-direction: column; font-size: 0.92rem; }
+.ficha-proyecto strong { color: var(--tinta); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.demo-nota {
+  text-align: center;
+  max-width: 44rem;
+  margin: -1.2rem auto 2rem;
+  font-size: 0.95rem;
+}
+.demo-nota-pie { margin: 1.2rem auto 0; font-size: 0.85rem; color: var(--texto-suave); }
+
+/* ---------- Marco con scroll horizontal en pantallas chicas ---------- */
+
+.demo-marco {
+  overflow-x: auto;
+  border-radius: 14px;
+  box-shadow: var(--sombra-media);
+}
+
+/* ---------- Ventana ---------- */
+
+.demo {
+  min-width: 880px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #00000055;
+  font-family: "Segoe UI", "Inter", sans-serif;
+
+  --d-fondo: #121212;
+  --d-panel: #1E1E1E;
+  --d-tarjeta: #262626;
+  --d-hover: #323232;
+  --d-input: #1A1A1A;
+  --d-primario: #5162C5;
+  --d-primario-hover: #4452A5;
+  --d-texto: #FFFFFF;
+  --d-muted: #A0A0A0;
+  --d-desactivado: #555555;
+  --d-borde: #4A4A4A;
+  --d-verde: #2ECC71;
+  --d-bg-exito: #1E3C2F;
+  --d-rojo: #FF6B6B;
+  --d-rojo-fondo: #3A242B;
+  --d-bg-alerta: #162B44;
+  --d-fg-alerta: #8AB4F8;
+
+  background: var(--d-fondo);
+  color: var(--d-texto);
+}
+
+/* Modo claro sepia (paleta real de la app) */
+.demo[data-tema="claro"] {
+  --d-fondo: #F4ECD8;
+  --d-panel: #FBF5E4;
+  --d-tarjeta: #EAE0C6;
+  --d-hover: #E0D3B2;
+  --d-input: #FDF9EE;
+  --d-primario: #4154BE;
+  --d-primario-hover: #4452A5;
+  --d-texto: #3B2F1E;
+  --d-muted: #7A6A50;
+  --d-desactivado: #B3A489;
+  --d-borde: #D6C6A2;
+  --d-verde: #3D6B2E;
+  --d-bg-exito: #DFE8CC;
+  --d-rojo: #A63A2A;
+  --d-rojo-fondo: #F2DFD0;
+  --d-bg-alerta: #ECE2C6;
+  --d-fg-alerta: #2F4A8A;
+}
+
+/* Barra de título de la ventana */
+.demo-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #0B0D14;
+  color: #C8CCD6;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.9rem;
+}
+.demo-titulo-icono {
+  width: 12px; height: 12px; border-radius: 3px;
+  background: linear-gradient(135deg, #E11D5F, #5162C5);
+}
+.demo-titulo-botones { margin-left: auto; display: flex; gap: 1rem; font-style: normal; }
+.demo-titulo-botones i { font-style: normal; opacity: 0.7; }
+
+/* Encabezado de la aplicación */
+.demo-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--d-primario);
+  padding: 0.9rem 1.4rem;
+}
+.demo-logo { display: inline-flex; background: #FBF5E4; border-radius: 50%; padding: 3px; }
+.demo-marca {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+}
+.demo-marca small { font-size: 0.6rem; font-weight: 400; opacity: 0.85; letter-spacing: 0.08em; }
+.demo-cabecera-botones { margin-left: auto; display: flex; gap: 0.6rem; }
+
+/* ---------- Botones del demo ---------- */
+
+.demo-btn {
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease;
+}
+.demo-btn-primario { background: var(--d-primario); color: #fff; }
+.demo-btn-primario:hover { background: var(--d-primario-hover); }
+.demo-btn-borde {
+  background: var(--d-panel);
+  color: var(--d-texto);
+  border-color: var(--d-borde);
+}
+.demo-btn-borde:hover { background: var(--d-hover); }
+.demo-cabecera .demo-btn-borde { background: #FFFFFF; color: #1E3A8A; border-color: #FFFFFF; }
+.demo-cabecera .demo-btn-borde:hover { background: #E8EAF6; }
+.demo-btn-rojo { background: var(--d-rojo-fondo); color: var(--d-rojo); border-color: transparent; }
+.demo-btn-rojo:hover { filter: brightness(1.15); }
+.demo-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---------- Pantallas ---------- */
+
+.demo-pantalla { min-height: 560px; position: relative; padding-bottom: 1rem; }
+
+/* Inicio */
+.demo-inicio { display: flex; align-items: flex-start; justify-content: center; padding: 2.2rem 1rem 2.6rem; }
+.demo-panel {
+  background: var(--d-panel);
+  border: 1px solid var(--d-borde);
+  padding: 1.8rem 2.4rem 2rem;
+  width: min(620px, 100%);
+  text-align: center;
+}
+.demo-panel h3 { font-size: 1.45rem; color: var(--d-texto); margin-bottom: 0.4rem; font-weight: 700; }
+.demo-muted { color: var(--d-muted); font-size: 0.9rem; }
+
+.demo-badge-foros {
+  font-family: inherit;
+  margin: 1.1rem 0 1.4rem;
+  background: var(--d-bg-exito);
+  color: var(--d-verde);
+  border: 1px solid var(--d-borde);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.6rem 1.1rem;
+  cursor: pointer;
+}
+.demo-badge-foros:hover { filter: brightness(1.15); }
+
+.demo-accion {
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  width: 100%;
+  text-align: left;
+  background: var(--d-tarjeta);
+  color: var(--d-texto);
+  border: 1px solid var(--d-borde);
+  padding: 1rem 1.1rem;
+  margin-top: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.demo-accion:hover { background: var(--d-hover); }
+.demo-accion-icono {
+  width: 56px; height: 56px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+}
+.demo-icono-azul { background: #1E3C64; color: #8AB4F8; }
+.demo-icono-verde { background: #1E3C2F; color: #2ECC71; }
+.demo-icono-gris { background: var(--d-hover); color: var(--d-muted); }
+.demo[data-tema="claro"] .demo-icono-azul { background: #DBEAFE; }
+.demo[data-tema="claro"] .demo-icono-verde { background: #DCFCE7; }
+.demo-accion-texto { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.85rem; color: var(--d-muted); }
+.demo-accion-texto b { color: var(--d-texto); font-size: 1.02rem; }
+.demo-accion-flecha { margin-left: auto; color: var(--d-muted); font-size: 1.3rem; font-weight: 700; }
+
+.demo-version {
+  position: absolute;
+  right: 1rem; bottom: 0.5rem;
+  color: var(--d-desactivado);
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
+/* ---------- Barras de herramientas ---------- */
+
+.demo-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.2rem;
+  flex-wrap: wrap;
+}
+.demo-toolbar b { font-size: 1rem; }
+.demo-toolbar-sep { flex-grow: 1; }
+.demo-toolbar label { font-size: 0.88rem; color: var(--d-texto); }
+.demo-toolbar input[type="text"] {
+  font-family: inherit;
+  background: var(--d-input);
+  color: var(--d-texto);
+  border: 1px solid var(--d-borde);
+  padding: 0.4rem 0.6rem;
+  width: 7.2rem;
+  font-size: 0.85rem;
+}
+.demo-toolbar-busqueda { padding-top: 0; }
+.demo-busqueda input {
+  font-family: inherit;
+  background: var(--d-input);
+  color: var(--d-texto);
+  border: 1px solid var(--d-borde);
+  padding: 0.4rem 0.6rem;
+  width: 15rem;
+  font-size: 0.85rem;
+}
+
+/* ---------- Progreso ---------- */
+
+.demo-progreso { padding: 2.2rem 1.4rem; text-align: center; }
+.demo-progreso-texto { color: var(--d-fg-alerta); font-weight: 600; margin-bottom: 0.9rem; }
+.demo-progreso-barra {
+  height: 10px;
+  background: var(--d-panel);
+  border: 1px solid var(--d-borde);
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.demo-progreso-barra i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--d-primario);
+  transition: width 0.4s ease;
+}
+
+/* ---------- Banners y tablas ---------- */
+
+.demo-banner-exito {
+  margin: 0 1.2rem 1rem;
+  background: var(--d-bg-exito);
+  color: var(--d-verde);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.7rem 1rem;
+}
+
+.demo-seccion-tabla { margin: 0 1.2rem 1.3rem; }
+.demo-tabla-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+.demo-tabla-cabecera b { font-size: 1.02rem; }
+
+.demo-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+  border: 1px solid var(--d-borde);
+}
+.demo-tabla th {
+  background: var(--d-panel);
+  color: var(--d-texto);
+  text-align: left;
+  font-weight: 700;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--d-borde);
+}
+.demo-tabla td {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--d-borde) 40%, transparent);
+  color: var(--d-texto);
+}
+.demo-tabla tbody tr { cursor: default; }
+.demo-tabla-lic tbody tr { cursor: pointer; }
+.demo-tabla-lic tbody tr:hover { background: var(--d-hover); }
+.demo-tabla-lic tr.demo-seleccionada { background: var(--d-primario); }
+.demo-tabla-lic tr.demo-seleccionada td { color: #fff; }
+.demo-link { color: var(--d-fg-alerta); white-space: nowrap; }
+.demo-match td { color: var(--d-verde); }
+
+/* ---------- Filtros ---------- */
+
+.demo-filtros-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1rem;
+  padding: 1rem 1.2rem 0;
+  align-items: start;
+}
+.demo-categorias {
+  background: var(--d-panel);
+  border: 1px solid var(--d-borde);
+  padding: 0.9rem;
+}
+.demo-categorias > b { display: block; font-size: 1.05rem; margin-bottom: 0.6rem; }
+.demo-lista-cat { list-style: none; margin: 0; padding: 0; }
+.demo-lista-cat button {
+  font-family: inherit;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--d-texto);
+  border: none;
+  padding: 0.42rem 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.demo-lista-cat button:hover { background: var(--d-hover); }
+.demo-lista-cat button.demo-cat-activa { background: #FCE4EC; color: #C2185B; font-weight: 700; }
+.demo[data-tema="claro"] .demo-lista-cat button.demo-cat-activa { background: #F3E8D8; }
+
+.demo-cat-botones { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+
+.demo-filtros-panel { min-width: 0; }
+.demo-filtros-titulo { display: block; font-size: 1.05rem; margin-bottom: 0.5rem; }
+.demo-tabla-filtros td:first-child { white-space: nowrap; color: var(--d-muted); }
+
+.demo-explicacion {
+  margin: 1.1rem 1.2rem 0.6rem;
+  background: var(--d-panel);
+  border: 1px solid var(--d-borde);
+  padding: 0.9rem 1.1rem;
+  font-size: 0.85rem;
+  color: var(--d-muted);
+}
+.demo-explicacion b { color: var(--d-texto); }
+.demo-explicacion p { margin-top: 0.4rem; }
+
+/* ---------- Foros ---------- */
+
+.demo-foros .demo-tabla { margin: 0.6rem 1.2rem 1rem; width: calc(100% - 2.4rem); }
+.demo-estado-ok { color: var(--d-verde); font-weight: 600; white-space: nowrap; }
+.demo-estado-neutro { color: var(--d-muted); white-space: nowrap; }
+.demo-historial-titulo { padding: 0 1.2rem; }
+.demo-foros .demo-link { cursor: default; }
+
+/* ---------- Toast ---------- */
+
+.demo-toast {
+  position: sticky;
+  bottom: 0.8rem;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: 90%;
+  background: var(--d-bg-alerta);
+  color: var(--d-fg-alerta);
+  border: 1px solid var(--d-borde);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+}
+
+/* ---------- Responsive de la página ---------- */
+
+@media (max-width: 860px) {
+  .proyecto-detalle { grid-template-columns: 1fr; }
+}
+
+
+/* ============================================================
+   Ajustes de diseño: header azul, logo animado, títulos con
+   animación palabra a palabra y fondos con más color.
+   Paleta original intacta: azul #2563EB/#1E3A8A · naranja #F97316
+   ============================================================ */
+
+/* ---------- Header azul oscuro ---------- */
+.cabecera {
+  background: linear-gradient(100deg, #0B1B45 0%, #1E3A8A 55%, #1D40A6 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: none;
+}
+.cabecera.con-sombra { box-shadow: 0 10px 26px -16px rgba(11, 27, 69, 0.6); }
+.cabecera .logo-texto { color: #fff; }
+.logo-texto em { font-style: normal; color: var(--naranja); }
+.cabecera .nav-enlace { color: #C7D7F5; }
+.cabecera .nav-enlace:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.cabecera .nav-enlace.activo { color: #fff; }
+.cabecera .nav-enlace.activo::after { background: var(--naranja); }
+.cabecera .btn-contorno {
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45);
+}
+.cabecera .btn-contorno:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.cabecera .menu-btn { color: #fff; border-color: rgba(255, 255, 255, 0.35); }
+@media (max-width: 860px) {
+  .cabecera .nav {
+    background: #14276B;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .cabecera .nav-enlace { color: #DCE6FA; }
+  .cabecera .nav-enlace:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+}
+
+/* ---------- Chispa del logo ---------- */
+.logo-chispa {
+  animation: chispaLogo 2.8s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes chispaLogo {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.75; }
+}
+
+/* ---------- Héroe con más color y movimiento ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 62%);
+}
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero::before {
+  width: 440px; height: 440px;
+  right: -150px; top: -170px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.16), transparent 70%);
+  animation: flotar 9s ease-in-out infinite alternate;
+}
+.hero::after {
+  width: 280px; height: 280px;
+  left: -120px; bottom: -130px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.15), transparent 70%);
+  animation: flotar 7s ease-in-out infinite alternate-reverse;
+}
+.hero-int { position: relative; z-index: 1; }
+@keyframes flotar {
+  from { transform: translateY(-14px); }
+  to { transform: translateY(16px); }
+}
+
+/* ---------- Cabeceras de páginas interiores ---------- */
+.cabecera-pagina {
+  background: linear-gradient(160deg, #EFF6FF 0%, #F8FAFC 70%);
+  position: relative;
+  overflow: hidden;
+}
+.cabecera-pagina::after {
+  content: "";
+  position: absolute;
+  right: -120px; top: -150px;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.13), transparent 70%);
+  animation: flotar 8s ease-in-out infinite alternate;
+}
+.cabecera-pagina .contenedor { position: relative; z-index: 1; }
+
+/* ---------- Banda CTA con movimiento ---------- */
+.banda-cta::before { animation: flotar 8s ease-in-out infinite alternate; }
+
+/* ---------- Barrita de color en los eyebrows ---------- */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--naranja), var(--azul));
+  margin-right: 0.55rem;
+  vertical-align: 0.18em;
+}
+
+/* ---------- Acento del héroe: degradado animado ---------- */
+.hero .acento {
+  background: linear-gradient(90deg, var(--azul), #60A5FA 30%, var(--naranja) 55%, var(--azul) 80%);
+  background-size: 280% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradienteAcento 7s linear infinite;
+}
+@keyframes gradienteAcento { to { background-position: -280% 0; } }
+
+/* ---------- Títulos: entrada palabra por palabra ---------- */
+.js .titulo-anim .palabra {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.js .titulo-anim .palabra > span {
+  display: inline-block;
+  transform: translateY(115%);
+}
+.js .titulo-anim.titulo-visible .palabra > span {
+  animation: palabraSube 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes palabraSube {
+  from { opacity: 0; transform: translateY(115%) rotate(3deg); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .titulo-anim .palabra > span { transform: none; opacity: 1; }
+}
+
+/* ---------- Réplica: páginas apiladas ---------- */
+main.pagina[hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+<header class="cabecera" id="cabecera">
+  <div class="contenedor cabecera-int">
+    <a class="logo" href="/" aria-label="RendApps, inicio">
+      <svg class="logo-icono" width="42" height="42" viewBox="0 0 40 40" aria-hidden="true">
+        <defs>
+          <linearGradient id="gradLogo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#3B82F6"/>
+            <stop offset="1" stop-color="#1E3A8A"/>
+          </linearGradient>
+        </defs>
+        <rect x="5" y="5" width="30" height="30" rx="10" fill="url(#gradLogo)" transform="rotate(-8 20 20)"/>
+        <text x="20" y="27" text-anchor="middle" font-family="'Space Grotesk','Arial',sans-serif" font-size="19" font-weight="700" fill="#fff">R</text>
+        <circle class="logo-chispa" cx="33" cy="8" r="4" fill="#F97316"/>
+        <circle cx="33" cy="8" r="1.6" fill="#fff"/>
+      </svg>
+      <span class="logo-texto">Rend<em>Apps</em></span>
+    </a>
+
+    <nav class="nav" id="nav-principal" aria-label="Principal">
+      <ul class="nav-lista">
+        <li><a href="/" class="nav-enlace activo">Inicio</a></li>
+        <li><a href="/servicios" class="nav-enlace ">Servicios</a></li>
+        <li><a href="/proyectos" class="nav-enlace ">Proyectos</a></li>
+        <li><a href="/nosotros" class="nav-enlace ">Nosotros</a></li>
+        <li><a href="/soporte" class="nav-enlace ">Soporte</a></li>
+        <li><a href="/contacto" class="nav-enlace ">Contacto</a></li>
+        <li class="nav-cta-item"><a href="/contacto" class="btn btn-contorno btn-chico">Cotiza tu proyecto</a></li>
+      </ul>
+    </nav>
+
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-principal" aria-label="Abrir menú">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+
+    </button>
+  </div>
+</header>
+<div id="contenido">
+<main class="pagina" data-pagina="inicio">
+
+
+<section class="hero">
+  <div class="contenedor hero-int">
+    <div class="hero-texto reveal">
+      <p class="eyebrow">Desarrollamos soluciones digitales</p>
+      <h1>Convertimos ideas en software que <span class="acento">impulsa tu negocio</span></h1>
+      <p class="hero-sub">
+        Desarrollamos aplicaciones móviles, software a medida, integraciones y
+        soluciones web que optimizan procesos y generan valor real.
+      </p>
+      <div class="hero-acciones">
+        <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+        <a class="btn btn-suave" href="#proceso">
+          <span class="btn-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="10 8.5 16 12 10 15.5" fill="currentColor" stroke="none"/></svg>
+</span>
+          Ver cómo trabajamos
+        </a>
+      </div>
+      <ul class="hero-checks">
+        <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Soluciones a medida</li>
+        <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Entregas ágiles</li>
+        <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Acompañamiento continuo</li>
+      </ul>
+    </div>
+    <div class="hero-figura reveal" aria-hidden="true">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NjAgNDMwIj4KICA8ZGVmcz4KICAgIDxjbGlwUGF0aCBpZD0icGFudGFsbGFMYXB0b3AiPjxyZWN0IHg9Ijk0IiB5PSIzMCIgd2lkdGg9IjQzMiIgaGVpZ2h0PSIyODIiIHJ4PSI4Ii8+PC9jbGlwUGF0aD4KICAgIDxjbGlwUGF0aCBpZD0icGFudGFsbGFNb3ZpbCI+PHJlY3QgeD0iNDg0IiB5PSIxMzYiIHdpZHRoPSIxMzAiIGhlaWdodD0iMjY2IiByeD0iMTYiLz48L2NsaXBQYXRoPgogIDwvZGVmcz4KCiAgPCEtLSBzb21icmEgLS0+CiAgPGVsbGlwc2UgY3g9IjMzMCIgY3k9IjQxMiIgcng9IjI4MCIgcnk9IjEzIiBmaWxsPSIjMTExODI3IiBvcGFjaXR5PSIwLjA2Ii8+CgogIDwhLS0gbGFwdG9wOiB0YXBhIHkgcGFudGFsbGEgLS0+CiAgPHJlY3QgeD0iODAiIHk9IjE2IiB3aWR0aD0iNDYwIiBoZWlnaHQ9IjMxMCIgcng9IjE2IiBmaWxsPSIjMTExODI3Ii8+CiAgPHJlY3QgeD0iOTQiIHk9IjMwIiB3aWR0aD0iNDMyIiBoZWlnaHQ9IjI4MiIgcng9IjgiIGZpbGw9IiNGRkZGRkYiLz4KCiAgPGcgY2xpcC1wYXRoPSJ1cmwoI3BhbnRhbGxhTGFwdG9wKSI+CiAgICA8IS0tIGJhcnJhIGxhdGVyYWwgLS0+CiAgICA8cmVjdCB4PSI5NCIgeT0iMzAiIHdpZHRoPSI5NiIgaGVpZ2h0PSIyODIiIGZpbGw9IiNGOEZBRkMiLz4KICAgIDxsaW5lIHgxPSIxOTAiIHkxPSIzMCIgeDI9IjE5MCIgeTI9IjMxMiIgc3Ryb2tlPSIjRUVGMkY2IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPGNpcmNsZSBjeD0iMTEyIiBjeT0iNTQiIHI9IjciIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjEyNCIgeT0iNDkiIHdpZHRoPSI0NiIgaGVpZ2h0PSI5IiByeD0iNC41IiBmaWxsPSIjRTVFN0VCIi8+CiAgICA8cmVjdCB4PSIxMDQiIHk9Ijc4IiB3aWR0aD0iNzYiIGhlaWdodD0iMjIiIHJ4PSI2IiBmaWxsPSIjRUZGNkZGIi8+CiAgICA8cmVjdCB4PSIxMTIiIHk9Ijg1IiB3aWR0aD0iNDIiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjExMiIgeT0iMTE2IiB3aWR0aD0iNTIiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNFNUU3RUIiLz4KICAgIDxyZWN0IHg9IjExMiIgeT0iMTQwIiB3aWR0aD0iNjAiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNFNUU3RUIiLz4KICAgIDxyZWN0IHg9IjExMiIgeT0iMTY0IiB3aWR0aD0iNDQiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNFNUU3RUIiLz4KICAgIDxyZWN0IHg9IjExMiIgeT0iMTg4IiB3aWR0aD0iNTYiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNFNUU3RUIiLz4KICAgIDxjaXJjbGUgY3g9IjExMiIgY3k9IjI5MCIgcj0iOCIgZmlsbD0iI0U1RTdFQiIvPgogICAgPHJlY3QgeD0iMTI2IiB5PSIyODYiIHdpZHRoPSI0MCIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iI0U1RTdFQiIvPgoKICAgIDwhLS0gZW5jYWJlemFkbyBkZWwgcGFuZWwgLS0+CiAgICA8cmVjdCB4PSIyMDYiIHk9IjQ4IiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjExIiByeD0iNSIgZmlsbD0iIzExMTgyNyIvPgogICAgPHJlY3QgeD0iMjA2IiB5PSI2NiIgd2lkdGg9Ijg4IiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiNDQkQ1RTEiLz4KICAgIDxyZWN0IHg9IjQzNiIgeT0iNDYiIHdpZHRoPSI3NCIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjRjk3MzE2Ii8+CiAgICA8cmVjdCB4PSI0NDkiIHk9IjU0IiB3aWR0aD0iNDgiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNGRkVERDUiLz4KCiAgICA8IS0tIHRhcmpldGFzIGRlIGluZGljYWRvcmVzIC0tPgogICAgPGc+CiAgICAgIDxyZWN0IHg9IjIwNiIgeT0iODgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI1NiIgcng9IjgiIGZpbGw9IiNGOEZBRkMiIHN0cm9rZT0iI0VFRjJGNiIvPgogICAgICA8cmVjdCB4PSIyMTYiIHk9Ijk4IiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNDQkQ1RTEiLz4KICAgICAgPHJlY3QgeD0iMjE2IiB5PSIxMTIiIHdpZHRoPSI1NiIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiMxMTE4MjciLz4KICAgICAgPHJlY3QgeD0iMjE2IiB5PSIxMzAiIHdpZHRoPSIyNiIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0RCRUFGRSIvPgogICAgPC9nPgogICAgPGc+CiAgICAgIDxyZWN0IHg9IjMxMCIgeT0iODgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI1NiIgcng9IjgiIGZpbGw9IiNGOEZBRkMiIHN0cm9rZT0iI0VFRjJGNiIvPgogICAgICA8cmVjdCB4PSIzMjAiIHk9Ijk4IiB3aWR0aD0iNDQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNDQkQ1RTEiLz4KICAgICAgPHJlY3QgeD0iMzIwIiB5PSIxMTIiIHdpZHRoPSI0OCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiMxMTE4MjciLz4KICAgICAgPHJlY3QgeD0iMzIwIiB5PSIxMzAiIHdpZHRoPSIyNiIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0RCRUFGRSIvPgogICAgPC9nPgogICAgPGc+CiAgICAgIDxyZWN0IHg9IjQxNCIgeT0iODgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI1NiIgcng9IjgiIGZpbGw9IiNGOEZBRkMiIHN0cm9rZT0iI0VFRjJGNiIvPgogICAgICA8cmVjdCB4PSI0MjQiIHk9Ijk4IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNDQkQ1RTEiLz4KICAgICAgPHJlY3QgeD0iNDI0IiB5PSIxMTIiIHdpZHRoPSI1MiIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiMxMTE4MjciLz4KICAgICAgPHJlY3QgeD0iNDI0IiB5PSIxMzAiIHdpZHRoPSIyNiIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0ZGRURENSIvPgogICAgPC9nPgoKICAgIDwhLS0gZ3LDoWZpY28gZGUgbMOtbmVhcyAtLT4KICAgIDxyZWN0IHg9IjIwNiIgeT0iMTU2IiB3aWR0aD0iMTk2IiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IiNGOEZBRkMiIHN0cm9rZT0iI0VFRjJGNiIvPgogICAgPHJlY3QgeD0iMjE4IiB5PSIxNjgiIHdpZHRoPSI2MCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjQ0JENUUxIi8+CiAgICA8cGF0aCBkPSJNMjE4IDIzNiBMMjQwIDIyOCBMMjYyIDIzOCBMMjg0IDIxNCBMMzA2IDIyMiBMMzI4IDIwMCBMMzUwIDIwOCBMMzcyIDE5MCBMMzg4IDE5NiBMMzg4IDI1MiBMMjE4IDI1MiBaIiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cG9seWxpbmUgcG9pbnRzPSIyMTggMjM2IDI0MCAyMjggMjYyIDIzOCAyODQgMjE0IDMwNiAyMjIgMzI4IDIwMCAzNTAgMjA4IDM3MiAxOTAgMzg4IDE5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjU2M0VCIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgICA8Y2lyY2xlIGN4PSIyODQiIGN5PSIyMTQiIHI9IjMiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxjaXJjbGUgY3g9IjM3MiIgY3k9IjE5MCIgcj0iMyIgZmlsbD0iIzI1NjNFQiIvPgoKICAgIDwhLS0gZ3LDoWZpY28gZGUgZG9uYSAtLT4KICAgIDxyZWN0IHg9IjQxNCIgeT0iMTU2IiB3aWR0aD0iOTYiIGhlaWdodD0iMTEwIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRUVGMkY2Ii8+CiAgICA8Y2lyY2xlIGN4PSI0NjIiIGN5PSIyMDIiIHI9IjIyIiBmaWxsPSJub25lIiBzdHJva2U9IiNFNUU3RUIiIHN0cm9rZS13aWR0aD0iOCIvPgogICAgPGNpcmNsZSBjeD0iNDYyIiBjeT0iMjAyIiByPSIyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjU2M0VCIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1kYXNoYXJyYXk9IjkwIDEzOCIgdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDQ2MiAyMDIpIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxjaXJjbGUgY3g9IjQ2MiIgY3k9IjIwMiIgcj0iMjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0Y5NzMxNiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtZGFzaGFycmF5PSIxOCAxMzgiIHN0cm9rZS1kYXNob2Zmc2V0PSItOTQiIHRyYW5zZm9ybT0icm90YXRlKC05MCA0NjIgMjAyKSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8Y2lyY2xlIGN4PSI0MzQiIGN5PSIyNDQiIHI9IjMiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjQ0MiIgeT0iMjQxIiB3aWR0aD0iMzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNDQkQ1RTEiLz4KICAgIDxjaXJjbGUgY3g9IjQzNCIgY3k9IjI1NiIgcj0iMyIgZmlsbD0iI0Y5NzMxNiIvPgogICAgPHJlY3QgeD0iNDQyIiB5PSIyNTMiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0NCRDVFMSIvPgoKICAgIDwhLS0gZmlsYXMgaW5mZXJpb3JlcyAtLT4KICAgIDxyZWN0IHg9IjIwNiIgeT0iMjc4IiB3aWR0aD0iMzA0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iI0VFRjJGNiIvPgogICAgPHJlY3QgeD0iMjA2IiB5PSIyOTYiIHdpZHRoPSIyMjAiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjRUVGMkY2Ii8+CiAgPC9nPgoKICA8IS0tIGJhc2UgZGVsIGxhcHRvcCAtLT4KICA8cmVjdCB4PSI1MiIgeT0iMzI2IiB3aWR0aD0iNTU2IiBoZWlnaHQ9IjE2IiByeD0iOCIgZmlsbD0iI0U1RTdFQiIvPgogIDxyZWN0IHg9IjI5NiIgeT0iMzI2IiB3aWR0aD0iNjgiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNDQkQ1RTEiLz4KCiAgPCEtLSB0ZWzDqWZvbm8gLS0+CiAgPHJlY3QgeD0iNDc0IiB5PSIxMjQiIHdpZHRoPSIxNTAiIGhlaWdodD0iMjkwIiByeD0iMjQiIGZpbGw9IiMxMTE4MjciLz4KICA8cmVjdCB4PSI0ODQiIHk9IjEzNiIgd2lkdGg9IjEzMCIgaGVpZ2h0PSIyNjYiIHJ4PSIxNiIgZmlsbD0iI0ZGRkZGRiIvPgoKICA8ZyBjbGlwLXBhdGg9InVybCgjcGFudGFsbGFNb3ZpbCkiPgogICAgPHJlY3QgeD0iNDg0IiB5PSIxMzYiIHdpZHRoPSIxMzAiIGhlaWdodD0iNTgiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjQ5NiIgeT0iMTUwIiB3aWR0aD0iNTYiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNEQkVBRkUiLz4KICAgIDxyZWN0IHg9IjQ5NiIgeT0iMTY0IiB3aWR0aD0iMzYiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5M0M1RkQiLz4KICAgIDxjaXJjbGUgY3g9IjU5NCIgY3k9IjE1OCIgcj0iOSIgZmlsbD0iIzkzQzVGRCIvPgoKICAgIDwhLS0gdGFyamV0YSBwcmluY2lwYWwgLS0+CiAgICA8cmVjdCB4PSI0OTYiIHk9IjE4MiIgd2lkdGg9IjEwNiIgaGVpZ2h0PSI0NiIgcng9IjEwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNFNUU3RUIiLz4KICAgIDxyZWN0IHg9IjUwNiIgeT0iMTkyIiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNDQkQ1RTEiLz4KICAgIDxyZWN0IHg9IjUwNiIgeT0iMjA0IiB3aWR0aD0iNTgiIGhlaWdodD0iMTEiIHJ4PSI1IiBmaWxsPSIjMTExODI3Ii8+CgogICAgPCEtLSBmaWxhcyAtLT4KICAgIDxnPgogICAgICA8Y2lyY2xlIGN4PSI1MDAiIGN5PSIyNTAiIHI9IjgiIGZpbGw9IiNFRkY2RkYiIHN0cm9rZT0iI0RCRUFGRSIvPgogICAgICA8cmVjdCB4PSI1MTQiIHk9IjI0MyIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjciIHJ4PSIzLjUiIGZpbGw9IiM0QjU1NjMiLz4KICAgICAgPHJlY3QgeD0iNTE0IiB5PSIyNTQiIHdpZHRoPSIzMCIgaGVpZ2h0PSI1IiByeD0iMi41IiBmaWxsPSIjRDFENURCIi8+CiAgICAgIDxyZWN0IHg9IjU3NCIgeT0iMjQ0IiB3aWR0aD0iMjgiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8L2c+CiAgICA8Zz4KICAgICAgPGNpcmNsZSBjeD0iNTAwIiBjeT0iMjgyIiByPSI4IiBmaWxsPSIjRkZGN0VEIiBzdHJva2U9IiNGRUQ3QUEiLz4KICAgICAgPHJlY3QgeD0iNTE0IiB5PSIyNzUiIHdpZHRoPSIzOCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjNEI1NTYzIi8+CiAgICAgIDxyZWN0IHg9IjUxNCIgeT0iMjg2IiB3aWR0aD0iMjYiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iI0QxRDVEQiIvPgogICAgICA8cmVjdCB4PSI1NzQiIHk9IjI3NiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjEyIiByeD0iNiIgZmlsbD0iI0ZGRURENSIvPgogICAgPC9nPgogICAgPGc+CiAgICAgIDxjaXJjbGUgY3g9IjUwMCIgY3k9IjMxNCIgcj0iOCIgZmlsbD0iI0VGRjZGRiIgc3Ryb2tlPSIjREJFQUZFIi8+CiAgICAgIDxyZWN0IHg9IjUxNCIgeT0iMzA3IiB3aWR0aD0iNDgiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iIzRCNTU2MyIvPgogICAgICA8cmVjdCB4PSI1MTQiIHk9IjMxOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjUiIHJ4PSIyLjUiIGZpbGw9IiNEMUQ1REIiLz4KICAgICAgPHJlY3QgeD0iNTc0IiB5PSIzMDgiIHdpZHRoPSIyOCIgaGVpZ2h0PSIxMiIgcng9IjYiIGZpbGw9IiNEQkVBRkUiLz4KICAgIDwvZz4KCiAgICA8IS0tIG1pbmkgYmFycmFzIC0tPgogICAgPHJlY3QgeD0iNDk2IiB5PSIzNTIiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxOCIgcng9IjMiIGZpbGw9IiM5M0M1RkQiLz4KICAgIDxyZWN0IHg9IjUxNiIgeT0iMzQ0IiB3aWR0aD0iMTIiIGhlaWdodD0iMjYiIHJ4PSIzIiBmaWxsPSIjMjU2M0VCIi8+CiAgICA8cmVjdCB4PSI1MzYiIHk9IjM1NiIgd2lkdGg9IjEyIiBoZWlnaHQ9IjE0IiByeD0iMyIgZmlsbD0iIzkzQzVGRCIvPgogICAgPHJlY3QgeD0iNTU2IiB5PSIzMzgiIHdpZHRoPSIxMiIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjU3NiIgeT0iMzQ4IiB3aWR0aD0iMTIiIGhlaWdodD0iMjIiIHJ4PSIzIiBmaWxsPSIjOTNDNUZEIi8+CgogICAgPCEtLSBiYXJyYSBpbmZlcmlvciAtLT4KICAgIDxyZWN0IHg9IjQ4NCIgeT0iMzc2IiB3aWR0aD0iMTMwIiBoZWlnaHQ9IjI2IiBmaWxsPSIjRjhGQUZDIi8+CiAgICA8Y2lyY2xlIGN4PSI1MjQiIGN5PSIzODkiIHI9IjMuNSIgZmlsbD0iI0NCRDVFMSIvPgogICAgPGNpcmNsZSBjeD0iNTQ5IiBjeT0iMzg5IiByPSIzLjUiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxjaXJjbGUgY3g9IjU3NCIgY3k9IjM4OSIgcj0iMy41IiBmaWxsPSIjQ0JENUUxIi8+CiAgPC9nPgoKICA8cmVjdCB4PSI1MzQiIHk9IjE0MiIgd2lkdGg9IjMwIiBoZWlnaHQ9IjUiIHJ4PSIyLjUiIGZpbGw9IiMxMTE4MjciLz4KPC9zdmc+Cg==" alt="" width="660" height="430">
+    </div>
+  </div>
+</section>
+
+<section class="banda-confianza">
+  <div class="contenedor">
+    <p class="banda-titulo">Tu proyecto en buenas manos</p>
+    <ul class="banda-items">
+      <li><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="11" width="17" height="10" rx="2"/><path d="M7.5 11V7a4.5 4.5 0 0 1 9 0v4"/></svg>
+ Código de tu propiedad</li>
+      <li><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+ Confidencialidad garantizada</li>
+      <li><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+ Respuesta en menos de 24 h</li>
+      <li><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+ Acompañamiento continuo</li>
+    </ul>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Lo que hacemos</p>
+      <h2>Soluciones tecnológicas a la medida</h2>
+    </div>
+    <div class="grid-servicios">
+      
+        <a class="tarjeta-servicio reveal" href="/servicios#apps-moviles">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><line x1="10.5" y1="18" x2="13.5" y2="18"/></svg>
+</span>
+          <h3>Apps móviles</h3>
+          <p>Desarrollamos aplicaciones nativas e híbridas para iOS y Android, con foco en experiencia y rendimiento.</p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
+      
+        <a class="tarjeta-servicio reveal" href="/servicios#software-a-medida">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 7 3 12 8 17"/><polyline points="16 7 21 12 16 17"/></svg>
+</span>
+          <h3>Desarrollo de software</h3>
+          <p>Creamos software a medida escalable, seguro y adaptado a las necesidades de tu negocio.</p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
+      
+        <a class="tarjeta-servicio reveal" href="/servicios#integraciones">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13.5a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 10.5a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+</span>
+          <h3>Integraciones</h3>
+          <p>Conectamos tus sistemas y automatizamos flujos para que tu operación sea más eficiente.</p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
+      
+        <a class="tarjeta-servicio reveal" href="/servicios#desarrollo-web">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a13.9 13.9 0 0 1 3.6 9 13.9 13.9 0 0 1-3.6 9 13.9 13.9 0 0 1-3.6-9A13.9 13.9 0 0 1 12 3z"/></svg>
+</span>
+          <h3>Desarrollo web</h3>
+          <p>Diseñamos y desarrollamos sitios y plataformas web modernas, rápidas y optimizadas.</p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
+      
+        <a class="tarjeta-servicio reveal" href="/servicios#consultoria">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 18h5"/><path d="M10.5 21h3"/><path d="M12 3a6.5 6.5 0 0 1 3.9 11.7c-.7.5-.9 1.3-.9 2.3h-6c0-1-.2-1.8-.9-2.3A6.5 6.5 0 0 1 12 3z"/></svg>
+</span>
+          <h3>Consultoría tecnológica</h3>
+          <p>Te ayudamos a definir la mejor estrategia tecnológica para alcanzar tus objetivos.</p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
+      
+        <a class="tarjeta-servicio reveal" href="/servicios#mantencion">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+</span>
+          <h3>Mantención y soporte</h3>
+          <p>Acompañamiento continuo tras la entrega: monitoreo, actualizaciones y mejoras.</p>
+          <span class="enlace-flecha" aria-hidden="true">→</span>
+        </a>
+      
+    </div>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna">
+  <div class="contenedor">
+    <div class="seccion-cabeza reveal">
+      <div>
+        <p class="eyebrow">Proyectos que generan impacto</p>
+        <h2>Algunos de nuestros trabajos</h2>
+      </div>
+      <a class="btn btn-blanco" href="/proyectos">Ver todos los proyectos <span class="btn-flecha" aria-hidden="true">→</span></a>
+    </div>
+    <div class="grid-proyectos">
+      
+        <article class="tarjeta-proyecto reveal">
+          <div class="proyecto-media">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjUwIj4KICA8IS0tIHZlbnRhbmEgZGUgYXBsaWNhY2nDs24gZGUgZXNjcml0b3JpbyAtLT4KICA8cmVjdCB4PSIzMCIgeT0iMTgiIHdpZHRoPSIzNDAiIGhlaWdodD0iMjE0IiByeD0iMTIiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0U1RTdFQiIvPgogIDxsaW5lIHgxPSIzMCIgeTE9IjQ2IiB4Mj0iMzcwIiB5Mj0iNDYiIHN0cm9rZT0iI0VFRjJGNiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI0OCIgY3k9IjMyIiByPSI0IiBmaWxsPSIjRkNBNUE1Ii8+CiAgPGNpcmNsZSBjeD0iNjIiIGN5PSIzMiIgcj0iNCIgZmlsbD0iI0ZDRDM0RCIvPgogIDxjaXJjbGUgY3g9Ijc2IiBjeT0iMzIiIHI9IjQiIGZpbGw9IiNBN0YzRDAiLz4KICA8cmVjdCB4PSI5MiIgeT0iMjUiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQiIHJ4PSI3IiBmaWxsPSIjRjhGQUZDIiBzdHJva2U9IiNFRUYyRjYiLz4KCiAgPCEtLSBmaWx0cm9zIC0tPgogIDxyZWN0IHg9IjQ2IiB5PSI1NiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iIzI1NjNFQiIvPgogIDxyZWN0IHg9IjU2IiB5PSI2MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjREJFQUZFIi8+CiAgPHJlY3QgeD0iMTA2IiB5PSI1NiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRTVFN0VCIi8+CiAgPHJlY3QgeD0iMTE2IiB5PSI2MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjQ0JENUUxIi8+CiAgPHJlY3QgeD0iMTY2IiB5PSI1NiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRTVFN0VCIi8+CiAgPHJlY3QgeD0iMTc2IiB5PSI2MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjQ0JENUUxIi8+CiAgPHJlY3QgeD0iMjkwIiB5PSI1NiIgd2lkdGg9IjY0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRTVFN0VCIi8+CiAgPGNpcmNsZSBjeD0iMzAyIiBjeT0iNjUiIHI9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMzA1IiB5MT0iNjgiIHgyPSIzMDgiIHkyPSI3MSIgc3Ryb2tlPSIjOUNBM0FGIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CgogIDwhLS0gZW5jYWJlemFkbyBkZSB0YWJsYSAtLT4KICA8cmVjdCB4PSI0NiIgeT0iODQiIHdpZHRoPSIzMDgiIGhlaWdodD0iMTYiIHJ4PSI1IiBmaWxsPSIjRjhGQUZDIi8+CiAgPHJlY3QgeD0iNTQiIHk9Ijg5IiB3aWR0aD0iNjAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KICA8cmVjdCB4PSIxNTAiIHk9Ijg5IiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KICA8cmVjdCB4PSIyMzAiIHk9Ijg5IiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KICA8cmVjdCB4PSIzMDQiIHk9Ijg5IiB3aWR0aD0iMzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KCiAgPCEtLSBmaWxhcyAtLT4KICA8Zz4KICAgIDxyZWN0IHg9IjQ2IiB5PSIxMDYiIHdpZHRoPSIzMDgiIGhlaWdodD0iMjQiIHJ4PSI2IiBmaWxsPSIjRkZGRkZGIi8+CiAgICA8cmVjdCB4PSI1NCIgeT0iMTE1IiB3aWR0aD0iNzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDxyZWN0IHg9IjE1MCIgeT0iMTE1IiB3aWR0aD0iNTAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNEMUQ1REIiLz4KICAgIDxyZWN0IHg9IjIzMCIgeT0iMTEyIiB3aWR0aD0iNDQiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIzMDQiIHk9IjExNSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjNkI3MjgwIi8+CiAgPC9nPgogIDxnPgogICAgPHJlY3QgeD0iNDYiIHk9IjEzNiIgd2lkdGg9IjMwOCIgaGVpZ2h0PSIyNCIgcng9IjYiIGZpbGw9IiNGOEZBRkMiLz4KICAgIDxyZWN0IHg9IjU0IiB5PSIxNDUiIHdpZHRoPSI1OCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzM3NDE1MSIvPgogICAgPHJlY3QgeD0iMTUwIiB5PSIxNDUiIHdpZHRoPSI0NCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0QxRDVEQiIvPgogICAgPHJlY3QgeD0iMjMwIiB5PSIxNDIiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxMiIgcng9IjYiIGZpbGw9IiNGRkVERDUiLz4KICAgIDxyZWN0IHg9IjMwNCIgeT0iMTQ1IiB3aWR0aD0iMzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM2QjcyODAiLz4KICA8L2c+CiAgPGc+CiAgICA8cmVjdCB4PSI0NiIgeT0iMTY2IiB3aWR0aD0iMzA4IiBoZWlnaHQ9IjI0IiByeD0iNiIgZmlsbD0iI0ZGRkZGRiIvPgogICAgPHJlY3QgeD0iNTQiIHk9IjE3NSIgd2lkdGg9IjY2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMzc0MTUxIi8+CiAgICA8cmVjdCB4PSIxNTAiIHk9IjE3NSIgd2lkdGg9IjU0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRDFENURCIi8+CiAgICA8cmVjdCB4PSIyMzAiIHk9IjE3MiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjEyIiByeD0iNiIgZmlsbD0iI0RCRUFGRSIvPgogICAgPHJlY3QgeD0iMzA0IiB5PSIxNzUiIHdpZHRoPSIzNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzZCNzI4MCIvPgogIDwvZz4KICA8Zz4KICAgIDxyZWN0IHg9IjQ2IiB5PSIxOTYiIHdpZHRoPSIzMDgiIGhlaWdodD0iMjQiIHJ4PSI2IiBmaWxsPSIjRjhGQUZDIi8+CiAgICA8cmVjdCB4PSI1NCIgeT0iMjA1IiB3aWR0aD0iNjIiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDxyZWN0IHg9IjE1MCIgeT0iMjA1IiB3aWR0aD0iNDYiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNEMUQ1REIiLz4KICAgIDxyZWN0IHg9IjIzMCIgeT0iMjAyIiB3aWR0aD0iNDQiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjRTVFN0VCIi8+CiAgICA8cmVjdCB4PSIzMDQiIHk9IjIwNSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjNkI3MjgwIi8+CiAgPC9nPgo8L3N2Zz4K" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo">Software de escritorio</p>
+            <h3 class="">Filtro de Licitaciones</h3>
+            <p class="proyecto-desc">Aplicación de escritorio que filtra y clasifica licitaciones de Mercado Público en tiempo real, integrada con su API oficial.</p>
+            <div class="proyecto-pie">
+              
+              <a class="enlace" href="/proyectos/filtro-licitaciones">Ver proyecto →</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="tarjeta-proyecto reveal">
+          <div class="proyecto-media">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjUwIj4KICA8ZGVmcz4KICAgIDxjbGlwUGF0aCBpZD0icGFudGFsbGFBIj48cmVjdCB4PSIxNTgiIHk9IjE3IiB3aWR0aD0iODQiIGhlaWdodD0iMjE2IiByeD0iMTIiLz48L2NsaXBQYXRoPgogIDwvZGVmcz4KCiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTI4IiByPSI5NSIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC40NSIvPgogIDxjaXJjbGUgY3g9IjI5NSIgY3k9IjU1IiByPSIxNiIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC42Ii8+CiAgPGNpcmNsZSBjeD0iMTA1IiBjeT0iMjAwIiByPSIxMCIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC42Ii8+CgogIDxyZWN0IHg9IjE1MiIgeT0iMTAiIHdpZHRoPSI5NiIgaGVpZ2h0PSIyMzAiIHJ4PSIxOCIgZmlsbD0iIzExMTgyNyIvPgogIDxyZWN0IHg9IjE1OCIgeT0iMTciIHdpZHRoPSI4NCIgaGVpZ2h0PSIyMTYiIHJ4PSIxMiIgZmlsbD0iI0ZGRkZGRiIvPgoKICA8ZyBjbGlwLXBhdGg9InVybCgjcGFudGFsbGFBKSI+CiAgICA8cmVjdCB4PSIxNTgiIHk9IjE3IiB3aWR0aD0iODQiIGhlaWdodD0iNDAiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjE2NiIgeT0iMjgiIHdpZHRoPSIzOCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIxNjYiIHk9IjQwIiB3aWR0aD0iMjYiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iIzkzQzVGRCIvPgogICAgPGNpcmNsZSBjeD0iMjMwIiBjeT0iMzQiIHI9IjYiIGZpbGw9IiM5M0M1RkQiLz4KCiAgICA8cmVjdCB4PSIxNjYiIHk9IjY2IiB3aWR0aD0iNjgiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjRjNGNEY2Ii8+CgogICAgPHJlY3QgeD0iMTY2IiB5PSI4OCIgd2lkdGg9IjY4IiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRUVGMkY2Ii8+CiAgICA8cmVjdCB4PSIxNzIiIHk9Ijk2IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHJ4PSI0IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIxOTIiIHk9Ijk3IiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDxyZWN0IHg9IjE5MiIgeT0iMTA4IiB3aWR0aD0iMjQiIGhlaWdodD0iNCIgcng9IjIiIGZpbGw9IiNEMUQ1REIiLz4KCiAgICA8cmVjdCB4PSIxNjYiIHk9IjEyOCIgd2lkdGg9IjY4IiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRUVGMkY2Ii8+CiAgICA8cmVjdCB4PSIxNzIiIHk9IjEzNiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiByeD0iNCIgZmlsbD0iI0ZGRURENSIvPgogICAgPHJlY3QgeD0iMTkyIiB5PSIxMzciIHdpZHRoPSIzMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzM3NDE1MSIvPgogICAgPHJlY3QgeD0iMTkyIiB5PSIxNDgiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0QxRDVEQiIvPgoKICAgIDxyZWN0IHg9IjE2NiIgeT0iMTY4IiB3aWR0aD0iNjgiIGhlaWdodD0iMzIiIHJ4PSI4IiBmaWxsPSIjRjhGQUZDIiBzdHJva2U9IiNFRUYyRjYiLz4KICAgIDxyZWN0IHg9IjE3MiIgeT0iMTc2IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHJ4PSI0IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIxOTIiIHk9IjE3NyIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMzc0MTUxIi8+CiAgICA8cmVjdCB4PSIxOTIiIHk9IjE4OCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjRDFENURCIi8+CgogICAgPHJlY3QgeD0iMTU4IiB5PSIyMTAiIHdpZHRoPSI4NCIgaGVpZ2h0PSIyMyIgZmlsbD0iI0Y4RkFGQyIvPgogICAgPGNpcmNsZSBjeD0iMTgyIiBjeT0iMjIxIiByPSIzIiBmaWxsPSIjQ0JENUUxIi8+CiAgICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMjEiIHI9IjMiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxjaXJjbGUgY3g9IjIxOCIgY3k9IjIyMSIgcj0iMyIgZmlsbD0iI0NCRDVFMSIvPgogIDwvZz4KCiAgPHJlY3QgeD0iMTg2IiB5PSIyMiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjMTExODI3Ii8+Cjwvc3ZnPgo=" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo">App móvil · SaaS</p>
+            <h3 class="placeholder-tag">Aplicación 1</h3>
+            <p class="proyecto-desc">Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.</p>
+            <div class="proyecto-pie">
+              <span class="chip-estado">En desarrollo</span>
+              <a class="enlace" href="/proyectos#aplicacion-1">Ver proyecto →</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="tarjeta-proyecto reveal">
+          <div class="proyecto-media">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjUwIj4KICA8ZGVmcz4KICAgIDxjbGlwUGF0aCBpZD0icGFudGFsbGFCIj48cmVjdCB4PSIxNTgiIHk9IjE3IiB3aWR0aD0iODQiIGhlaWdodD0iMjE2IiByeD0iMTIiLz48L2NsaXBQYXRoPgogIDwvZGVmcz4KCiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTI4IiByPSI5NSIgZmlsbD0iI0VGRjZGRiIvPgogIDxjaXJjbGUgY3g9IjExMCIgY3k9IjYwIiByPSIxNCIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC43Ii8+CiAgPGNpcmNsZSBjeD0iMjkyIiBjeT0iMTk2IiByPSI5IiBmaWxsPSIjREJFQUZFIiBvcGFjaXR5PSIwLjciLz4KCiAgPHJlY3QgeD0iMTUyIiB5PSIxMCIgd2lkdGg9Ijk2IiBoZWlnaHQ9IjIzMCIgcng9IjE4IiBmaWxsPSIjMTExODI3Ii8+CiAgPHJlY3QgeD0iMTU4IiB5PSIxNyIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjIxNiIgcng9IjEyIiBmaWxsPSIjMUYyOTM3Ii8+CgogIDxnIGNsaXAtcGF0aD0idXJsKCNwYW50YWxsYUIpIj4KICAgIDxyZWN0IHg9IjE2NiIgeT0iMzAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iI0Y5RkFGQiIvPgogICAgPHJlY3QgeD0iMTY2IiB5PSI0NCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjUiIHJ4PSIyLjUiIGZpbGw9IiM2QjcyODAiLz4KICAgIDxjaXJjbGUgY3g9IjIzMCIgY3k9IjM2IiByPSI2IiBmaWxsPSIjMzc0MTUxIi8+CgogICAgPCEtLSB0YXJqZXRhIGRlc3RhY2FkYSAtLT4KICAgIDxyZWN0IHg9IjE2NiIgeT0iNjAiIHdpZHRoPSI2OCIgaGVpZ2h0PSI0MiIgcng9IjgiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjE3NCIgeT0iNjgiIHdpZHRoPSIzMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0JGREJGRSIvPgogICAgPHJlY3QgeD0iMTc0IiB5PSI4MCIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iI0ZGRkZGRiIvPgogICAgPGNpcmNsZSBjeD0iMjI0IiBjeT0iNzIiIHI9IjUiIGZpbGw9IiM2MEE1RkEiLz4KCiAgICA8IS0tIG1pbmkgZ3LDoWZpY28gZGUgYmFycmFzIC0tPgogICAgPHJlY3QgeD0iMTY2IiB5PSIxMTIiIHdpZHRoPSI2OCIgaGVpZ2h0PSI0NiIgcng9IjgiIGZpbGw9IiMxMTE4MjciLz4KICAgIDxyZWN0IHg9IjE3NCIgeT0iMTMyIiB3aWR0aD0iOCIgaGVpZ2h0PSIxOCIgcng9IjIiIGZpbGw9IiMzQjgyRjYiLz4KICAgIDxyZWN0IHg9IjE4NyIgeT0iMTI0IiB3aWR0aD0iOCIgaGVpZ2h0PSIyNiIgcng9IjIiIGZpbGw9IiM2MEE1RkEiLz4KICAgIDxyZWN0IHg9IjIwMCIgeT0iMTM2IiB3aWR0aD0iOCIgaGVpZ2h0PSIxNCIgcng9IjIiIGZpbGw9IiMzQjgyRjYiLz4KICAgIDxyZWN0IHg9IjIxMyIgeT0iMTIwIiB3aWR0aD0iOCIgaGVpZ2h0PSIzMCIgcng9IjIiIGZpbGw9IiNGOTczMTYiLz4KCiAgICA8IS0tIGZpbGFzIC0tPgogICAgPGc+CiAgICAgIDxjaXJjbGUgY3g9IjE3NCIgY3k9IjE3NCIgcj0iNiIgZmlsbD0iIzM3NDE1MSIvPgogICAgICA8cmVjdCB4PSIxODYiIHk9IjE2OCIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRTVFN0VCIi8+CiAgICAgIDxyZWN0IHg9IjE4NiIgeT0iMTc4IiB3aWR0aD0iMjIiIGhlaWdodD0iNCIgcng9IjIiIGZpbGw9IiM2QjcyODAiLz4KICAgICAgPHJlY3QgeD0iMjE2IiB5PSIxNjkiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDwvZz4KICAgIDxnPgogICAgICA8Y2lyY2xlIGN4PSIxNzQiIGN5PSIxOTgiIHI9IjYiIGZpbGw9IiMzNzQxNTEiLz4KICAgICAgPHJlY3QgeD0iMTg2IiB5PSIxOTIiIHdpZHRoPSIzMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0U1RTdFQiIvPgogICAgICA8cmVjdCB4PSIxODYiIHk9IjIwMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjNkI3MjgwIi8+CiAgICAgIDxyZWN0IHg9IjIxNiIgeT0iMTkzIiB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjN0MyRDEyIi8+CiAgICA8L2c+CgogICAgPHJlY3QgeD0iMTU4IiB5PSIyMTQiIHdpZHRoPSI4NCIgaGVpZ2h0PSIxOSIgZmlsbD0iIzExMTgyNyIvPgogICAgPGNpcmNsZSBjeD0iMTgyIiBjeT0iMjIzIiByPSIzIiBmaWxsPSIjNEI1NTYzIi8+CiAgICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMjMiIHI9IjMiIGZpbGw9IiMzQjgyRjYiLz4KICAgIDxjaXJjbGUgY3g9IjIxOCIgY3k9IjIyMyIgcj0iMyIgZmlsbD0iIzRCNTU2MyIvPgogIDwvZz4KCiAgPHJlY3QgeD0iMTg2IiB5PSIyMiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjMTExODI3Ii8+Cjwvc3ZnPgo=" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo">App móvil · SaaS</p>
+            <h3 class="placeholder-tag">Aplicación 2</h3>
+            <p class="proyecto-desc">Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.</p>
+            <div class="proyecto-pie">
+              <span class="chip-estado">En desarrollo</span>
+              <a class="enlace" href="/proyectos#aplicacion-2">Ver proyecto →</a>
+            </div>
+          </div>
+        </article>
+      
+    </div>
+  </div>
+</section>
+
+<section class="seccion" id="proceso">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Nuestro proceso</p>
+      <h2>Así trabajamos contigo</h2>
+    </div>
+    <ol class="pasos">
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</span>
+          <h3>1. Entendemos</h3>
+          <p>Escuchamos tu idea y entendemos tus objetivos y necesidades.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+</span>
+          <h3>2. Diseñamos</h3>
+          <p>Proponemos la mejor solución tecnológica y planificamos cada etapa.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 7 3 12 8 17"/><polyline points="16 7 21 12 16 17"/></svg>
+</span>
+          <h3>3. Desarrollamos</h3>
+          <p>Construimos tu solución con metodologías ágiles y altos estándares de calidad.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+</span>
+          <h3>4. Entregamos</h3>
+          <p>Probamos, lanzamos y aseguramos que todo funcione perfecto.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+</span>
+          <h3>5. Acompañamos</h3>
+          <p>Te acompañamos después del lanzamiento para seguir impulsando tu negocio.</p>
+        </li>
+      
+    </ol>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿Tienes un proyecto en mente?</h2>
+      <p>Hablemos y llevemos tu idea al siguiente nivel.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+</main>
+<main class="pagina" data-pagina="servicios" hidden>
+
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Servicios</p>
+    <h1>Soluciones tecnológicas a la medida</h1>
+    <p class="cabecera-sub">Del levantamiento a la puesta en marcha: nos hacemos cargo de tu proyecto de principio a fin.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="grid-servicios-detalle">
+      
+        <article class="tarjeta-servicio-detalle reveal" id="apps-moviles">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><line x1="10.5" y1="18" x2="13.5" y2="18"/></svg>
+</span>
+          <h2>Apps móviles</h2>
+          <p>Desarrollamos aplicaciones nativas e híbridas para iOS y Android, con foco en experiencia y rendimiento.</p>
+          <ul class="lista-check">
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ iOS y Android desde un solo código</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Publicación en las tiendas incluida</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Diseño centrado en el usuario</li>
+            
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      
+        <article class="tarjeta-servicio-detalle reveal" id="software-a-medida">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 7 3 12 8 17"/><polyline points="16 7 21 12 16 17"/></svg>
+</span>
+          <h2>Desarrollo de software</h2>
+          <p>Creamos software a medida escalable, seguro y adaptado a las necesidades de tu negocio.</p>
+          <ul class="lista-check">
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Aplicaciones de escritorio y sistemas internos</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Automatización de procesos manuales</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Código documentado y de tu propiedad</li>
+            
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      
+        <article class="tarjeta-servicio-detalle reveal" id="integraciones">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13.5a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 10.5a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+</span>
+          <h2>Integraciones</h2>
+          <p>Conectamos tus sistemas y automatizamos flujos para que tu operación sea más eficiente.</p>
+          <ul class="lista-check">
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ APIs públicas y privadas (ej. Mercado Público)</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Sincronización entre plataformas</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Reportes y alertas automáticas</li>
+            
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      
+        <article class="tarjeta-servicio-detalle reveal" id="desarrollo-web">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a13.9 13.9 0 0 1 3.6 9 13.9 13.9 0 0 1-3.6 9 13.9 13.9 0 0 1-3.6-9A13.9 13.9 0 0 1 12 3z"/></svg>
+</span>
+          <h2>Desarrollo web</h2>
+          <p>Diseñamos y desarrollamos sitios y plataformas web modernas, rápidas y optimizadas.</p>
+          <ul class="lista-check">
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Sitios corporativos y plataformas</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Rápidos y optimizados para buscadores</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Administrables por tu equipo</li>
+            
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      
+        <article class="tarjeta-servicio-detalle reveal" id="consultoria">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 18h5"/><path d="M10.5 21h3"/><path d="M12 3a6.5 6.5 0 0 1 3.9 11.7c-.7.5-.9 1.3-.9 2.3h-6c0-1-.2-1.8-.9-2.3A6.5 6.5 0 0 1 12 3z"/></svg>
+</span>
+          <h2>Consultoría tecnológica</h2>
+          <p>Te ayudamos a definir la mejor estrategia tecnológica para alcanzar tus objetivos.</p>
+          <ul class="lista-check">
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Diagnóstico de procesos y sistemas</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Propuesta con alcance, plazos y costos</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Acompañamiento en la implementación</li>
+            
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      
+        <article class="tarjeta-servicio-detalle reveal" id="mantencion">
+          <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+</span>
+          <h2>Mantención y soporte</h2>
+          <p>Acompañamiento continuo tras la entrega: monitoreo, actualizaciones y mejoras.</p>
+          <ul class="lista-check">
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Corrección de errores garantizada</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Actualizaciones y nuevas funciones</li>
+            
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+ Soporte remoto en horario hábil</li>
+            
+          </ul>
+          <a class="enlace" href="/contacto">Cotizar este servicio →</a>
+        </article>
+      
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿No sabes por dónde empezar?</h2>
+      <p>Cuéntanos tu problema y te proponemos la solución con alcance, plazos y costos claros.</p>
+    </div>
+    <a class="btn" href="/contacto">Pedir una propuesta <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+</main>
+<main class="pagina" data-pagina="proyectos" hidden>
+
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Proyectos</p>
+    <h1>Trabajo real, resultados reales</h1>
+    <p class="cabecera-sub">Casos desarrollados para clientes y productos propios en camino.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="grid-proyectos">
+      
+        <article class="tarjeta-proyecto reveal" id="filtro-licitaciones">
+          <div class="proyecto-media">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjUwIj4KICA8IS0tIHZlbnRhbmEgZGUgYXBsaWNhY2nDs24gZGUgZXNjcml0b3JpbyAtLT4KICA8cmVjdCB4PSIzMCIgeT0iMTgiIHdpZHRoPSIzNDAiIGhlaWdodD0iMjE0IiByeD0iMTIiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0U1RTdFQiIvPgogIDxsaW5lIHgxPSIzMCIgeTE9IjQ2IiB4Mj0iMzcwIiB5Mj0iNDYiIHN0cm9rZT0iI0VFRjJGNiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI0OCIgY3k9IjMyIiByPSI0IiBmaWxsPSIjRkNBNUE1Ii8+CiAgPGNpcmNsZSBjeD0iNjIiIGN5PSIzMiIgcj0iNCIgZmlsbD0iI0ZDRDM0RCIvPgogIDxjaXJjbGUgY3g9Ijc2IiBjeT0iMzIiIHI9IjQiIGZpbGw9IiNBN0YzRDAiLz4KICA8cmVjdCB4PSI5MiIgeT0iMjUiIHdpZHRoPSIxODAiIGhlaWdodD0iMTQiIHJ4PSI3IiBmaWxsPSIjRjhGQUZDIiBzdHJva2U9IiNFRUYyRjYiLz4KCiAgPCEtLSBmaWx0cm9zIC0tPgogIDxyZWN0IHg9IjQ2IiB5PSI1NiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iIzI1NjNFQiIvPgogIDxyZWN0IHg9IjU2IiB5PSI2MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjREJFQUZFIi8+CiAgPHJlY3QgeD0iMTA2IiB5PSI1NiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRTVFN0VCIi8+CiAgPHJlY3QgeD0iMTE2IiB5PSI2MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjQ0JENUUxIi8+CiAgPHJlY3QgeD0iMTY2IiB5PSI1NiIgd2lkdGg9IjU0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRTVFN0VCIi8+CiAgPHJlY3QgeD0iMTc2IiB5PSI2MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjQ0JENUUxIi8+CiAgPHJlY3QgeD0iMjkwIiB5PSI1NiIgd2lkdGg9IjY0IiBoZWlnaHQ9IjE4IiByeD0iOSIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRTVFN0VCIi8+CiAgPGNpcmNsZSBjeD0iMzAyIiBjeT0iNjUiIHI9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMzA1IiB5MT0iNjgiIHgyPSIzMDgiIHkyPSI3MSIgc3Ryb2tlPSIjOUNBM0FGIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CgogIDwhLS0gZW5jYWJlemFkbyBkZSB0YWJsYSAtLT4KICA8cmVjdCB4PSI0NiIgeT0iODQiIHdpZHRoPSIzMDgiIGhlaWdodD0iMTYiIHJ4PSI1IiBmaWxsPSIjRjhGQUZDIi8+CiAgPHJlY3QgeD0iNTQiIHk9Ijg5IiB3aWR0aD0iNjAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KICA8cmVjdCB4PSIxNTAiIHk9Ijg5IiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KICA8cmVjdCB4PSIyMzAiIHk9Ijg5IiB3aWR0aD0iNDAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KICA8cmVjdCB4PSIzMDQiIHk9Ijg5IiB3aWR0aD0iMzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM5Q0EzQUYiLz4KCiAgPCEtLSBmaWxhcyAtLT4KICA8Zz4KICAgIDxyZWN0IHg9IjQ2IiB5PSIxMDYiIHdpZHRoPSIzMDgiIGhlaWdodD0iMjQiIHJ4PSI2IiBmaWxsPSIjRkZGRkZGIi8+CiAgICA8cmVjdCB4PSI1NCIgeT0iMTE1IiB3aWR0aD0iNzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDxyZWN0IHg9IjE1MCIgeT0iMTE1IiB3aWR0aD0iNTAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNEMUQ1REIiLz4KICAgIDxyZWN0IHg9IjIzMCIgeT0iMTEyIiB3aWR0aD0iNDQiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIzMDQiIHk9IjExNSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjNkI3MjgwIi8+CiAgPC9nPgogIDxnPgogICAgPHJlY3QgeD0iNDYiIHk9IjEzNiIgd2lkdGg9IjMwOCIgaGVpZ2h0PSIyNCIgcng9IjYiIGZpbGw9IiNGOEZBRkMiLz4KICAgIDxyZWN0IHg9IjU0IiB5PSIxNDUiIHdpZHRoPSI1OCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzM3NDE1MSIvPgogICAgPHJlY3QgeD0iMTUwIiB5PSIxNDUiIHdpZHRoPSI0NCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0QxRDVEQiIvPgogICAgPHJlY3QgeD0iMjMwIiB5PSIxNDIiIHdpZHRoPSI0NCIgaGVpZ2h0PSIxMiIgcng9IjYiIGZpbGw9IiNGRkVERDUiLz4KICAgIDxyZWN0IHg9IjMwNCIgeT0iMTQ1IiB3aWR0aD0iMzAiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiM2QjcyODAiLz4KICA8L2c+CiAgPGc+CiAgICA8cmVjdCB4PSI0NiIgeT0iMTY2IiB3aWR0aD0iMzA4IiBoZWlnaHQ9IjI0IiByeD0iNiIgZmlsbD0iI0ZGRkZGRiIvPgogICAgPHJlY3QgeD0iNTQiIHk9IjE3NSIgd2lkdGg9IjY2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMzc0MTUxIi8+CiAgICA8cmVjdCB4PSIxNTAiIHk9IjE3NSIgd2lkdGg9IjU0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRDFENURCIi8+CiAgICA8cmVjdCB4PSIyMzAiIHk9IjE3MiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjEyIiByeD0iNiIgZmlsbD0iI0RCRUFGRSIvPgogICAgPHJlY3QgeD0iMzA0IiB5PSIxNzUiIHdpZHRoPSIzNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzZCNzI4MCIvPgogIDwvZz4KICA8Zz4KICAgIDxyZWN0IHg9IjQ2IiB5PSIxOTYiIHdpZHRoPSIzMDgiIGhlaWdodD0iMjQiIHJ4PSI2IiBmaWxsPSIjRjhGQUZDIi8+CiAgICA8cmVjdCB4PSI1NCIgeT0iMjA1IiB3aWR0aD0iNjIiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDxyZWN0IHg9IjE1MCIgeT0iMjA1IiB3aWR0aD0iNDYiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNEMUQ1REIiLz4KICAgIDxyZWN0IHg9IjIzMCIgeT0iMjAyIiB3aWR0aD0iNDQiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjRTVFN0VCIi8+CiAgICA8cmVjdCB4PSIzMDQiIHk9IjIwNSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjNkI3MjgwIi8+CiAgPC9nPgo8L3N2Zz4K" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo">Software de escritorio</p>
+            <h3 class="">Filtro de Licitaciones</h3>
+            <p class="proyecto-desc">Aplicación de escritorio que filtra y clasifica licitaciones de Mercado Público en tiempo real, integrada con su API oficial.</p>
+            <p class="proyecto-cliente">Producto RendApps</p>
+            <div class="proyecto-pie">
+              
+              
+                <a class="enlace" href="/proyectos/filtro-licitaciones">Ver proyecto →</a>
+              
+            </div>
+          </div>
+        </article>
+      
+        <article class="tarjeta-proyecto reveal" id="aplicacion-1">
+          <div class="proyecto-media">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjUwIj4KICA8ZGVmcz4KICAgIDxjbGlwUGF0aCBpZD0icGFudGFsbGFBIj48cmVjdCB4PSIxNTgiIHk9IjE3IiB3aWR0aD0iODQiIGhlaWdodD0iMjE2IiByeD0iMTIiLz48L2NsaXBQYXRoPgogIDwvZGVmcz4KCiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTI4IiByPSI5NSIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC40NSIvPgogIDxjaXJjbGUgY3g9IjI5NSIgY3k9IjU1IiByPSIxNiIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC42Ii8+CiAgPGNpcmNsZSBjeD0iMTA1IiBjeT0iMjAwIiByPSIxMCIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC42Ii8+CgogIDxyZWN0IHg9IjE1MiIgeT0iMTAiIHdpZHRoPSI5NiIgaGVpZ2h0PSIyMzAiIHJ4PSIxOCIgZmlsbD0iIzExMTgyNyIvPgogIDxyZWN0IHg9IjE1OCIgeT0iMTciIHdpZHRoPSI4NCIgaGVpZ2h0PSIyMTYiIHJ4PSIxMiIgZmlsbD0iI0ZGRkZGRiIvPgoKICA8ZyBjbGlwLXBhdGg9InVybCgjcGFudGFsbGFBKSI+CiAgICA8cmVjdCB4PSIxNTgiIHk9IjE3IiB3aWR0aD0iODQiIGhlaWdodD0iNDAiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjE2NiIgeT0iMjgiIHdpZHRoPSIzOCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIxNjYiIHk9IjQwIiB3aWR0aD0iMjYiIGhlaWdodD0iNSIgcng9IjIuNSIgZmlsbD0iIzkzQzVGRCIvPgogICAgPGNpcmNsZSBjeD0iMjMwIiBjeT0iMzQiIHI9IjYiIGZpbGw9IiM5M0M1RkQiLz4KCiAgICA8cmVjdCB4PSIxNjYiIHk9IjY2IiB3aWR0aD0iNjgiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjRjNGNEY2Ii8+CgogICAgPHJlY3QgeD0iMTY2IiB5PSI4OCIgd2lkdGg9IjY4IiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRUVGMkY2Ii8+CiAgICA8cmVjdCB4PSIxNzIiIHk9Ijk2IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHJ4PSI0IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIxOTIiIHk9Ijk3IiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDxyZWN0IHg9IjE5MiIgeT0iMTA4IiB3aWR0aD0iMjQiIGhlaWdodD0iNCIgcng9IjIiIGZpbGw9IiNEMUQ1REIiLz4KCiAgICA8cmVjdCB4PSIxNjYiIHk9IjEyOCIgd2lkdGg9IjY4IiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0Y4RkFGQyIgc3Ryb2tlPSIjRUVGMkY2Ii8+CiAgICA8cmVjdCB4PSIxNzIiIHk9IjEzNiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiByeD0iNCIgZmlsbD0iI0ZGRURENSIvPgogICAgPHJlY3QgeD0iMTkyIiB5PSIxMzciIHdpZHRoPSIzMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzM3NDE1MSIvPgogICAgPHJlY3QgeD0iMTkyIiB5PSIxNDgiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0QxRDVEQiIvPgoKICAgIDxyZWN0IHg9IjE2NiIgeT0iMTY4IiB3aWR0aD0iNjgiIGhlaWdodD0iMzIiIHJ4PSI4IiBmaWxsPSIjRjhGQUZDIiBzdHJva2U9IiNFRUYyRjYiLz4KICAgIDxyZWN0IHg9IjE3MiIgeT0iMTc2IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHJ4PSI0IiBmaWxsPSIjREJFQUZFIi8+CiAgICA8cmVjdCB4PSIxOTIiIHk9IjE3NyIgd2lkdGg9IjM2IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjMzc0MTUxIi8+CiAgICA8cmVjdCB4PSIxOTIiIHk9IjE4OCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjRDFENURCIi8+CgogICAgPHJlY3QgeD0iMTU4IiB5PSIyMTAiIHdpZHRoPSI4NCIgaGVpZ2h0PSIyMyIgZmlsbD0iI0Y4RkFGQyIvPgogICAgPGNpcmNsZSBjeD0iMTgyIiBjeT0iMjIxIiByPSIzIiBmaWxsPSIjQ0JENUUxIi8+CiAgICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMjEiIHI9IjMiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxjaXJjbGUgY3g9IjIxOCIgY3k9IjIyMSIgcj0iMyIgZmlsbD0iI0NCRDVFMSIvPgogIDwvZz4KCiAgPHJlY3QgeD0iMTg2IiB5PSIyMiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjMTExODI3Ii8+Cjwvc3ZnPgo=" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo">App móvil · SaaS</p>
+            <h3 class="placeholder-tag">Aplicación 1</h3>
+            <p class="proyecto-desc">Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.</p>
+            <p class="proyecto-cliente">Producto RendApps</p>
+            <div class="proyecto-pie">
+              <span class="chip-estado">En desarrollo</span>
+              
+                <a class="enlace" href="/contacto">Quiero algo así →</a>
+              
+            </div>
+          </div>
+        </article>
+      
+        <article class="tarjeta-proyecto reveal" id="aplicacion-2">
+          <div class="proyecto-media">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjUwIj4KICA8ZGVmcz4KICAgIDxjbGlwUGF0aCBpZD0icGFudGFsbGFCIj48cmVjdCB4PSIxNTgiIHk9IjE3IiB3aWR0aD0iODQiIGhlaWdodD0iMjE2IiByeD0iMTIiLz48L2NsaXBQYXRoPgogIDwvZGVmcz4KCiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTI4IiByPSI5NSIgZmlsbD0iI0VGRjZGRiIvPgogIDxjaXJjbGUgY3g9IjExMCIgY3k9IjYwIiByPSIxNCIgZmlsbD0iI0RCRUFGRSIgb3BhY2l0eT0iMC43Ii8+CiAgPGNpcmNsZSBjeD0iMjkyIiBjeT0iMTk2IiByPSI5IiBmaWxsPSIjREJFQUZFIiBvcGFjaXR5PSIwLjciLz4KCiAgPHJlY3QgeD0iMTUyIiB5PSIxMCIgd2lkdGg9Ijk2IiBoZWlnaHQ9IjIzMCIgcng9IjE4IiBmaWxsPSIjMTExODI3Ii8+CiAgPHJlY3QgeD0iMTU4IiB5PSIxNyIgd2lkdGg9Ijg0IiBoZWlnaHQ9IjIxNiIgcng9IjEyIiBmaWxsPSIjMUYyOTM3Ii8+CgogIDxnIGNsaXAtcGF0aD0idXJsKCNwYW50YWxsYUIpIj4KICAgIDxyZWN0IHg9IjE2NiIgeT0iMzAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iI0Y5RkFGQiIvPgogICAgPHJlY3QgeD0iMTY2IiB5PSI0NCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjUiIHJ4PSIyLjUiIGZpbGw9IiM2QjcyODAiLz4KICAgIDxjaXJjbGUgY3g9IjIzMCIgY3k9IjM2IiByPSI2IiBmaWxsPSIjMzc0MTUxIi8+CgogICAgPCEtLSB0YXJqZXRhIGRlc3RhY2FkYSAtLT4KICAgIDxyZWN0IHg9IjE2NiIgeT0iNjAiIHdpZHRoPSI2OCIgaGVpZ2h0PSI0MiIgcng9IjgiIGZpbGw9IiMyNTYzRUIiLz4KICAgIDxyZWN0IHg9IjE3NCIgeT0iNjgiIHdpZHRoPSIzMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0JGREJGRSIvPgogICAgPHJlY3QgeD0iMTc0IiB5PSI4MCIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iI0ZGRkZGRiIvPgogICAgPGNpcmNsZSBjeD0iMjI0IiBjeT0iNzIiIHI9IjUiIGZpbGw9IiM2MEE1RkEiLz4KCiAgICA8IS0tIG1pbmkgZ3LDoWZpY28gZGUgYmFycmFzIC0tPgogICAgPHJlY3QgeD0iMTY2IiB5PSIxMTIiIHdpZHRoPSI2OCIgaGVpZ2h0PSI0NiIgcng9IjgiIGZpbGw9IiMxMTE4MjciLz4KICAgIDxyZWN0IHg9IjE3NCIgeT0iMTMyIiB3aWR0aD0iOCIgaGVpZ2h0PSIxOCIgcng9IjIiIGZpbGw9IiMzQjgyRjYiLz4KICAgIDxyZWN0IHg9IjE4NyIgeT0iMTI0IiB3aWR0aD0iOCIgaGVpZ2h0PSIyNiIgcng9IjIiIGZpbGw9IiM2MEE1RkEiLz4KICAgIDxyZWN0IHg9IjIwMCIgeT0iMTM2IiB3aWR0aD0iOCIgaGVpZ2h0PSIxNCIgcng9IjIiIGZpbGw9IiMzQjgyRjYiLz4KICAgIDxyZWN0IHg9IjIxMyIgeT0iMTIwIiB3aWR0aD0iOCIgaGVpZ2h0PSIzMCIgcng9IjIiIGZpbGw9IiNGOTczMTYiLz4KCiAgICA8IS0tIGZpbGFzIC0tPgogICAgPGc+CiAgICAgIDxjaXJjbGUgY3g9IjE3NCIgY3k9IjE3NCIgcj0iNiIgZmlsbD0iIzM3NDE1MSIvPgogICAgICA8cmVjdCB4PSIxODYiIHk9IjE2OCIgd2lkdGg9IjM0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRTVFN0VCIi8+CiAgICAgIDxyZWN0IHg9IjE4NiIgeT0iMTc4IiB3aWR0aD0iMjIiIGhlaWdodD0iNCIgcng9IjIiIGZpbGw9IiM2QjcyODAiLz4KICAgICAgPHJlY3QgeD0iMjE2IiB5PSIxNjkiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiMzNzQxNTEiLz4KICAgIDwvZz4KICAgIDxnPgogICAgICA8Y2lyY2xlIGN4PSIxNzQiIGN5PSIxOTgiIHI9IjYiIGZpbGw9IiMzNzQxNTEiLz4KICAgICAgPHJlY3QgeD0iMTg2IiB5PSIxOTIiIHdpZHRoPSIzMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0U1RTdFQiIvPgogICAgICA8cmVjdCB4PSIxODYiIHk9IjIwMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjNkI3MjgwIi8+CiAgICAgIDxyZWN0IHg9IjIxNiIgeT0iMTkzIiB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjN0MyRDEyIi8+CiAgICA8L2c+CgogICAgPHJlY3QgeD0iMTU4IiB5PSIyMTQiIHdpZHRoPSI4NCIgaGVpZ2h0PSIxOSIgZmlsbD0iIzExMTgyNyIvPgogICAgPGNpcmNsZSBjeD0iMTgyIiBjeT0iMjIzIiByPSIzIiBmaWxsPSIjNEI1NTYzIi8+CiAgICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMjMiIHI9IjMiIGZpbGw9IiMzQjgyRjYiLz4KICAgIDxjaXJjbGUgY3g9IjIxOCIgY3k9IjIyMyIgcj0iMyIgZmlsbD0iIzRCNTU2MyIvPgogIDwvZz4KCiAgPHJlY3QgeD0iMTg2IiB5PSIyMiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjQiIHJ4PSIyIiBmaWxsPSIjMTExODI3Ii8+Cjwvc3ZnPgo=" alt="" loading="lazy">
+          </div>
+          <div class="proyecto-cuerpo">
+            <p class="proyecto-tipo">App móvil · SaaS</p>
+            <h3 class="placeholder-tag">Aplicación 2</h3>
+            <p class="proyecto-desc">Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.</p>
+            <p class="proyecto-cliente">Producto RendApps</p>
+            <div class="proyecto-pie">
+              <span class="chip-estado">En desarrollo</span>
+              
+                <a class="enlace" href="/contacto">Quiero algo así →</a>
+              
+            </div>
+          </div>
+        </article>
+      
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>Tu proyecto puede ser el siguiente</h2>
+      <p>Cuéntanos qué necesitas y te respondemos con una propuesta concreta.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+</main>
+<main class="pagina" data-pagina="proyecto-filtro" hidden>
+
+
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Producto propio · Software de escritorio</p>
+    <h1>Filtro de Licitaciones</h1>
+    <p class="cabecera-sub">Producto propio de RendApps: una aplicación de escritorio que encuentra oportunidades de venta en Mercado Público, todos los días.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor proyecto-detalle">
+    <div class="reveal">
+      <h2>Qué es y qué hace</h2>
+      <p>
+        La Filtradora de Licitaciones es una aplicación de escritorio para Windows que automatiza
+        la detección de oportunidades de venta en Mercado Público. Se conecta a la API oficial,
+        descarga las licitaciones del período indicado y las clasifica según reglas de filtrado
+        configurables por categoría: palabra exacta, derivados o combinaciones de términos.
+      </p>
+      <p>
+        El resultado es una lista acotada de licitaciones pertinentes al rubro de la empresa, con
+        los productos que gatillaron cada coincidencia identificados y exportable a Excel. Además
+        monitorea los <strong>foros inversos</strong> de las licitaciones cerradas en los últimos
+        30 días y registra las preguntas que los compradores dirigen a la empresa, junto con su
+        estado de respuesta.
+      </p>
+    </div>
+    <aside class="ficha-proyecto reveal">
+      <h3>Ficha del proyecto</h3>
+      <ul>
+        <li><strong>Producto</strong><span>Desarrollo propio de RendApps</span></li>
+        <li><strong>Tipo</strong><span>Aplicación de escritorio (Windows)</span></li>
+        <li><strong>Tecnología</strong><span>Python · instalador firmado</span></li>
+        <li><strong>Integración</strong><span>API de Mercado Público</span></li>
+        <li><strong>Extras</strong><span>Modo claro/oscuro · exportación a Excel · foros inversos</span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Demo interactiva</p>
+      <h2>Pruébala tú mismo</h2>
+    </div>
+    <p class="demo-nota reveal">
+      Réplica navegable con datos de ejemplo: descarga licitaciones, selecciona, cambia el tema y
+      recorre los filtros. La aplicación real corre en Windows y se conecta en vivo a Mercado Público.
+    </p>
+
+    <div class="demo-marco reveal">
+      <div class="demo" id="demo" data-tema="oscuro" data-pantalla="inicio">
+
+        <!-- Barra de título de la ventana -->
+        <div class="demo-titulo">
+          <span class="demo-titulo-icono" aria-hidden="true"></span>
+          <span class="demo-titulo-texto">Filtradora de Licitaciones v2.0</span>
+          <span class="demo-titulo-botones" aria-hidden="true"><i>—</i><i>□</i><i>✕</i></span>
+        </div>
+
+        <!-- Encabezado de la aplicación -->
+        <div class="demo-cabecera">
+          <span class="demo-logo" aria-hidden="true">
+            <svg width="34" height="34" viewBox="0 0 34 34"><path d="M6 8h22L20 19v8l-6 3V19z" fill="#4154BE"/><circle cx="26" cy="25" r="5" fill="#E11D5F"/><path d="M24 25l1.6 1.6L28.4 24" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="demo-marca">Filtradora<small>Licitaciones · Mercado Público</small></span>
+          <span class="demo-cabecera-botones">
+            <button type="button" class="demo-btn demo-btn-borde demo-volver" hidden>← Volver al inicio</button>
+            <button type="button" class="demo-btn demo-btn-borde demo-toggle-tema">☀ Modo claro</button>
+          </span>
+        </div>
+
+        <!-- ====== PANTALLA: INICIO ====== -->
+        <div class="demo-pantalla demo-inicio" data-nombre="inicio">
+          <div class="demo-panel">
+            <h3>Bienvenido a la filtradora de licitaciones</h3>
+            <p class="demo-muted">Selecciona una acción para comenzar</p>
+            <button type="button" class="demo-badge-foros" data-ir="foros">🔔 8 foro(s) inverso(s) detectado(s) para tu empresa <b>〉</b></button>
+
+            <button type="button" class="demo-accion" data-ir="descarga">
+              <span class="demo-accion-icono demo-icono-azul">☁</span>
+              <span class="demo-accion-texto"><b>Descargar de Mercado Público</b>Obtén las licitaciones publicadas en el periodo que elijas</span>
+              <span class="demo-accion-flecha">〉</span>
+            </button>
+            <button type="button" class="demo-accion" data-demo-toast="El módulo Compra Ágil está disponible en la aplicación de escritorio.">
+              <span class="demo-accion-icono demo-icono-verde">🛒</span>
+              <span class="demo-accion-texto"><b>Compra Ágil</b>Revisa cotizaciones de Compra Ágil vigentes y filtra por productos de interés</span>
+              <span class="demo-accion-flecha">〉</span>
+            </button>
+            <button type="button" class="demo-accion" data-ir="filtros">
+              <span class="demo-accion-icono demo-icono-gris">⚗</span>
+              <span class="demo-accion-texto"><b>Gestionar filtros</b>Define categorías y reglas de búsqueda de productos</span>
+              <span class="demo-accion-flecha">〉</span>
+            </button>
+          </div>
+          <p class="demo-version">v2.0 Powered by Python</p>
+        </div>
+
+        <!-- ====== PANTALLA: DESCARGA ====== -->
+        <div class="demo-pantalla demo-descarga" data-nombre="descarga" hidden>
+          <div class="demo-toolbar">
+            <label>Desde <input type="text" value="13-07-2026" readonly> 📅</label>
+            <label>Hasta <input type="text" value="13-07-2026" readonly> 📅</label>
+            <span class="demo-toolbar-sep"></span>
+            <button type="button" class="demo-btn demo-btn-primario demo-descargar">☁ Descargar datos</button>
+            <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real abre la última descarga guardada.">🗂 Ver datos descargados</button>
+          </div>
+
+          <div class="demo-progreso" hidden>
+            <p class="demo-progreso-texto">Consultando API de Mercado Público…</p>
+            <div class="demo-progreso-barra"><i></i></div>
+          </div>
+
+          <div class="demo-resultados" hidden>
+            <p class="demo-banner-exito">✨ ¡Filtrado finalizado! Selecciona con un ticket las que quieras exportar.</p>
+
+            <div class="demo-seccion-tabla">
+              <div class="demo-tabla-cabecera">
+                <b><span class="demo-lic-count">16</span> Licitaciones encontradas</b>
+                <span class="demo-muted">· click en ID o Comprador para abrir en Mercado Público</span>
+                <span class="demo-toolbar-sep"></span>
+                <button type="button" class="demo-btn demo-btn-borde demo-exportar" disabled>↓ Exportar seleccionadas</button>
+              </div>
+              <table class="demo-tabla demo-tabla-lic">
+                <thead><tr><th></th><th>ID</th><th>Nombre</th><th>Comprador</th><th>Publicación</th><th>Cierre</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 1001-24-LE26</td><td>ADQUISICIÓN DE ARTÍCULOS DE OFICINA Y PAPELERÍA</td><td class="demo-link">HOSPITAL DE VALLE CLARO</td><td>10-07-2026 14:20</td><td>20-07-2026 15:30</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 2045-95-LP26</td><td>SUMINISTRO DE TÓNER E INSUMOS DE IMPRESIÓN</td><td class="demo-link">I MUNICIPALIDAD DE PUERTO ALERCE</td><td>10-07-2026 15:55</td><td>21-07-2026 15:08</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 3310-10-LE26</td><td>MOBILIARIO PARA DEPENDENCIAS ADMINISTRATIVAS</td><td class="demo-link">INSTITUTO TÉCNICO COSTA AZUL</td><td>10-07-2026 11:27</td><td>22-07-2026 15:00</td></tr>
+                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 4471-71-LE26</td><td>SERVICIO DE ARRIENDO DE IMPRESORAS MULTIFUNCIONALES</td><td class="demo-link">CENTRO DE SALUD RÍO BLANCO</td><td>10-07-2026 14:12</td><td>22-07-2026 15:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="demo-seccion-tabla">
+              <div class="demo-tabla-cabecera">
+                <b>34 Productos</b>
+                <span class="demo-muted">· los que calzan con tus filtros aparecen en verde</span>
+              </div>
+              <table class="demo-tabla demo-tabla-prod">
+                <thead><tr><th>Cantidad</th><th>Producto</th><th>Filtro</th></tr></thead>
+                <tbody>
+                  <tr class="demo-match"><td>10.0</td><td>☑ RESMA PAPEL CARTA 75G — papel multipropósito para impresión y copiado</td><td>papelería + suministro</td></tr>
+                  <tr class="demo-match"><td>4.0</td><td>☑ TÓNER LÁSER NEGRO — cartucho compatible para impresora multifuncional</td><td>impresión</td></tr>
+                  <tr class="demo-match"><td>6.0</td><td>☑ SILLA ERGONÓMICA GIRATORIA — respaldo alto con apoyo lumbar regulable</td><td>mobiliario</td></tr>
+                  <tr><td>2.0</td><td>◯ PIZARRA DE CORCHO 60×90 — panel mural con marco de madera</td><td>---</td></tr>
+                  <tr><td>1.0</td><td>◯ DISPENSADOR DE AGUA FRÍA/CALIENTE</td><td>---</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== PANTALLA: FILTROS ====== -->
+        <div class="demo-pantalla demo-filtros" data-nombre="filtros" hidden>
+          <div class="demo-filtros-grid">
+            <div class="demo-categorias">
+              <b>Categorías</b>
+              <ul class="demo-lista-cat"></ul>
+              <div class="demo-cat-botones">
+                <button type="button" class="demo-btn demo-btn-primario" data-demo-toast="En la app real crea una categoría nueva.">+ Nueva</button>
+                <button type="button" class="demo-btn demo-btn-rojo" data-demo-toast="En la app real elimina la categoría seleccionada.">Eliminar</button>
+              </div>
+            </div>
+            <div class="demo-filtros-panel">
+              <b class="demo-filtros-titulo">Filtros de IMPRESION</b>
+              <table class="demo-tabla demo-tabla-filtros">
+                <thead><tr><th>Tipo</th><th>Qué busca</th></tr></thead>
+                <tbody></tbody>
+              </table>
+              <div class="demo-cat-botones">
+                <button type="button" class="demo-btn demo-btn-primario" data-demo-toast="En la app real abre el editor de filtros.">+ Añadir filtro</button>
+                <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real edita el filtro seleccionado.">Editar</button>
+                <button type="button" class="demo-btn demo-btn-rojo" data-demo-toast="En la app real elimina el filtro seleccionado.">Eliminar</button>
+              </div>
+            </div>
+          </div>
+          <div class="demo-explicacion">
+            <b>✦ ¿Cómo funcionan los filtros?</b>
+            <p>Cada categoría agrupa filtros; una licitación aparece en los resultados si cumple CUALQUIERA de ellos.</p>
+            <p>· <b>Palabra exacta</b>: encuentra esa palabra tal cual (tóner). · <b>Palabra y derivados</b>: encuentra la raíz y sus variantes (impres… → impresora, impresión). · <b>Combinación</b>: exige varias condiciones a la vez.</p>
+          </div>
+        </div>
+
+        <!-- ====== PANTALLA: FOROS ====== -->
+        <div class="demo-pantalla demo-foros" data-nombre="foros" hidden>
+          <div class="demo-toolbar">
+            <b>🔔 Foros inversos detectados para tu empresa</b>
+            <span class="demo-toolbar-sep"></span>
+            <button type="button" class="demo-btn demo-btn-primario demo-ver-foros">🔎 Revisar licitaciones</button>
+            <button type="button" class="demo-btn demo-btn-borde demo-ver-historial">📋 Revisar historial mensual</button>
+          </div>
+          <div class="demo-toolbar demo-toolbar-busqueda">
+            <label class="demo-busqueda">🔍 <input type="search" class="demo-filtro-foros" placeholder="Buscar por ID o cliente" aria-label="Buscar foros"></label>
+            <span class="demo-foros-count demo-muted"></span>
+          </div>
+          <p class="demo-muted demo-historial-titulo" hidden>47 licitación(es) revisada(s) en los últimos 30 días.</p>
+          <table class="demo-tabla demo-tabla-foros">
+            <thead><tr><th>ID</th><th>Cliente</th><th>Fecha de pregunta</th><th>Estado</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="demo-toast" role="status" aria-live="polite" hidden></div>
+      </div>
+    </div>
+
+    <p class="demo-nota demo-nota-pie reveal">Los datos mostrados son de ejemplo y no corresponden a licitaciones reales.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Resultados</p>
+      <h2>Qué automatiza</h2>
+    </div>
+    <div class="grid-3 tarjetas-confianza">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13.5a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 10.5a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+</span>
+        <h3>Descarga y filtrado diario</h3>
+        <p>Se conecta a la API de Mercado Público, descarga las licitaciones del período y aplica las reglas de la empresa en segundos.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</span>
+        <h3>Vigilancia de foros inversos</h3>
+        <p>Revisa las licitaciones cerradas de los últimos 30 días y avisa si un comprador hizo preguntas dirigidas a la empresa.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+</span>
+        <h3>Exportación a Excel</h3>
+        <p>Las licitaciones seleccionadas se exportan listas para el flujo comercial, sin copiar y pegar.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿Tu equipo también pierde horas en tareas repetitivas?</h2>
+      <p>Cuéntanos tu proceso y te proponemos cómo automatizarlo.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+
+</main>
+<main class="pagina" data-pagina="nosotros" hidden>
+
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Nosotros</p>
+    <h1>Tecnología con un objetivo: que tu negocio funcione mejor</h1>
+    <p class="cabecera-sub">Un estudio de desarrollo chileno enfocado en soluciones que generan valor real.</p>
+  </div>
+</section>
+
+<section class="seccion" id="historia">
+  <div class="contenedor texto-ancho reveal">
+    <h2>Nuestra historia</h2>
+    <p>
+      RendApps nació en 2026 con una convicción simple: las empresas no necesitan más
+      tecnología, necesitan la tecnología correcta. Nuestro primer producto lo demostró:
+      una aplicación que filtra licitaciones de Mercado Público en tiempo real y ahorra
+      horas de revisión manual cada semana.
+    </p>
+    <p>
+      Hoy desarrollamos software a medida, aplicaciones móviles e integraciones para
+      empresas que quieren automatizar procesos y crecer. Trabajamos de forma remota,
+      por proyecto o por suscripción, con un principio que no negociamos: entregar
+      soluciones que funcionan y acompañarlas en el tiempo.
+    </p>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna" id="confianza">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Confianza y seguridad</p>
+      <h2>Compromisos que asumimos contigo</h2>
+    </div>
+    <div class="grid-3 tarjetas-confianza">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="11" width="17" height="10" rx="2"/><path d="M7.5 11V7a4.5 4.5 0 0 1 9 0v4"/></svg>
+</span>
+        <h3>Tu código, tu propiedad</h3>
+        <p>Al finalizar el proyecto recibes el código fuente y su documentación. Sin letras chicas ni dependencias forzadas.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+</span>
+        <h3>Confidencialidad desde el día uno</h3>
+        <p>Tu información y tus procesos se tratan con estricta reserva. Firmamos acuerdos de confidencialidad si tu empresa lo requiere.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</span>
+        <h3>Comunicación directa</h3>
+        <p>Hablas directamente con quien construye tu software: sin intermediarios, con respuestas en menos de 24 horas hábiles.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="seccion" id="valores">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Nuestro proceso</p>
+      <h2>Así trabajamos contigo</h2>
+    </div>
+    <ol class="pasos">
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</span>
+          <h3>1. Entendemos</h3>
+          <p>Escuchamos tu idea y entendemos tus objetivos y necesidades.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+</span>
+          <h3>2. Diseñamos</h3>
+          <p>Proponemos la mejor solución tecnológica y planificamos cada etapa.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8 7 3 12 8 17"/><polyline points="16 7 21 12 16 17"/></svg>
+</span>
+          <h3>3. Desarrollamos</h3>
+          <p>Construimos tu solución con metodologías ágiles y altos estándares de calidad.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+</span>
+          <h3>4. Entregamos</h3>
+          <p>Probamos, lanzamos y aseguramos que todo funcione perfecto.</p>
+        </li>
+      
+        <li class="paso reveal">
+          <span class="paso-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+</span>
+          <h3>5. Acompañamos</h3>
+          <p>Te acompañamos después del lanzamiento para seguir impulsando tu negocio.</p>
+        </li>
+      
+    </ol>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>Conversemos sobre tu proyecto</h2>
+      <p>Sin compromiso: escuchamos tu idea y te decimos con honestidad cómo abordarla.</p>
+    </div>
+    <a class="btn" href="/contacto">Agendar una conversación <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+</main>
+<main class="pagina" data-pagina="soporte" hidden>
+
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Soporte</p>
+    <h1>Estamos contigo después de la entrega</h1>
+    <p class="cabecera-sub">Soporte, documentación y mantención para que tu software siga funcionando perfecto.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="grid-3">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+</span>
+        <h3>Soporte y mantención</h3>
+        <p>Corrección de errores y actualizaciones tras la entrega. Reporta un problema indicando el proyecto y el detalle.</p>
+        <a class="enlace" href="/contacto">Reportar un problema →</a>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+</span>
+        <h3>Documentación</h3>
+        <p>Solicita el manual de uso y la documentación técnica de tu solución cuando la necesites.</p>
+        <a class="enlace" href="/contacto">Pedir documentación →</a>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+</span>
+        <h3>Soporte técnico</h3>
+        <p>Soporte remoto en horario hábil, con diagnóstico claro y plan de solución.</p>
+        <a class="enlace" href="/contacto">Contactar soporte →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna">
+  <div class="contenedor texto-ancho">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Preguntas frecuentes</p>
+      <h2>Resolvemos tus dudas</h2>
+    </div>
+    <details class="faq reveal">
+      <summary>¿Qué incluye el soporte del software?</summary>
+      <p>Corrección de errores, ajustes menores y actualizaciones según lo acordado en cada proyecto o plan de mantención.</p>
+    </details>
+    <details class="faq reveal">
+      <summary>¿Cómo se entrega el software?</summary>
+      <p>De forma digital: instalador para aplicaciones de escritorio, acceso web o publicación en la tienda para apps móviles, según el tipo de solución.</p>
+    </details>
+    <details class="faq reveal">
+      <summary>¿Se integra con los sistemas que ya uso?</summary>
+      <p>Sí. Trabajamos integraciones con APIs y plataformas externas, como la API de Mercado Público.</p>
+    </details>
+    <details class="faq reveal">
+      <summary>¿Ofrecen mantención después de la entrega?</summary>
+      <p>Sí, mediante un plan mensual o por solicitud puntual, según lo que necesite tu operación.</p>
+    </details>
+    <details class="faq reveal">
+      <summary>¿Qué pasa con la confidencialidad de mi información?</summary>
+      <p>Tu información se usa solo para el desarrollo de tu proyecto y se trata con estricta reserva. Si tu empresa lo requiere, firmamos un acuerdo de confidencialidad antes de comenzar.</p>
+    </details>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿No encontraste tu respuesta?</h2>
+      <p>Escríbenos y un especialista te responde dentro del día hábil.</p>
+    </div>
+    <a class="btn" href="/contacto">Ir a contacto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+</main>
+<main class="pagina" data-pagina="contacto" hidden>
+
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Contacto</p>
+    <h1>Hablemos de tu proyecto</h1>
+    <p class="cabecera-sub">Cuéntanos qué necesitas y te respondemos dentro del día hábil con los siguientes pasos.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor contacto-int">
+    <div class="contacto-form reveal">
+      
+      
+
+      <form action="/contacto" method="post" novalidate>
+        <div class="campo">
+          <label for="nombre">Nombre *</label>
+          <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" value="">
+        </div>
+        <div class="campo">
+          <label for="email">Correo electrónico *</label>
+          <input type="email" id="email" name="email" required placeholder="nombre@empresa.com" value="">
+        </div>
+        <div class="campo">
+          <label for="asunto">Asunto</label>
+          <select id="asunto" name="asunto">
+            <option value="cotizacion" >Cotización</option>
+            <option value="soporte" >Soporte</option>
+            <option value="consulta" >Consulta general</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="mensaje">Mensaje *</label>
+          <textarea id="mensaje" name="mensaje" rows="6" required placeholder="Cuéntanos sobre tu proyecto o necesidad"></textarea>
+        </div>
+        <button class="btn" type="submit">Enviar mensaje <span class="btn-flecha" aria-hidden="true">→</span></button>
+        <p class="nota-confianza">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+          Tu información es confidencial y solo se usa para responderte.
+        </p>
+      </form>
+    </div>
+
+    <aside class="contacto-datos reveal">
+      <h2>Datos directos</h2>
+      <ul>
+        <li>
+          <span class="icono-caja icono-caja-chica"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
+</span>
+          <div><strong>Consultas comerciales</strong><a href="/cdn-cgi/l/email-protection#c2a1adacb6a3a1b6ad82b0a7aca6a3b2b2b1eca1ae"><span class="__cf_email__" data-cfemail="f0939f9e849193849fb082959e9491808083de939c">[email&#160;protected]</span></a></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+</span>
+          <div><strong>Soporte técnico</strong><a href="/cdn-cgi/l/email-protection#067569766974726346746368626776767528656a"><span class="__cf_email__" data-cfemail="e4978b948b969081a496818a8085949497ca8788">[email&#160;protected]</span></a></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+</span>
+          <div><strong>Ubicación</strong><span>Santiago, Región Metropolitana</span></div>
+        </li>
+        <li>
+          <span class="icono-caja icono-caja-chica"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+</span>
+          <div><strong>Modalidad</strong><span>Trabajo remoto · Lun a Vie, 9:00 – 18:00</span></div>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+</main>
+</div>
+<footer class="pie">
+  <div class="contenedor pie-int">
+    <div class="pie-marca">
+      <a class="logo" href="/" aria-label="RendApps, inicio">
+        <svg class="logo-icono" width="38" height="38" viewBox="0 0 40 40" aria-hidden="true">
+          <defs>
+            <linearGradient id="gradLogoPie" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#3B82F6"/>
+              <stop offset="1" stop-color="#1E3A8A"/>
+            </linearGradient>
+          </defs>
+          <rect x="5" y="5" width="30" height="30" rx="10" fill="url(#gradLogoPie)" transform="rotate(-8 20 20)"/>
+          <text x="20" y="27" text-anchor="middle" font-family="'Space Grotesk','Arial',sans-serif" font-size="19" font-weight="700" fill="#fff">R</text>
+          <circle class="logo-chispa" cx="33" cy="8" r="4" fill="#F97316"/>
+          <circle cx="33" cy="8" r="1.6" fill="#fff"/>
+        </svg>
+        <span class="logo-texto">Rend<em>Apps</em></span>
+      </a>
+      <p>Desarrollamos soluciones de software a medida que impulsan negocios y transforman ideas en productos digitales de alto impacto.</p>
+    </div>
+
+    <nav class="pie-col" aria-label="Navegación del sitio">
+      <h3>Navegación</h3>
+      <ul>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/servicios">Servicios</a></li>
+        <li><a href="/proyectos">Proyectos</a></li>
+        <li><a href="/nosotros">Nosotros</a></li>
+        <li><a href="/soporte">Soporte</a></li>
+        <li><a href="/contacto">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <nav class="pie-col" aria-label="Servicios">
+      <h3>Servicios</h3>
+      <ul>
+        
+          <li><a href="/servicios#apps-moviles">Apps móviles</a></li>
+        
+          <li><a href="/servicios#software-a-medida">Desarrollo de software</a></li>
+        
+          <li><a href="/servicios#integraciones">Integraciones</a></li>
+        
+          <li><a href="/servicios#desarrollo-web">Desarrollo web</a></li>
+        
+          <li><a href="/servicios#consultoria">Consultoría tecnológica</a></li>
+        
+          <li><a href="/servicios#mantencion">Mantención y soporte</a></li>
+        
+      </ul>
+    </nav>
+
+    <div class="pie-col pie-contacto">
+      <h3>Contacto</h3>
+      <ul>
+        <li>
+          <span class="pie-icono"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
+</span>
+          <a href="/cdn-cgi/l/email-protection#7e1d11100a1f1d0a113e0c1b101a1f0e0e0d501d12"><span class="__cf_email__" data-cfemail="17747879637674637857657279737667676439747b">[email&#160;protected]</span></a>
+        </li>
+        <li>
+          <span class="pie-icono"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+</span>
+          <span>Santiago, Región Metropolitana</span>
+        </li>
+        <li>
+          <span class="pie-icono"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+</span>
+          <span>Lun a Vie, 9:00 – 18:00</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pie-legal">
+    <div class="contenedor pie-legal-int">
+      <p>© 2026 RendApps · Informática Daniel Chiappe Puebla E.I.R.L. · RUT 78.447.904-8</p>
+      <p>Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Menú móvil, sombra de cabecera y animaciones de aparición
+(function () {
+  document.documentElement.classList.add('js');
+
+  // --- Menú móvil ---
+  var menuBtn = document.querySelector('.menu-btn');
+  var nav = document.querySelector('.nav');
+
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', function () {
+      var abierto = nav.classList.toggle('abierta');
+      menuBtn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+      menuBtn.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
+    });
+
+    nav.addEventListener('click', function (evento) {
+      if (evento.target.closest('a')) {
+        nav.classList.remove('abierta');
+        menuBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // --- Sombra de la cabecera al hacer scroll ---
+  var cabecera = document.getElementById('cabecera');
+  if (cabecera) {
+    var actualizarSombra = function () {
+      cabecera.classList.toggle('con-sombra', window.scrollY > 8);
+    };
+    actualizarSombra();
+    window.addEventListener('scroll', actualizarSombra, { passive: true });
+  }
+
+  // --- Aparición discreta de secciones (reveal) ---
+  var reveals = document.querySelectorAll('.reveal');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('visible'); });
+    return;
+  }
+
+  var observador = new IntersectionObserver(function (entradas) {
+    entradas.forEach(function (entrada) {
+      if (entrada.isIntersecting) {
+        entrada.target.classList.add('visible');
+        observador.unobserve(entrada.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+  reveals.forEach(function (el, i) {
+    // Pequeño escalonado entre elementos hermanos para que la entrada sea suave
+    el.style.transitionDelay = Math.min(i % 6, 4) * 60 + 'ms';
+    observador.observe(el);
+  });
+})();
+
+
+// Animación de títulos: entrada palabra por palabra (h1 y h2 del sitio)
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+  function envolver(el) {
+    var nodos = Array.prototype.slice.call(el.childNodes);
+    nodos.forEach(function (n) { el.removeChild(n); });
+    nodos.forEach(function (n) {
+      if (n.nodeType === 3) {
+        n.textContent.split(/(\s+)/).forEach(function (trozo) {
+          if (!trozo) return;
+          if (/^\s+$/.test(trozo)) { el.appendChild(document.createTextNode(' ')); return; }
+          var caja = document.createElement('span');
+          caja.className = 'palabra';
+          var interior = document.createElement('span');
+          interior.textContent = trozo;
+          caja.appendChild(interior);
+          el.appendChild(caja);
+        });
+      } else {
+        var caja = document.createElement('span');
+        caja.className = 'palabra';
+        var interior = document.createElement('span');
+        interior.appendChild(n);
+        caja.appendChild(interior);
+        el.appendChild(caja);
+      }
+    });
+    var internos = el.querySelectorAll('.palabra > span');
+    Array.prototype.forEach.call(internos, function (s, i) {
+      s.style.animationDelay = (i * 0.07) + 's';
+    });
+    el.classList.add('titulo-anim');
+  }
+
+  var observadorTitulos = new IntersectionObserver(function (entradas) {
+    entradas.forEach(function (entrada) {
+      if (entrada.isIntersecting) {
+        entrada.target.classList.add('titulo-visible');
+        observadorTitulos.unobserve(entrada.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  var titulos = document.querySelectorAll('#contenido h1, #contenido h2');
+  Array.prototype.forEach.call(titulos, function (t) {
+    if (t.closest('.demo')) return;
+    envolver(t);
+    observadorTitulos.observe(t);
+  });
+})();
+
+// Demo interactiva de la Filtradora de Licitaciones (datos de ejemplo)
+(function () {
+  var demo = document.getElementById('demo');
+  if (!demo) return;
+
+  var $ = function (sel) { return demo.querySelector(sel); };
+  var $$ = function (sel) { return Array.prototype.slice.call(demo.querySelectorAll(sel)); };
+
+  // ============ Datos de ejemplo ============
+
+  // Filtros de ejemplo para un rubro ficticio (artículos de oficina e impresión).
+  // No corresponden a reglas reales de ningún cliente.
+  // t: P = palabra, D = derivados, C = combinación
+  var FILTROS = {
+    'CONVENIOS': [
+      { t: 'C', q: '(convenio o contrato o suministro) + (oficina o papelería o impresión o mobiliario o escritorio)' }
+    ],
+    'PAPELERIA': [
+      { t: 'P', q: 'La palabra «resma»' },
+      { t: 'P', q: 'La palabra «carpeta»' },
+      { t: 'D', q: 'Palabras que empiezan con «papel»' },
+      { t: 'C', q: 'sobre + (carta o oficio)' },
+      { t: 'P', q: 'La palabra «etiquetas»' }
+    ],
+    'IMPRESION': [
+      { t: 'C', q: 'cartucho + (tinta o tóner)' },
+      { t: 'P', q: 'La palabra «tóner»' },
+      { t: 'D', q: 'Palabras que empiezan con «impres»' },
+      { t: 'P', q: 'La palabra «plotter»' },
+      { t: 'P', q: 'La palabra «multifuncional»' },
+      { t: 'C', q: 'cinta + (etiquetadora o rotuladora)' }
+    ],
+    'MOBILIARIO': [
+      { t: 'C', q: 'silla + (ergonómica o giratoria o visita)' },
+      { t: 'P', q: 'La palabra «escritorio»' },
+      { t: 'P', q: 'La palabra «estante»' },
+      { t: 'P', q: 'La palabra «kardex»' },
+      { t: 'C', q: 'mesa + (reunión o trabajo)' },
+      { t: 'D', q: 'Palabras que empiezan con «mobiliar»' }
+    ],
+    'TECNOLOGIA': [
+      { t: 'P', q: 'La palabra «notebook»' },
+      { t: 'P', q: 'La palabra «monitor»' },
+      { t: 'C', q: 'computador + (escritorio o portátil)' },
+      { t: 'D', q: 'Palabras que empiezan con «proyect»' },
+      { t: 'P', q: 'La palabra «teclado»' },
+      { t: 'C', q: 'disco + (duro o ssd o externo)' }
+    ],
+    'ESCRITURA': [
+      { t: 'P', q: 'La palabra «lápiz»' },
+      { t: 'P', q: 'La palabra «bolígrafo»' },
+      { t: 'P', q: 'La palabra «plumón»' },
+      { t: 'P', q: 'La palabra «destacador»' },
+      { t: 'C', q: 'tinta + timbre' }
+    ],
+    'ARCHIVO': [
+      { t: 'D', q: 'Palabras que empiezan con «archiv»' },
+      { t: 'C', q: 'caja + (archivo o almacenaje)' },
+      { t: 'P', q: 'La palabra «separadores»' },
+      { t: 'P', q: 'La palabra «fundas»' },
+      { t: 'P', q: 'La palabra «clips»' }
+    ],
+    'ESCOLAR': [
+      { t: 'P', q: 'La palabra «cuaderno»' },
+      { t: 'P', q: 'La palabra «témpera»' },
+      { t: 'D', q: 'Palabras que empiezan con «escol»' },
+      { t: 'C', q: 'set + (geometría o arte)' },
+      { t: 'P', q: 'La palabra «mochila»' }
+    ]
+  };
+  var TIPO_NOMBRE = { P: 'Palabra', D: 'Derivados', C: 'Combinación' };
+
+  // Organismos e IDs ficticios: mantienen el formato de Mercado Público
+  // pero no corresponden a licitaciones ni instituciones reales.
+  var FOROS = [
+    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-05-18 09:16', estado: 'Respondida' },
+    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-06-01 12:58', estado: 'Respondida' },
+    { id: '4210-141-LP26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-06-26 14:40', estado: 'Respondida' },
+    { id: '105811-157-LP26', cliente: 'CENTRO CLÍNICO LAGUNA GRANDE', fecha: '2026-06-17 09:30', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:05', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
+    { id: '127900-26-LE26', cliente: 'CORPOSALUD BAHÍA NEGRA', fecha: '2026-06-12 12:59', estado: 'Respondida' }
+  ];
+
+  var HISTORIAL = [
+    { id: '105733-100-LP26', cliente: 'HOSPITAL DE NIÑOS RÍO BLANCO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
+    { id: '2307-21-LP26', cliente: 'I MUNICIPALIDAD DE BAHÍA NEGRA', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
+    { id: '1398-47-LE26', cliente: 'SERVICIO DE SALUD VALLE CLARO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
+    { id: '3191-58-LE26', cliente: 'HOSPITAL COSTA AZUL', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
+    { id: '2777-10-LE26', cliente: 'I MUNICIPALIDAD DE PUERTO ALERCE', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
+    { id: '4210-139-LE26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
+    { id: '105744-37-LP26', cliente: 'CENTRO DE SALUD LOMA VERDE', fecha: '2026-07-10 09:43', estado: 'Sin foro' }
+  ];
+
+  // ============ Utilidades ============
+
+  var toastEl = $('.demo-toast');
+  var toastTimer = null;
+  function toast(mensaje) {
+    toastEl.textContent = mensaje;
+    toastEl.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2600);
+  }
+
+  function mostrarPantalla(nombre) {
+    $$('.demo-pantalla').forEach(function (p) { p.hidden = p.getAttribute('data-nombre') !== nombre; });
+    demo.setAttribute('data-pantalla', nombre);
+    $('.demo-volver').hidden = nombre === 'inicio';
+  }
+
+  // ============ Navegación y tema ============
+
+  demo.addEventListener('click', function (evento) {
+    var ir = evento.target.closest('[data-ir]');
+    if (ir) { mostrarPantalla(ir.getAttribute('data-ir')); return; }
+    var conToast = evento.target.closest('[data-demo-toast]');
+    if (conToast) { toast(conToast.getAttribute('data-demo-toast')); }
+  });
+
+  $('.demo-volver').addEventListener('click', function () { mostrarPantalla('inicio'); });
+
+  $('.demo-toggle-tema').addEventListener('click', function () {
+    var claro = demo.getAttribute('data-tema') === 'claro';
+    demo.setAttribute('data-tema', claro ? 'oscuro' : 'claro');
+    this.textContent = claro ? '☀ Modo claro' : '🌙 Modo oscuro';
+  });
+
+  // ============ Pantalla Descarga ============
+
+  var progreso = $('.demo-progreso');
+  var resultados = $('.demo-resultados');
+  var btnDescargar = $('.demo-descargar');
+
+  btnDescargar.addEventListener('click', function () {
+    resultados.hidden = true;
+    progreso.hidden = false;
+    btnDescargar.disabled = true;
+    var barra = $('.demo-progreso-barra i');
+    var texto = $('.demo-progreso-texto');
+    barra.style.width = '0';
+    texto.textContent = 'Consultando API de Mercado Público…';
+
+    setTimeout(function () { barra.style.width = '45%'; }, 60);
+    setTimeout(function () {
+      texto.textContent = 'Aplicando filtros por categoría…';
+      barra.style.width = '85%';
+    }, 900);
+    setTimeout(function () { barra.style.width = '100%'; }, 1500);
+    setTimeout(function () {
+      progreso.hidden = true;
+      resultados.hidden = false;
+      btnDescargar.disabled = false;
+    }, 1900);
+  });
+
+  // Selección de licitaciones + exportación
+  var btnExportar = $('.demo-exportar');
+  function actualizarExportar() {
+    var n = $$('.demo-tabla-lic tbody input:checked').length;
+    btnExportar.disabled = n === 0;
+    btnExportar.textContent = n > 0 ? '↓ Exportar seleccionadas (' + n + ')' : '↓ Exportar seleccionadas';
+  }
+
+  $$('.demo-tabla-lic tbody tr').forEach(function (fila) {
+    fila.addEventListener('click', function (evento) {
+      var caja = fila.querySelector('input[type="checkbox"]');
+      if (evento.target !== caja) caja.checked = !caja.checked;
+      fila.classList.toggle('demo-seleccionada', caja.checked);
+      actualizarExportar();
+    });
+  });
+
+  btnExportar.addEventListener('click', function () {
+    var n = $$('.demo-tabla-lic tbody input:checked').length;
+    toast('Resultado_Filtrado.xlsx exportado con ' + n + ' licitación(es) — demo');
+  });
+
+  // ============ Pantalla Filtros ============
+
+  var listaCat = $('.demo-lista-cat');
+  var cuerpoFiltros = $('.demo-tabla-filtros tbody');
+  var tituloFiltros = $('.demo-filtros-titulo');
+
+  function pintarCategoria(nombre) {
+    tituloFiltros.textContent = 'Filtros de ' + nombre;
+    cuerpoFiltros.innerHTML = '';
+    FILTROS[nombre].forEach(function (filtro) {
+      var tr = document.createElement('tr');
+      var td1 = document.createElement('td');
+      td1.textContent = TIPO_NOMBRE[filtro.t];
+      var td2 = document.createElement('td');
+      td2.textContent = filtro.q;
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      cuerpoFiltros.appendChild(tr);
+    });
+    $$('.demo-lista-cat button').forEach(function (b) {
+      b.classList.toggle('demo-cat-activa', b.textContent === nombre);
+    });
+  }
+
+  Object.keys(FILTROS).forEach(function (nombre) {
+    var li = document.createElement('li');
+    var boton = document.createElement('button');
+    boton.type = 'button';
+    boton.textContent = nombre;
+    boton.addEventListener('click', function () { pintarCategoria(nombre); });
+    li.appendChild(boton);
+    listaCat.appendChild(li);
+  });
+  pintarCategoria('IMPRESION');
+
+  // ============ Pantalla Foros ============
+
+  var cuerpoForos = $('.demo-tabla-foros tbody');
+  var contadorForos = $('.demo-foros-count');
+  var tituloHistorial = $('.demo-historial-titulo');
+  var busquedaForos = $('.demo-filtro-foros');
+  var vistaForos = 'foros'; // 'foros' | 'historial'
+
+  function pintarForos() {
+    var datos = vistaForos === 'foros' ? FOROS : HISTORIAL;
+    var q = busquedaForos.value.trim().toLowerCase();
+    var visibles = datos.filter(function (f) {
+      return !q || f.id.toLowerCase().indexOf(q) !== -1 || f.cliente.toLowerCase().indexOf(q) !== -1;
+    });
+    cuerpoForos.innerHTML = '';
+    visibles.forEach(function (f) {
+      var tr = document.createElement('tr');
+      var esOk = f.estado === 'Respondida';
+      [f.id, f.cliente, f.fecha].forEach(function (valor, i) {
+        var td = document.createElement('td');
+        td.textContent = valor;
+        if (i === 0 && esOk) td.className = 'demo-link';
+        tr.appendChild(td);
+      });
+      var tdEstado = document.createElement('td');
+      tdEstado.textContent = (esOk ? '✓ ' : '') + f.estado;
+      tdEstado.className = esOk ? 'demo-estado-ok' : 'demo-estado-neutro';
+      tr.appendChild(tdEstado);
+      cuerpoForos.appendChild(tr);
+    });
+    contadorForos.textContent = visibles.length + ' foro(s)';
+    tituloHistorial.hidden = vistaForos !== 'historial';
+  }
+
+  busquedaForos.addEventListener('input', pintarForos);
+  $('.demo-ver-foros').addEventListener('click', function () { vistaForos = 'foros'; pintarForos(); });
+  $('.demo-ver-historial').addEventListener('click', function () { vistaForos = 'historial'; pintarForos(); });
+  pintarForos();
+})();
+
+
+// Enrutador de la réplica: convierte los enlaces internos en cambio de "página"
+(function () {
+  var MAPA = {
+    '/': 'inicio', '/servicios': 'servicios', '/productos': 'servicios',
+    '/proyectos': 'proyectos', '/proyectos/filtro-licitaciones': 'proyecto-filtro',
+    '/nosotros': 'nosotros', '/soporte': 'soporte', '/contacto': 'contacto'
+  };
+  function mostrarPagina(id, hash) {
+    document.querySelectorAll('main.pagina').forEach(function (m) {
+      m.hidden = m.getAttribute('data-pagina') !== id;
+    });
+    document.querySelectorAll('.nav-enlace').forEach(function (enlace) {
+      var destino = MAPA[enlace.getAttribute('href')] || '';
+      enlace.classList.toggle('activo', destino === id || (id === 'proyecto-filtro' && destino === 'proyectos'));
+    });
+    if (hash) {
+      var el = document.getElementById(hash);
+      if (el) { el.scrollIntoView(); return; }
+    }
+    window.scrollTo(0, 0);
+  }
+  document.addEventListener('click', function (evento) {
+    var a = evento.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (/^(https?:|mailto:|tel:|data:)/.test(href)) return;
+    evento.preventDefault();
+    var ruta = href.split('#')[0];
+    var hash = href.split('#')[1] || '';
+    if (ruta === '' && hash) {
+      var mismo = document.getElementById(hash);
+      if (mismo) mismo.scrollIntoView();
+      return;
+    }
+    mostrarPagina(MAPA[ruta] || 'inicio', hash);
+  });
+  // Formulario de contacto: simulación (la réplica no tiene servidor)
+  var form = document.querySelector('.contacto-form form');
+  if (form) {
+    form.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      var alerta = document.createElement('div');
+      alerta.className = 'alerta alerta-ok';
+      alerta.setAttribute('role', 'status');
+      alerta.innerHTML = '<h2>Mensaje enviado</h2><p>(Simulación: en el sitio real esto llega por POST al servidor.)</p>';
+      form.parentElement.insertBefore(alerta, form);
+      form.reset();
+      alerta.scrollIntoView({ block: 'center' });
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -859,3 +859,145 @@ a:hover { color: var(--azul-oscuro); }
   * { transition: none !important; animation: none !important; }
   .js .reveal { opacity: 1; transform: none; }
 }
+
+/* ============================================================
+   Ajustes de diseño: header azul, logo animado, títulos con
+   animación palabra a palabra y fondos con más color.
+   Paleta original intacta: azul #2563EB/#1E3A8A · naranja #F97316
+   ============================================================ */
+
+/* ---------- Header azul oscuro ---------- */
+.cabecera {
+  background: linear-gradient(100deg, #0B1B45 0%, #1E3A8A 55%, #1D40A6 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: none;
+}
+.cabecera.con-sombra { box-shadow: 0 10px 26px -16px rgba(11, 27, 69, 0.6); }
+.cabecera .logo-texto { color: #fff; }
+.logo-texto em { font-style: normal; color: var(--naranja); }
+.cabecera .nav-enlace { color: #C7D7F5; }
+.cabecera .nav-enlace:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.cabecera .nav-enlace.activo { color: #fff; }
+.cabecera .nav-enlace.activo::after { background: var(--naranja); }
+.cabecera .btn-contorno {
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45);
+}
+.cabecera .btn-contorno:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.cabecera .menu-btn { color: #fff; border-color: rgba(255, 255, 255, 0.35); }
+@media (max-width: 860px) {
+  .cabecera .nav {
+    background: #14276B;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .cabecera .nav-enlace { color: #DCE6FA; }
+  .cabecera .nav-enlace:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+}
+
+/* ---------- Chispa del logo ---------- */
+.logo-chispa {
+  animation: chispaLogo 2.8s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes chispaLogo {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.75; }
+}
+
+/* ---------- Héroe con más color y movimiento ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 62%);
+}
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero::before {
+  width: 440px; height: 440px;
+  right: -150px; top: -170px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.16), transparent 70%);
+  animation: flotar 9s ease-in-out infinite alternate;
+}
+.hero::after {
+  width: 280px; height: 280px;
+  left: -120px; bottom: -130px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.15), transparent 70%);
+  animation: flotar 7s ease-in-out infinite alternate-reverse;
+}
+.hero-int { position: relative; z-index: 1; }
+@keyframes flotar {
+  from { transform: translateY(-14px); }
+  to { transform: translateY(16px); }
+}
+
+/* ---------- Cabeceras de páginas interiores ---------- */
+.cabecera-pagina {
+  background: linear-gradient(160deg, #EFF6FF 0%, #F8FAFC 70%);
+  position: relative;
+  overflow: hidden;
+}
+.cabecera-pagina::after {
+  content: "";
+  position: absolute;
+  right: -120px; top: -150px;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.13), transparent 70%);
+  animation: flotar 8s ease-in-out infinite alternate;
+}
+.cabecera-pagina .contenedor { position: relative; z-index: 1; }
+
+/* ---------- Banda CTA con movimiento ---------- */
+.banda-cta::before { animation: flotar 8s ease-in-out infinite alternate; }
+
+/* ---------- Barrita de color en los eyebrows ---------- */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--naranja), var(--azul));
+  margin-right: 0.55rem;
+  vertical-align: 0.18em;
+}
+
+/* ---------- Acento del héroe: degradado animado ---------- */
+.hero .acento {
+  background: linear-gradient(90deg, var(--azul), #60A5FA 30%, var(--naranja) 55%, var(--azul) 80%);
+  background-size: 280% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradienteAcento 7s linear infinite;
+}
+@keyframes gradienteAcento { to { background-position: -280% 0; } }
+
+/* ---------- Títulos: entrada palabra por palabra ---------- */
+.js .titulo-anim .palabra {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.js .titulo-anim .palabra > span {
+  display: inline-block;
+  transform: translateY(115%);
+}
+.js .titulo-anim.titulo-visible .palabra > span {
+  animation: palabraSube 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes palabraSube {
+  from { opacity: 0; transform: translateY(115%) rotate(3deg); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .titulo-anim .palabra > span { transform: none; opacity: 1; }
+}

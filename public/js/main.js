@@ -55,3 +55,56 @@
     observador.observe(el);
   });
 })();
+
+// Animación de títulos: entrada palabra por palabra (h1 y h2 del sitio)
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+  function envolver(el) {
+    var nodos = Array.prototype.slice.call(el.childNodes);
+    nodos.forEach(function (n) { el.removeChild(n); });
+    nodos.forEach(function (n) {
+      if (n.nodeType === 3) {
+        n.textContent.split(/(\s+)/).forEach(function (trozo) {
+          if (!trozo) return;
+          if (/^\s+$/.test(trozo)) { el.appendChild(document.createTextNode(' ')); return; }
+          var caja = document.createElement('span');
+          caja.className = 'palabra';
+          var interior = document.createElement('span');
+          interior.textContent = trozo;
+          caja.appendChild(interior);
+          el.appendChild(caja);
+        });
+      } else {
+        var caja = document.createElement('span');
+        caja.className = 'palabra';
+        var interior = document.createElement('span');
+        interior.appendChild(n);
+        caja.appendChild(interior);
+        el.appendChild(caja);
+      }
+    });
+    var internos = el.querySelectorAll('.palabra > span');
+    Array.prototype.forEach.call(internos, function (s, i) {
+      s.style.animationDelay = (i * 0.07) + 's';
+    });
+    el.classList.add('titulo-anim');
+  }
+
+  var observadorTitulos = new IntersectionObserver(function (entradas) {
+    entradas.forEach(function (entrada) {
+      if (entrada.isIntersecting) {
+        entrada.target.classList.add('titulo-visible');
+        observadorTitulos.unobserve(entrada.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  var titulos = document.querySelectorAll('#contenido h1, #contenido h2');
+  Array.prototype.forEach.call(titulos, function (t) {
+    if (t.closest('.demo')) return;
+    envolver(t);
+    observadorTitulos.observe(t);
+  });
+})();

@@ -57,8 +57,8 @@ Marcados en el sitio con un borde punteado naranja (clase `placeholder-tag`):
 
 - Nombre y descripción reales de **Aplicación 1** y **Aplicación 2** (arreglo `proyectos` en `server.js`).
 
-Los correos (`contacto@rendapps.cl`, `soporte@rendapps.cl`) requieren tener sus reglas de
-reenvío creadas en Cloudflare → Email → Routing para recibir mensajes.
+El correo (`contacto@rendapps.cl`) requiere tener su regla de reenvío creada en
+Cloudflare → Email → Routing para recibir mensajes.
 
 Para cambiar la paleta, edita las variables al inicio de `public/css/styles.css`.
 Los servicios, proyectos y datos de la empresa se editan en `server.js`.

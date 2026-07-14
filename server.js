@@ -116,7 +116,6 @@ app.locals.empresa = {
   razon: 'Informática Daniel Chiappe Puebla E.I.R.L.',
   rut: '78.447.904-8',
   email: 'contacto@rendapps.cl',
-  emailSoporte: 'soporte@rendapps.cl',
   ubicacion: 'Santiago, Región Metropolitana',
   horario: 'Lun a Vie, 9:00 – 18:00'
 };
