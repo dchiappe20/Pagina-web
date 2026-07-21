@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Registro al evento · RendApps</title>
+<style>
+  :root{
+    --bg:#070c18; --card:rgba(12,20,38,.72); --bd:rgba(255,255,255,.10);
+    --tx:#eef3ff; --txd:#93a1c4; --field:rgba(255,255,255,.045);
+    --acc:#a3e635; --acc2:#4ade80; --err:#ff5c6c;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+    color:var(--tx); background:var(--bg); overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* Fondo: imagen (data center) + degradado oscuro encima. Cambia la URL por la tuya. */
+  .bg{
+    position:fixed; inset:0; z-index:0;
+    background:
+      linear-gradient(180deg, rgba(7,12,24,.82), rgba(7,12,24,.92)),
+      radial-gradient(1200px 600px at 70% -10%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(163,230,53,.12), transparent 60%),
+      url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80');
+    background-size:cover; background-position:center;
+  }
+  canvas#particles{position:fixed; inset:0; z-index:1; pointer-events:none}
+
+  .wrap{position:relative; z-index:2; min-height:100%; display:flex; align-items:center; justify-content:center; padding:28px 18px}
+
+  .card{
+    width:100%; max-width:380px; position:relative;
+    background:var(--card); border:1px solid var(--bd); border-radius:22px;
+    padding:30px 26px 26px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02) inset;
+    animation:rise .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .card::before{
+    content:""; position:absolute; top:0; left:22px; right:22px; height:2px; border-radius:2px;
+    background:linear-gradient(90deg,transparent,var(--acc),var(--acc2),transparent); opacity:.7;
+  }
+  @keyframes rise{from{opacity:0; transform:translateY(20px) scale(.985)}to{opacity:1; transform:none}}
+
+  .brand{display:flex; align-items:center; justify-content:center; gap:9px; margin-bottom:16px}
+  .logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--acc),var(--acc2));
+    display:flex; align-items:center; justify-content:center; font-weight:800; color:#07130a; font-size:15px;
+    box-shadow:0 6px 20px rgba(163,230,53,.35)}
+  .brand b{font-size:13px; letter-spacing:.5px; color:var(--txd); font-weight:600}
+
+  h1{margin:0; text-align:center; font-size:22px; font-weight:800; letter-spacing:-.3px; line-height:1.25}
+  .sub{margin:6px 0 0; text-align:center; font-size:13px; color:var(--txd)}
+
+  form{display:flex; flex-direction:column; gap:11px; margin-top:22px}
+  input{
+    width:100%; background:var(--field); border:1px solid var(--bd); border-radius:13px;
+    padding:14px 15px; font-size:15px; color:var(--tx); outline:none; font-family:inherit;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  input::placeholder{color:var(--txd); opacity:.75}
+  input:focus{border-color:var(--acc); box-shadow:0 0 0 3px rgba(163,230,53,.16)}
+  .row2{display:flex; gap:11px}
+  .row2 input{flex:1; min-width:0}
+
+  button{
+    margin-top:6px; border:0; border-radius:13px; padding:15px; font-size:15.5px; font-weight:800; cursor:pointer;
+    color:#07130a; background:linear-gradient(135deg,var(--acc),var(--acc2)); font-family:inherit;
+    box-shadow:0 8px 26px rgba(163,230,53,.35); transition:transform .15s, box-shadow .3s, opacity .2s;
+  }
+  button:hover{transform:translateY(-2px); box-shadow:0 12px 34px rgba(163,230,53,.5)}
+  button:active{transform:scale(.98)}
+  button:disabled{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none}
+
+  .hint{margin:12px 2px 0; text-align:center; font-size:11.5px; color:var(--txd); line-height:1.5}
+
+  .msg{margin-top:14px; border-radius:12px; padding:11px 13px; font-size:12.5px; line-height:1.45; display:none}
+  .msg.err{display:block; background:rgba(255,92,108,.12); border:1px solid rgba(255,92,108,.45); color:#ffb3ba}
+  .msg.ok{display:block; background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.45); color:#bff5d0}
+
+  /* Estado de éxito con QR */
+  .done{display:none; flex-direction:column; align-items:center; text-align:center; animation:rise .55s both}
+  .done.show{display:flex}
+  .qrbox{background:#fff; border-radius:18px; padding:16px; box-shadow:0 16px 50px rgba(74,222,128,.3); margin-top:6px}
+  .qrbox img{display:block; width:190px; height:190px}
+  .done h2{margin:20px 0 4px; font-size:20px; font-weight:800}
+  .done p{margin:0; font-size:13px; color:var(--txd); line-height:1.5}
+  .again{margin-top:20px; background:var(--field); color:var(--tx); border:1px solid var(--bd);
+    box-shadow:none; padding:13px 24px; font-size:13.5px}
+  .again:hover{border-color:var(--acc); transform:none; box-shadow:none}
+
+  .spin{width:18px;height:18px;border:2.5px solid rgba(7,19,10,.35);border-top-color:#07130a;border-radius:50%;
+    display:inline-block;vertical-align:-4px;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .foot{margin-top:20px;text-align:center;font-size:10px;letter-spacing:1.5px;color:var(--txd);opacity:.55;text-transform:uppercase}
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <canvas id="particles"></canvas>
+
+  <div class="wrap">
+    <div class="card">
+      <!-- Vista formulario -->
+      <div id="view-form">
+        <div class="brand"><div class="logo">R</div><b>RENDAPPS · REGISTRO</b></div>
+        <h1 id="titulo">Cargando evento…</h1>
+        <p class="sub">Reserva tu lugar</p>
+
+        <form id="form" autocomplete="on">
+          <input id="nombre" name="name" placeholder="Nombre y Apellido" required>
+          <input id="empresa" name="organization" placeholder="Empresa">
+          <input id="cargo" name="organization-title" placeholder="Cargo">
+          <input id="telefono" name="tel" type="tel" placeholder="Teléfono">
+          <input id="email" name="email" type="email" placeholder="Correo Electrónico" required>
+          <div id="cert-fields" class="row2" style="display:none">
+            <input id="rut" placeholder="RUT">
+            <input id="patente" placeholder="Patente">
+          </div>
+          <button id="submit" type="submit">Registrarme y obtener QR</button>
+        </form>
+
+        <p class="hint">Al registrarte recibirás tu código QR de acceso en tu correo electrónico.</p>
+        <div id="msg" class="msg"></div>
+      </div>
+
+      <!-- Vista éxito -->
+      <div id="view-done" class="done">
+        <div class="qrbox"><img id="qr" alt="Tu código QR"></div>
+        <h2>¡Registro exitoso!</h2>
+        <p id="done-sub">Guarda este QR y preséntalo en el acceso.<br>También lo enviamos a tu correo.</p>
+        <button class="again" type="button" onclick="location.reload()">Registrar a otra persona</button>
+      </div>
+
+      <div class="foot">Registro Pro Eventos</div>
+    </div>
+  </div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// Configuración Supabase (la publishable key es segura en el cliente)
+// ─────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://tbvqpsearfgazjnqvrng.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_l5D1VcgQjUCk7hfhgxm3eA_Asu5pRNx';
+const SCHEMA = 'registro_eventos';
+
+const headersBase = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+const eventoId = new URLSearchParams(location.search).get('id');
+
+const $ = (id) => document.getElementById(id);
+let esCertificacion = false;
+let eventoOk = false;
+
+function showMsg(text, type){ const m = $('msg'); m.textContent = text; m.className = 'msg ' + type; }
+
+// 1) Cargar el evento por id
+async function cargarEvento(){
+  if(!eventoId){ $('titulo').textContent = 'Enlace inválido'; showMsg('El enlace no incluye un evento. Solicita uno nuevo al organizador.', 'err'); $('submit').disabled = true; return; }
+  try{
+    const url = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=nombre,certificacion_capacitacion,activo';
+    const res = await fetch(url, { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    if(!res.ok) throw new Error('http ' + res.status);
+    const rows = await res.json();
+    if(!rows.length){ throw new Error('no-event'); }
+    const ev = rows[0];
+    $('titulo').textContent = ev.nombre || 'Registro al evento';
+    document.title = (ev.nombre || 'Registro') + ' · RendApps';
+    esCertificacion = !!ev.certificacion_capacitacion;
+    if(esCertificacion) $('cert-fields').style.display = 'flex';
+    if(ev.activo === false){ showMsg('Este evento ya no está activo.', 'err'); $('submit').disabled = true; return; }
+    eventoOk = true;
+  }catch(e){
+    console.error(e);
+    $('titulo').textContent = 'Evento no encontrado';
+    showMsg('No se pudo cargar la información del evento. Verifique el enlace.', 'err');
+    $('submit').disabled = true;
+  }
+}
+
+// 2) Registrar
+$('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if(!eventoOk) return;
+  const nombre = $('nombre').value.trim();
+  const email = $('email').value.trim().toLowerCase();
+  if(!nombre || !email){ showMsg('Ingresa tu nombre y tu correo.', 'err'); return; }
+
+  const btn = $('submit');
+  btn.disabled = true; const prev = btn.textContent; btn.innerHTML = '<span class="spin"></span>';
+  $('msg').className = 'msg';
+
+  const payload = {
+    evento_id: eventoId,
+    nombre_completo: nombre,
+    empresa: $('empresa').value.trim() || null,
+    cargo: $('cargo').value.trim() || null,
+    telefono: $('telefono').value.trim() || null,
+    email: email,
+    rut: esCertificacion ? ($('rut').value.trim() || null) : null,
+    patente: esCertificacion ? ($('patente').value.trim() || null) : null,
+    ingresado_por: null,
+    acreditado: false
+  };
+
+  try{
+    const res = await fetch(SUPABASE_URL + '/rest/v1/registrados', {
+      method: 'POST',
+      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA, Prefer: 'return=representation' },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok){ const t = await res.text(); throw new Error(t || ('http ' + res.status)); }
+    const [row] = await res.json();
+
+    // 3) Disparar el correo con el QR (best-effort; no bloquea el éxito)
+    try{
+      await fetch(SUPABASE_URL + '/functions/v1/enviar-qr', {
+        method: 'POST',
+        headers: { ...headersBase, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ record: { ...row, evento_id: eventoId } })
+      });
+    }catch(mailErr){ console.warn('QR mail:', mailErr); }
+
+    // 4) Mostrar el QR (mismo id que escanea la app)
+    $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(row.id);
+    $('view-form').style.display = 'none';
+    $('view-done').classList.add('show');
+  }catch(err){
+    console.error(err);
+    showMsg('No pudimos completar tu registro. Intenta nuevamente en unos segundos.', 'err');
+    btn.disabled = false; btn.textContent = prev;
+  }
+});
+
+cargarEvento();
+
+// ─────────────────────────────────────────────────────────────
+// Animación de partículas (constelación)
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('particles'), ctx = c.getContext('2d');
+  let w, h, dpr, pts = [];
+  const COUNT = Math.min(90, Math.floor((innerWidth*innerHeight)/16000));
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    w = c.width = innerWidth*dpr; h = c.height = innerHeight*dpr;
+    c.style.width = innerWidth+'px'; c.style.height = innerHeight+'px';
+  }
+  function init(){
+    pts = Array.from({length:COUNT}, () => ({
+      x:Math.random()*w, y:Math.random()*h,
+      vx:(Math.random()-.5)*0.25*dpr, vy:(Math.random()-.5)*0.25*dpr,
+      r:(Math.random()*1.6+0.6)*dpr
+    }));
+  }
+  function step(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of pts){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(163,230,53,.55)'; ctx.fill();
+    }
+    const max=130*dpr;
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const a=pts[i], b=pts[j], dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
+        if(d<max){
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle='rgba(120,200,255,'+(0.16*(1-d/max))+')'; ctx.lineWidth=dpr*0.6; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(step);
+  }
+  addEventListener('resize', ()=>{ resize(); init(); });
+  resize(); init(); step();
+})();
+</script>
+</body>
+</html>

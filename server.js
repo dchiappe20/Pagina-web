@@ -174,6 +174,12 @@ app.post('/contacto', (req, res) => {
   res.render('contacto', { titulo: 'Contacto', pagina: 'contacto', enviado: true, error: null, datos: {} });
 });
 
+// Formulario público de registro a eventos (Registro Pro Eventos).
+// La app enlaza a https://www.rendapps.cl/registro-forms?id=<eventoId>
+app.get('/registro-forms', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'registro-forms.html'));
+});
+
 app.use((req, res) => {
   res.status(404).render('404', { titulo: 'Página no encontrada', pagina: '' });
 });
