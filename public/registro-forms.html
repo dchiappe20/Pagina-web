@@ -166,16 +166,43 @@ function uuidv4(){
 
 function showMsg(text, type){ const m = $('msg'); m.textContent = text; m.className = 'msg ' + type; }
 
+// Fondo personalizable por evento: imagen del evento o color HSV (#RRGGBBAA).
+// Se lee en vivo desde la BD en cada carga → los cambios hechos en la app
+// llegan al form con solo recargar la página.
+const DEFAULT_IMG = "url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80')";
+function aplicarFondo(ev){
+  const bg = document.querySelector('.bg');
+  if(!bg) return;
+  if(ev.form_usar_imagen && ev.imagen_url){
+    // Imagen del evento + velo oscuro para que la tarjeta siga siendo legible.
+    bg.style.background = "linear-gradient(180deg, rgba(7,12,24,.55), rgba(7,12,24,.8)), url('" + ev.imagen_url + "')";
+    bg.style.backgroundSize = 'cover';
+    bg.style.backgroundPosition = 'center';
+  } else if(ev.form_bg_color){
+    // Color con transparencia (hex de 8 dígitos, CSS lo soporta nativo)
+    // superpuesto sobre la imagen por defecto: alfa bajo = tinte, alfa 100% = color sólido.
+    const c = ev.form_bg_color;
+    bg.style.background = 'linear-gradient(' + c + ',' + c + '), ' + DEFAULT_IMG;
+    bg.style.backgroundSize = 'cover';
+    bg.style.backgroundPosition = 'center';
+  }
+}
+
 // 1) Cargar el evento por id
 async function cargarEvento(){
   if(!eventoId){ $('titulo').textContent = 'Enlace inválido'; showMsg('El enlace no incluye un evento. Solicita uno nuevo al organizador.', 'err'); $('submit').disabled = true; return; }
   try{
-    const url = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=nombre,certificacion_capacitacion,activo';
-    const res = await fetch(url, { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    const base = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=';
+    // Intento con las columnas de personalización; si aún no existen en la BD, fallback al select básico.
+    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    if(!res.ok){
+      res = await fetch(base + 'nombre,certificacion_capacitacion,activo', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    }
     if(!res.ok) throw new Error('http ' + res.status);
     const rows = await res.json();
     if(!rows.length){ throw new Error('no-event'); }
     const ev = rows[0];
+    aplicarFondo(ev);
     $('titulo').textContent = ev.nombre || 'Registro al evento';
     document.title = (ev.nombre || 'Registro') + ' · RendApps';
     esCertificacion = !!ev.certificacion_capacitacion;
