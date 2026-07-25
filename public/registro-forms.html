@@ -146,7 +146,9 @@ const SUPABASE_URL = 'https://tbvqpsearfgazjnqvrng.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_l5D1VcgQjUCk7hfhgxm3eA_Asu5pRNx';
 const SCHEMA = 'registro_eventos';
 
-const headersBase = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+// OJO: la publishable key va SOLO en apikey. Si se manda también en
+// Authorization: Bearer, PostgREST no la resuelve al rol `anon` y el RLS falla.
+const headersBase = { apikey: SUPABASE_KEY };
 const eventoId = new URLSearchParams(location.search).get('id');
 
 const $ = (id) => document.getElementById(id);
@@ -217,7 +219,7 @@ $('form').addEventListener('submit', async (e) => {
     try{
       await fetch(SUPABASE_URL + '/functions/v1/enviar-qr', {
         method: 'POST',
-        headers: { ...headersBase, 'Content-Type': 'application/json' },
+        headers: { ...headersBase, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({ record: { ...row, evento_id: eventoId } })
       });
     }catch(mailErr){ console.warn('QR mail:', mailErr); }
