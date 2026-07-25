@@ -155,6 +155,15 @@ const $ = (id) => document.getElementById(id);
 let esCertificacion = false;
 let eventoOk = false;
 
+// UUID v4 (usa el nativo si está; si no, fallback). Generamos el id en el
+// cliente para NO tener que leer la fila de vuelta (anon no tiene SELECT).
+function uuidv4(){
+  if(crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8); return v.toString(16);
+  });
+}
+
 function showMsg(text, type){ const m = $('msg'); m.textContent = text; m.className = 'msg ' + type; }
 
 // 1) Cargar el evento por id
@@ -193,7 +202,9 @@ $('form').addEventListener('submit', async (e) => {
   btn.disabled = true; const prev = btn.textContent; btn.innerHTML = '<span class="spin"></span>';
   $('msg').className = 'msg';
 
+  const nuevoId = uuidv4();
   const payload = {
+    id: nuevoId,
     evento_id: eventoId,
     nombre_completo: nombre,
     empresa: $('empresa').value.trim() || null,
@@ -207,25 +218,25 @@ $('form').addEventListener('submit', async (e) => {
   };
 
   try{
+    // return=minimal: NO pedimos la fila de vuelta (evita el SELECT que anon no tiene).
     const res = await fetch(SUPABASE_URL + '/rest/v1/registrados', {
       method: 'POST',
-      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA, Prefer: 'return=representation' },
+      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA, Prefer: 'return=minimal' },
       body: JSON.stringify(payload)
     });
     if(!res.ok){ const t = await res.text(); throw new Error(t || ('http ' + res.status)); }
-    const [row] = await res.json();
 
     // 3) Disparar el correo con el QR (best-effort; no bloquea el éxito)
     try{
       await fetch(SUPABASE_URL + '/functions/v1/enviar-qr', {
         method: 'POST',
         headers: { ...headersBase, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ record: { ...row, evento_id: eventoId } })
+        body: JSON.stringify({ record: { ...payload } })
       });
     }catch(mailErr){ console.warn('QR mail:', mailErr); }
 
     // 4) Mostrar el QR (mismo id que escanea la app)
-    $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(row.id);
+    $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(nuevoId);
     $('view-form').style.display = 'none';
     $('view-done').classList.add('show');
   }catch(err){

@@ -177,6 +177,8 @@ app.post('/contacto', (req, res) => {
 // Formulario público de registro a eventos (Registro Pro Eventos).
 // La app enlaza a https://www.rendapps.cl/registro-forms?id=<eventoId>
 app.get('/registro-forms', (req, res) => {
+  // Sin caché: el formulario cambia con frecuencia y no debe quedar cacheado.
+  res.set('Cache-Control', 'no-store, must-revalidate');
   res.sendFile(path.join(__dirname, 'public', 'registro-forms.html'));
 });
 
