@@ -177,30 +177,44 @@ function aplicarFondo(ev){
   if(ev.form_usar_imagen && ev.imagen_url){
     // Imagen del evento con el encuadre configurado para este formato.
     const esPC = window.innerWidth >= 768;
-    const cfg = (esPC ? ev.form_img_pc : ev.form_img_movil) || {};
-    const x = typeof cfg.x === 'number' ? cfg.x : 0.5;
-    const y = typeof cfg.y === 'number' ? cfg.y : 0.5;
-    const zoom = typeof cfg.zoom === 'number' && cfg.zoom > 0 ? cfg.zoom : 1;
+    const cfg = esPC ? ev.form_img_pc : ev.form_img_movil;
 
     bg.classList.add('con-imagen');
     bg.style.background = "url('" + ev.imagen_url + "')";
     bg.style.backgroundRepeat = 'no-repeat';
-    bg.style.backgroundPosition = (x * 100) + '% ' + (y * 100) + '%';
-    bg.style.backgroundSize = 'cover';
+    bg.style.backgroundColor = '#070c18'; // relleno si la imagen no cubre todo
 
-    // Con zoom: replicamos "cover" a mano para poder multiplicarlo. El eje que
-    // manda depende de si la imagen es más ancha que la ventana.
-    if(zoom !== 1){
-      const probe = new Image();
-      probe.onload = () => {
-        const ratioImg = probe.naturalWidth / probe.naturalHeight;
-        const ratioWin = window.innerWidth / window.innerHeight;
-        bg.style.backgroundSize = ratioImg > ratioWin
-          ? 'auto ' + (zoom * 100) + '%'
-          : (zoom * 100) + '% auto';
-      };
-      probe.src = ev.imagen_url;
+    if(!cfg || typeof cfg.zoom !== 'number'){
+      // Nunca se configuró el encuadre: cover centrado (comportamiento por defecto).
+      bg.style.backgroundPosition = 'center';
+      bg.style.backgroundSize = 'cover';
+      return;
     }
+
+    const x = typeof cfg.x === 'number' ? cfg.x : 0.5;
+    const y = typeof cfg.y === 'number' ? cfg.y : 0.5;
+    const zoom = cfg.zoom > 0 ? cfg.zoom : 1;
+    const fill = cfg.fill === true; // modo "Llenar marco"
+    bg.style.backgroundPosition = (x * 100) + '% ' + (y * 100) + '%';
+
+    if(fill && zoom === 1){
+      // Cubre siempre, sea cual sea la pantalla del visitante.
+      bg.style.backgroundSize = 'cover';
+      return;
+    }
+
+    // Con zoom, replicamos la base del modo (cover o contain) por el factor.
+    // El eje que manda es opuesto entre ambos modos.
+    const probe = new Image();
+    probe.onload = () => {
+      const ratioImg = probe.naturalWidth / probe.naturalHeight;
+      const ratioWin = window.innerWidth / window.innerHeight;
+      const anchoManda = fill ? (ratioImg <= ratioWin) : (ratioImg > ratioWin);
+      bg.style.backgroundSize = anchoManda
+        ? (zoom * 100) + '% auto'
+        : 'auto ' + (zoom * 100) + '%';
+    };
+    probe.src = ev.imagen_url;
     return;
   }
 
