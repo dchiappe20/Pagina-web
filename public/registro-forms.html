@@ -116,9 +116,9 @@
           <input id="cargo" name="organization-title" placeholder="Cargo">
           <input id="telefono" name="tel" type="tel" placeholder="Teléfono">
           <input id="email" name="email" type="email" placeholder="Correo Electrónico" required>
-          <div id="cert-fields" class="row2" style="display:none">
-            <input id="rut" placeholder="RUT">
-            <input id="patente" placeholder="Patente">
+          <div id="campos-opcionales" class="row2" style="display:none">
+            <input id="rut" placeholder="RUT" style="display:none">
+            <input id="patente" placeholder="Patente" style="display:none">
           </div>
           <button id="submit" type="submit">Registrarme y obtener QR</button>
         </form>
@@ -153,7 +153,8 @@ const headersBase = { apikey: SUPABASE_KEY };
 const eventoId = new URLSearchParams(location.search).get('id');
 
 const $ = (id) => document.getElementById(id);
-let esCertificacion = false;
+// Campos opcionales que pide este evento (configurables desde la app).
+let campos = { rut: false, patente: false };
 let eventoOk = false;
 
 // UUID v4 (usa el nativo si está; si no, fallback). Generamos el id en el
@@ -232,7 +233,7 @@ async function cargarEvento(){
   try{
     const base = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=';
     // Intento con las columnas de personalización; si aún no existen en la BD, fallback al select básico.
-    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color,form_img_movil,form_img_pc', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color,form_img_movil,form_img_pc,form_campos', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
     if(!res.ok){
       res = await fetch(base + 'nombre,certificacion_capacitacion,activo', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
     }
@@ -243,8 +244,16 @@ async function cargarEvento(){
     aplicarFondo(ev);
     $('titulo').textContent = ev.nombre || 'Registro al evento';
     document.title = (ev.nombre || 'Registro') + ' · RendApps';
-    esCertificacion = !!ev.certificacion_capacitacion;
-    if(esCertificacion) $('cert-fields').style.display = 'flex';
+    // Compatibilidad: los eventos antiguos usaban la marca de certificación.
+    if(ev.form_campos && typeof ev.form_campos === 'object'){
+      campos = { rut: !!ev.form_campos.rut, patente: !!ev.form_campos.patente };
+    } else {
+      const cert = !!ev.certificacion_capacitacion;
+      campos = { rut: cert, patente: cert };
+    }
+    if(campos.rut) $('rut').style.display = 'block';
+    if(campos.patente) $('patente').style.display = 'block';
+    if(campos.rut || campos.patente) $('campos-opcionales').style.display = 'flex';
     if(ev.activo === false){ showMsg('Este evento ya no está activo.', 'err'); $('submit').disabled = true; return; }
     eventoOk = true;
   }catch(e){
@@ -276,8 +285,8 @@ $('form').addEventListener('submit', async (e) => {
     cargo: $('cargo').value.trim() || null,
     telefono: $('telefono').value.trim() || null,
     email: email,
-    rut: esCertificacion ? ($('rut').value.trim() || null) : null,
-    patente: esCertificacion ? ($('patente').value.trim() || null) : null,
+    rut: campos.rut ? ($('rut').value.trim() || null) : null,
+    patente: campos.patente ? ($('patente').value.trim() || null) : null,
     ingresado_por: null,
     acreditado: false
   };
