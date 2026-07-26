@@ -108,7 +108,7 @@
       <div id="view-form">
         <div class="brand"><div class="logo">R</div><b>RENDAPPS · REGISTRO</b></div>
         <h1 id="titulo">Cargando evento…</h1>
-        <p class="sub">Reserva tu lugar</p>
+        <p class="sub" id="cuando">Reserva tu lugar</p>
 
         <form id="form" autocomplete="on">
           <input id="nombre" name="name" placeholder="Nombre y Apellido" required>
@@ -227,13 +227,28 @@ function aplicarFondo(ev){
   }
 }
 
+// Fecha y horario del evento, listos para mostrar bajo el título.
+function cuandoTexto(ev){
+  let fecha = ev.fecha || '';
+  // En la BD la fecha va como AAAA-MM-DD; se muestra como DD-MM-AAAA.
+  if(fecha.includes('-') && fecha.split('-')[0].length === 4){
+    const [a, m, d] = fecha.split('-');
+    fecha = `${d}-${m}-${a}`;
+  }
+  const valida = (h) => typeof h === 'string' && /^\d{2}:\d{2}$/.test(h.trim());
+  const i = valida(ev.hora_inicio) ? ev.hora_inicio.trim() : '';
+  const f = valida(ev.hora_fin) ? ev.hora_fin.trim() : '';
+  const horario = i && f ? `${i} a ${f}` : i ? `Desde ${i}` : f ? `Hasta ${f}` : '';
+  return [fecha, horario].filter(Boolean).join(' · ');
+}
+
 // 1) Cargar el evento por id
 async function cargarEvento(){
   if(!eventoId){ $('titulo').textContent = 'Enlace inválido'; showMsg('El enlace no incluye un evento. Solicita uno nuevo al organizador.', 'err'); $('submit').disabled = true; return; }
   try{
     const base = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=';
     // Intento con las columnas de personalización; si aún no existen en la BD, fallback al select básico.
-    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color,form_img_movil,form_img_pc,form_campos', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color,form_img_movil,form_img_pc,form_campos,fecha,hora_inicio,hora_fin', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
     if(!res.ok){
       res = await fetch(base + 'nombre,certificacion_capacitacion,activo', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
     }
@@ -244,6 +259,7 @@ async function cargarEvento(){
     aplicarFondo(ev);
     $('titulo').textContent = ev.nombre || 'Registro al evento';
     document.title = (ev.nombre || 'Registro') + ' · RendApps';
+    $('cuando').textContent = cuandoTexto(ev) || 'Reserva tu lugar';
     // Compatibilidad: los eventos antiguos usaban la marca de certificación.
     if(ev.form_campos && typeof ev.form_campos === 'object'){
       campos = { rut: !!ev.form_campos.rut, patente: !!ev.form_campos.patente };
