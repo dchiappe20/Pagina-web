@@ -18,16 +18,17 @@
     color:var(--tx); background:var(--bg); overflow-x:hidden;
     -webkit-font-smoothing:antialiased;
   }
-  /* Fondo: imagen (data center) + degradado oscuro encima. Cambia la URL por la tuya. */
+  /* Fondo por defecto: oscuro con halos de color (sin foto). Se reemplaza
+     desde la BD por el color elegido o por la imagen del evento. */
   .bg{
     position:fixed; inset:0; z-index:0;
     background:
-      linear-gradient(180deg, rgba(7,12,24,.82), rgba(7,12,24,.92)),
       radial-gradient(1200px 600px at 70% -10%, rgba(56,189,248,.18), transparent 60%),
       radial-gradient(900px 500px at 10% 110%, rgba(163,230,53,.12), transparent 60%),
-      url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80');
-    background-size:cover; background-position:center;
+      #070c18;
   }
+  /* Velo sobre la imagen para que la tarjeta siga siendo legible. */
+  .bg.con-imagen::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,12,24,.45),rgba(7,12,24,.72))}
   canvas#particles{position:fixed; inset:0; z-index:1; pointer-events:none}
 
   .wrap{position:relative; z-index:2; min-height:100%; display:flex; align-items:center; justify-content:center; padding:28px 18px}
@@ -169,22 +170,45 @@ function showMsg(text, type){ const m = $('msg'); m.textContent = text; m.classN
 // Fondo personalizable por evento: imagen del evento o color HSV (#RRGGBBAA).
 // Se lee en vivo desde la BD en cada carga → los cambios hechos en la app
 // llegan al form con solo recargar la página.
-const DEFAULT_IMG = "url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80')";
 function aplicarFondo(ev){
   const bg = document.querySelector('.bg');
   if(!bg) return;
+
   if(ev.form_usar_imagen && ev.imagen_url){
-    // Imagen del evento + velo oscuro para que la tarjeta siga siendo legible.
-    bg.style.background = "linear-gradient(180deg, rgba(7,12,24,.55), rgba(7,12,24,.8)), url('" + ev.imagen_url + "')";
+    // Imagen del evento con el encuadre configurado para este formato.
+    const esPC = window.innerWidth >= 768;
+    const cfg = (esPC ? ev.form_img_pc : ev.form_img_movil) || {};
+    const x = typeof cfg.x === 'number' ? cfg.x : 0.5;
+    const y = typeof cfg.y === 'number' ? cfg.y : 0.5;
+    const zoom = typeof cfg.zoom === 'number' && cfg.zoom > 0 ? cfg.zoom : 1;
+
+    bg.classList.add('con-imagen');
+    bg.style.background = "url('" + ev.imagen_url + "')";
+    bg.style.backgroundRepeat = 'no-repeat';
+    bg.style.backgroundPosition = (x * 100) + '% ' + (y * 100) + '%';
     bg.style.backgroundSize = 'cover';
-    bg.style.backgroundPosition = 'center';
-  } else if(ev.form_bg_color){
-    // Color con transparencia (hex de 8 dígitos, CSS lo soporta nativo)
-    // superpuesto sobre la imagen por defecto: alfa bajo = tinte, alfa 100% = color sólido.
-    const c = ev.form_bg_color;
-    bg.style.background = 'linear-gradient(' + c + ',' + c + '), ' + DEFAULT_IMG;
-    bg.style.backgroundSize = 'cover';
-    bg.style.backgroundPosition = 'center';
+
+    // Con zoom: replicamos "cover" a mano para poder multiplicarlo. El eje que
+    // manda depende de si la imagen es más ancha que la ventana.
+    if(zoom !== 1){
+      const probe = new Image();
+      probe.onload = () => {
+        const ratioImg = probe.naturalWidth / probe.naturalHeight;
+        const ratioWin = window.innerWidth / window.innerHeight;
+        bg.style.backgroundSize = ratioImg > ratioWin
+          ? 'auto ' + (zoom * 100) + '%'
+          : (zoom * 100) + '% auto';
+      };
+      probe.src = ev.imagen_url;
+    }
+    return;
+  }
+
+  if(ev.form_bg_color){
+    // Color plano elegido en la app (hex de 8 dígitos: incluye transparencia,
+    // que se mezcla con el fondo oscuro de la página).
+    bg.classList.remove('con-imagen');
+    bg.style.background = ev.form_bg_color;
   }
 }
 
@@ -194,7 +218,7 @@ async function cargarEvento(){
   try{
     const base = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=';
     // Intento con las columnas de personalización; si aún no existen en la BD, fallback al select básico.
-    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
+    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color,form_img_movil,form_img_pc', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
     if(!res.ok){
       res = await fetch(base + 'nombre,certificacion_capacitacion,activo', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
     }
