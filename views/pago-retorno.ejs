@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/css/planes.css?v=1">
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="retorno">
+      <% if (estado === 'ok') { %>
+        <div class="retorno-icono ok">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>¡Listo! Tu prueba ya empezó</h1>
+        <p>Registramos tu tarjeta y activamos los <strong>14 días de prueba</strong>. No se te ha cobrado nada.</p>
+        <p>En unos minutos te llega un correo con los accesos. Si no lo ves, revisa la carpeta de spam.</p>
+        <p>El primer cobro se hará al terminar la prueba, y puedes cancelar antes desde tu cuenta o escribiéndonos.</p>
+
+      <% } else if (estado === 'pendiente') { %>
+        <div class="retorno-icono pendiente">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+        </div>
+        <h1>Estamos confirmando el registro</h1>
+        <p>Flow todavía no nos confirma el resultado. Esto suele resolverse en menos de un minuto.</p>
+        <p>No vuelvas a registrar la tarjeta: si el registro se completó, te llegará el correo con los accesos. Si en una hora no tienes noticias, escríbenos a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a>.</p>
+
+      <% } else { %>
+        <div class="retorno-icono error">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h1>No pudimos registrar la tarjeta</h1>
+        <p>El registro no se completó, así que <strong>no se generó ningún cobro</strong>.</p>
+        <p>Puede haber pasado por un rechazo del banco, datos mal ingresados o porque cerraste la ventana antes de terminar. Puedes intentarlo otra vez.</p>
+      <% } %>
+
+      <div class="retorno-acciones">
+        <% if (estado === 'ok') { %>
+          <a class="btn" href="/">Volver al inicio <span class="btn-flecha" aria-hidden="true">→</span></a>
+        <% } else { %>
+          <a class="btn" href="/planes">Volver a intentar <span class="btn-flecha" aria-hidden="true">→</span></a>
+          <a class="btn btn-contorno" href="/contacto">Escribirnos</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

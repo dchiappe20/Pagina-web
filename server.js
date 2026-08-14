@@ -100,6 +100,59 @@ const proyectos = [
   }
 ];
 
+// ================================
+// Planes de suscripción
+//
+// El precio va en UF porque los planes están creados en UF dentro de Flow y
+// es Flow quien convierte a pesos en cada cobro. El valor en CLP que ve el
+// visitante es referencial y lo calcula el navegador con la UF del día.
+// ================================
+const planes = [
+  {
+    id: 'filt', // debe coincidir con core.apps.codigo
+    app: 'Filtro de Licitaciones',
+    nombre: 'Plan Pymes',
+    sub: 'Filtro de Licitaciones · Mercado Público y Compra Ágil',
+    icono: 'documento',
+    uf: 3,
+    features: [
+      'Descarga y filtrado diario de licitaciones desde Mercado Público',
+      'Barrido automático de Compra Ágil (madrugada, media mañana y media tarde)',
+      'Vigilancia de foros de licitaciones (avisa preguntas dirigidas a tu empresa)',
+      'Cuentas y roles por empresa (administrar, descargar o consultar)',
+      'Exportación de licitaciones y cotizaciones a Excel',
+      'Actualizaciones automáticas de la aplicación',
+      'Soporte por correo'
+    ]
+  },
+  {
+    id: 'gatheryx', // debe coincidir con core.apps.codigo
+    app: 'Gatheryx',
+    nombre: 'Plan Pymes',
+    sub: 'Gatheryx · Control de accesos y acreditación para eventos',
+    icono: 'movil',
+    uf: 1,
+    features: [
+      'Acreditación de asistentes por lectura de código QR en tiempo real',
+      'Operación sin conexión con sincronización automática al recuperar señal',
+      'Formulario de inscripción pública por evento, con envío automático del QR',
+      'Métricas de asistencia en vivo durante el evento',
+      'Personalización de marca: colores, tipografía y campos del formulario',
+      'Exportación de registrados y acreditados a Excel',
+      'Soporte por correo'
+    ]
+  }
+];
+
+// Config que el navegador necesita. Sólo datos públicos: la URL de la Edge
+// Function y el valor de respaldo de la UF. Ninguna credencial de Flow pasa
+// por aquí — viven como secrets en Supabase.
+const configPlanes = {
+  urlCrearSuscripcion: process.env.URL_CREAR_SUSCRIPCION || '',
+  // Sólo se usa si mindicador.cl no responde, y sólo para mostrar.
+  ufRespaldo: Number(process.env.UF_RESPALDO) || 39500
+};
+
 const proceso = [
   { n: 1, nombre: 'Entendemos', icono: 'chat', desc: 'Escuchamos tu idea y entendemos tus objetivos y necesidades.' },
   { n: 2, nombre: 'Diseñamos', icono: 'diseno', desc: 'Proponemos la mejor solución tecnológica y planificamos cada etapa.' },
@@ -147,6 +200,21 @@ app.get('/proyectos/filtro-licitaciones', (req, res) => {
 app.get('/proyectos/gatheryx', (req, res) => {
   // fuentesApp: la demo replica la app real, que usa Sora + JetBrains Mono.
   res.render('proyecto-gatheryx', { titulo: 'Gatheryx', pagina: 'proyectos', fuentesApp: true });
+});
+
+app.get('/planes', (req, res) => {
+  res.render('planes', { titulo: 'Planes y precios', pagina: 'planes', planes, configPlanes });
+});
+
+// Página a la que Flow devuelve al cliente tras registrar la tarjeta.
+// El estado real lo determina la Edge Function `flow-retorno`, que valida
+// contra Flow y redirige aquí con ?estado=ok|pendiente|error. Nunca se decide
+// nada mirando sólo este parámetro: es únicamente para elegir qué mostrar.
+app.get('/pago/retorno', (req, res) => {
+  const permitidos = ['ok', 'pendiente', 'error'];
+  const estado = permitidos.includes(req.query.estado) ? req.query.estado : 'error';
+  res.set('Cache-Control', 'no-store, must-revalidate');
+  res.render('pago-retorno', { titulo: 'Estado de tu suscripción', pagina: 'planes', estado });
 });
 
 app.get('/nosotros', (req, res) => {

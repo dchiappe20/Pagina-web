@@ -1,0 +1,144 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/css/planes.css?v=1">
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Planes</p>
+    <h1>Precios simples, sin sorpresas</h1>
+    <p class="cabecera-sub">Suscripción mensual por empresa, con 14 días de prueba gratis. Sin costo de instalación y sin permanencia mínima.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="planes-grid">
+      <% planes.forEach(function (p) { %>
+        <article class="plan reveal" id="plan-<%= p.id %>">
+          <div class="plan-cabecera">
+            <h2 class="plan-nombre"><%= p.nombre %></h2>
+            <span class="plan-icono"><%- include('partials/icono', { n: p.icono, t: 22 }) %></span>
+          </div>
+          <p class="plan-sub"><%= p.sub %></p>
+
+          <div class="plan-precio">
+            <span class="plan-precio-uf"><%= p.uf %> UF</span>
+            <span class="plan-precio-periodo">/mes + IVA</span>
+          </div>
+          <%# El CLP lo rellena planes.js con el valor de la UF del día. %>
+          <p class="plan-clp" data-uf="<%= p.uf %>" data-estado="cargando">Calculando valor referencial…</p>
+
+          <ul class="plan-lista">
+            <% p.features.forEach(function (f) { %>
+              <li>
+                <span class="plan-check" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                <span><%= f %></span>
+              </li>
+            <% }); %>
+          </ul>
+
+          <button type="button" class="btn plan-cta" data-plan="<%= p.id %>" data-plan-nombre="<%= p.nombre %> · <%= p.app %>">
+            Empezar 14 días gratis <span class="btn-flecha" aria-hidden="true">→</span>
+          </button>
+          <p class="plan-nota">No se cobra nada durante la prueba. Puedes cancelar cuando quieras.</p>
+        </article>
+      <% }); %>
+    </div>
+
+    <p class="planes-aclaracion">
+      <strong>Sobre el precio:</strong> los planes están fijados en <strong>UF</strong> y el cobro lo
+      realiza Flow convirtiendo a pesos con el valor de la UF del día de cada cargo. El monto en pesos
+      que ves aquí es <strong>sólo referencial</strong>, calculado con la UF de hoy. Los valores son
+      netos: se les agrega IVA en la boleta o factura.
+    </p>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Cómo funciona</p>
+      <h2>De la prueba al uso diario</h2>
+    </div>
+    <div class="grid-3 tarjetas-confianza">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'documento', t: 24 }) %></span>
+        <h3>1 · Completas tus datos</h3>
+        <p>Nombre, correo, empresa y RUT. Con eso creamos la cuenta de tu empresa y sus usuarios.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'candado', t: 24 }) %></span>
+        <h3>2 · Registras tu tarjeta</h3>
+        <p>El registro ocurre en el sitio seguro de Flow. Nosotros nunca vemos ni guardamos los datos de tu tarjeta.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'reloj', t: 24 }) %></span>
+        <h3>3 · Pruebas 14 días</h3>
+        <p>El primer cobro se hace recién al terminar la prueba. Si cancelas antes, no se cobra nada.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Modal de alta ====== -->
+<div class="modal-fondo" id="modal-alta" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" hidden>
+  <div class="modal">
+    <div class="modal-cabecera">
+      <h2 id="modal-titulo">Empezar 14 días gratis</h2>
+      <button type="button" class="modal-cerrar" aria-label="Cerrar">&times;</button>
+    </div>
+    <p class="modal-sub">Estás contratando <span class="modal-plan"></span>.</p>
+
+    <div class="modal-aviso error" role="alert"></div>
+
+    <form id="form-alta" novalidate>
+      <div class="campo">
+        <label for="alta-nombre">Nombre y apellido</label>
+        <input id="alta-nombre" name="nombre" type="text" autocomplete="name" required>
+        <p class="campo-error">Escribe tu nombre y apellido.</p>
+      </div>
+      <div class="campo">
+        <label for="alta-correo">Correo electrónico</label>
+        <input id="alta-correo" name="correo" type="email" autocomplete="email" required>
+        <p class="campo-error">Revisa el correo: no parece válido.</p>
+      </div>
+      <div class="campo">
+        <label for="alta-empresa">Empresa</label>
+        <input id="alta-empresa" name="empresa" type="text" autocomplete="organization" required>
+        <p class="campo-error">Escribe el nombre de tu empresa.</p>
+      </div>
+      <div class="campo">
+        <label for="alta-rut">RUT de la empresa</label>
+        <input id="alta-rut" name="rut" type="text" inputmode="text" placeholder="12.345.678-9" required>
+        <p class="campo-error">El RUT no es válido. Revisa el dígito verificador.</p>
+      </div>
+
+      <button type="submit" class="btn modal-enviar">
+        Continuar al registro de tarjeta <span class="btn-flecha" aria-hidden="true">→</span>
+      </button>
+      <p class="modal-legal">
+        Te llevaremos al sitio seguro de Flow para registrar la tarjeta. No se cobra nada hoy:
+        el primer cargo es al terminar los 14 días de prueba.
+      </p>
+    </form>
+  </div>
+</div>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿Necesitas algo distinto?</h2>
+      <p>Si tu operación no calza con estos planes, lo conversamos y armamos una propuesta a medida.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<script>
+  // Configuración que necesita el front. La URL de la Edge Function y el valor
+  // de respaldo de la UF salen del servidor para no hardcodearlos en el JS.
+  window.CONFIG_PLANES = <%- JSON.stringify(configPlanes) %>;
+</script>
+<script src="/js/planes.js?v=1" defer></script>
+<%- include('partials/footer') %>
