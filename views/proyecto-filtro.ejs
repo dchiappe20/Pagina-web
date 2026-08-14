@@ -1,5 +1,5 @@
 <%- include('partials/header') %>
-<link rel="stylesheet" href="/css/demo-filtro.css">
+<link rel="stylesheet" href="/css/demo-filtro.css?v=2">
 
 <section class="cabecera-pagina">
   <div class="contenedor">
@@ -20,11 +20,16 @@
         configurables por categoría: palabra exacta, derivados o combinaciones de términos.
       </p>
       <p>
-        El resultado es una lista acotada de licitaciones pertinentes al rubro de la empresa, con
-        los productos que gatillaron cada coincidencia identificados y exportable a Excel. Además
-        monitorea los <strong>foros inversos</strong> de las licitaciones cerradas en los últimos
-        30 días y registra las preguntas que los compradores dirigen a la empresa, junto con su
-        estado de respuesta.
+        A la búsqueda de licitaciones se sumó <strong>Compra Ágil</strong>: un barrido automático
+        en el servidor recorre las cotizaciones vigentes de madrugada y las repasa a las 10:00 y a
+        las 16:00, así que al abrir la app las oportunidades ya están filtradas y esperando.
+      </p>
+      <p>
+        Todo funciona sobre una <strong>cuenta de empresa en la nube</strong>: cada equipo entra con
+        su correo autorizado, los datos descargados y los filtros son los mismos para todos, y cada
+        persona tiene un rol —administrador, vendedor o consulta— que define qué puede hacer.
+        Además la app monitorea los <strong>foros inversos</strong> de las licitaciones ofertadas y
+        avisa cuando un comprador dirige una pregunta a la empresa.
       </p>
     </div>
     <aside class="ficha-proyecto reveal">
@@ -32,9 +37,11 @@
       <ul>
         <li><strong>Producto</strong><span>Desarrollo propio de RendApps</span></li>
         <li><strong>Tipo</strong><span>Aplicación de escritorio (Windows)</span></li>
-        <li><strong>Tecnología</strong><span>Python · instalador firmado</span></li>
-        <li><strong>Integración</strong><span>API de Mercado Público</span></li>
-        <li><strong>Extras</strong><span>Modo claro/oscuro · exportación a Excel · foros inversos</span></li>
+        <li><strong>Versión</strong><span>2.1 · actualización automática</span></li>
+        <li><strong>Tecnología</strong><span>Python · base de datos en la nube · instalador firmado</span></li>
+        <li><strong>Integración</strong><span>API de Mercado Público y Compra Ágil</span></li>
+        <li><strong>Cuentas</strong><span>Multiusuario por empresa con roles y permisos</span></li>
+        <li><strong>Extras</strong><span>Modo claro/oscuro · escala de texto · exportación a Excel</span></li>
       </ul>
     </aside>
   </div>
@@ -47,168 +54,390 @@
       <h2>Pruébala tú mismo</h2>
     </div>
     <p class="demo-nota reveal">
-      Réplica navegable con datos de ejemplo: descarga licitaciones, selecciona, cambia el tema y
-      recorre los filtros. La aplicación real corre en Windows y se conecta en vivo a Mercado Público.
+      Réplica navegable de la versión 2.1 con datos de ejemplo: recorre la barra lateral, descarga
+      licitaciones, revisa Compra Ágil y los foros inversos, cambia el tema y el tamaño de letra.
+      La aplicación real corre en Windows y se conecta en vivo a Mercado Público.
     </p>
 
     <div class="demo-marco reveal">
-      <div class="demo" id="demo" data-tema="oscuro" data-pantalla="inicio">
+      <div class="demo" id="demo" data-tema="oscuro" data-pantalla="inicio" data-escala="1" data-sidebar="visible">
 
         <!-- Barra de título de la ventana -->
         <div class="demo-titulo">
           <span class="demo-titulo-icono" aria-hidden="true"></span>
-          <span class="demo-titulo-texto">Filtradora de Licitaciones v2.0</span>
+          <span>Filtradora de Licitaciones v2.1.5</span>
           <span class="demo-titulo-botones" aria-hidden="true"><i>—</i><i>□</i><i>✕</i></span>
         </div>
 
-        <!-- Encabezado de la aplicación -->
-        <div class="demo-cabecera">
-          <span class="demo-logo" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 34 34"><path d="M6 8h22L20 19v8l-6 3V19z" fill="#4154BE"/><circle cx="26" cy="25" r="5" fill="#E11D5F"/><path d="M24 25l1.6 1.6L28.4 24" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <span class="demo-marca">Filtradora<small>Licitaciones · Mercado Público</small></span>
-          <span class="demo-cabecera-botones">
-            <button type="button" class="demo-btn demo-btn-borde demo-volver" hidden>← Volver al inicio</button>
-            <button type="button" class="demo-btn demo-btn-borde demo-toggle-tema">☀ Modo claro</button>
-          </span>
-        </div>
+        <div class="demo-shell">
 
-        <!-- ====== PANTALLA: INICIO ====== -->
-        <div class="demo-pantalla demo-inicio" data-nombre="inicio">
-          <div class="demo-panel">
-            <h3>Bienvenido a la filtradora de licitaciones</h3>
-            <p class="demo-muted">Selecciona una acción para comenzar</p>
-            <button type="button" class="demo-badge-foros" data-ir="foros">🔔 8 foro(s) inverso(s) detectado(s) para tu empresa <b>〉</b></button>
-
-            <button type="button" class="demo-accion" data-ir="descarga">
-              <span class="demo-accion-icono demo-icono-azul">☁</span>
-              <span class="demo-accion-texto"><b>Descargar de Mercado Público</b>Obtén las licitaciones publicadas en el periodo que elijas</span>
-              <span class="demo-accion-flecha">〉</span>
-            </button>
-            <button type="button" class="demo-accion" data-demo-toast="El módulo Compra Ágil está disponible en la aplicación de escritorio.">
-              <span class="demo-accion-icono demo-icono-verde">🛒</span>
-              <span class="demo-accion-texto"><b>Compra Ágil</b>Revisa cotizaciones de Compra Ágil vigentes y filtra por productos de interés</span>
-              <span class="demo-accion-flecha">〉</span>
-            </button>
-            <button type="button" class="demo-accion" data-ir="filtros">
-              <span class="demo-accion-icono demo-icono-gris">⚗</span>
-              <span class="demo-accion-texto"><b>Gestionar filtros</b>Define categorías y reglas de búsqueda de productos</span>
-              <span class="demo-accion-flecha">〉</span>
-            </button>
-          </div>
-          <p class="demo-version">v2.0 Powered by Python</p>
-        </div>
-
-        <!-- ====== PANTALLA: DESCARGA ====== -->
-        <div class="demo-pantalla demo-descarga" data-nombre="descarga" hidden>
-          <div class="demo-toolbar">
-            <label>Desde <input type="text" value="13-07-2026" readonly> 📅</label>
-            <label>Hasta <input type="text" value="13-07-2026" readonly> 📅</label>
-            <span class="demo-toolbar-sep"></span>
-            <button type="button" class="demo-btn demo-btn-primario demo-descargar">☁ Descargar datos</button>
-            <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real abre la última descarga guardada.">🗂 Ver datos descargados</button>
-          </div>
-
-          <div class="demo-progreso" hidden>
-            <p class="demo-progreso-texto">Consultando API de Mercado Público…</p>
-            <div class="demo-progreso-barra"><i></i></div>
-          </div>
-
-          <div class="demo-resultados" hidden>
-            <p class="demo-banner-exito">✨ ¡Filtrado finalizado! Selecciona con un ticket las que quieras exportar.</p>
-
-            <div class="demo-seccion-tabla">
-              <div class="demo-tabla-cabecera">
-                <b><span class="demo-lic-count">16</span> Licitaciones encontradas</b>
-                <span class="demo-muted">· click en ID o Comprador para abrir en Mercado Público</span>
-                <span class="demo-toolbar-sep"></span>
-                <button type="button" class="demo-btn demo-btn-borde demo-exportar" disabled>↓ Exportar seleccionadas</button>
-              </div>
-              <table class="demo-tabla demo-tabla-lic">
-                <thead><tr><th></th><th>ID</th><th>Nombre</th><th>Comprador</th><th>Publicación</th><th>Cierre</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 1001-24-LE26</td><td>ADQUISICIÓN DE ARTÍCULOS DE OFICINA Y PAPELERÍA</td><td class="demo-link">HOSPITAL DE VALLE CLARO</td><td>10-07-2026 14:20</td><td>20-07-2026 15:30</td></tr>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 2045-95-LP26</td><td>SUMINISTRO DE TÓNER E INSUMOS DE IMPRESIÓN</td><td class="demo-link">I MUNICIPALIDAD DE PUERTO ALERCE</td><td>10-07-2026 15:55</td><td>21-07-2026 15:08</td></tr>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 3310-10-LE26</td><td>MOBILIARIO PARA DEPENDENCIAS ADMINISTRATIVAS</td><td class="demo-link">INSTITUTO TÉCNICO COSTA AZUL</td><td>10-07-2026 11:27</td><td>22-07-2026 15:00</td></tr>
-                  <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">🔗 4471-71-LE26</td><td>SERVICIO DE ARRIENDO DE IMPRESORAS MULTIFUNCIONALES</td><td class="demo-link">CENTRO DE SALUD RÍO BLANCO</td><td>10-07-2026 14:12</td><td>22-07-2026 15:00</td></tr>
-                </tbody>
-              </table>
+          <!-- ====== BARRA LATERAL ====== -->
+          <aside class="demo-sidebar">
+            <div class="demo-sidebar-marca">
+              <b>Empresa Demo</b>
+              <span>Filtradora</span>
             </div>
 
-            <div class="demo-seccion-tabla">
-              <div class="demo-tabla-cabecera">
-                <b>34 Productos</b>
-                <span class="demo-muted">· los que calzan con tus filtros aparecen en verde</span>
+            <nav class="demo-nav" aria-label="Navegación de la demo">
+              <span class="demo-nav-seccion">GENERAL</span>
+              <button type="button" class="demo-nav-item" data-ir="inicio" aria-current="true"><span class="demo-nav-icono">🏠</span> Inicio</button>
+
+              <span class="demo-nav-seccion">BÚSQUEDA</span>
+              <button type="button" class="demo-nav-item" data-ir="api"><span class="demo-nav-icono">☁</span> Mercado Público</button>
+              <button type="button" class="demo-nav-item" data-ir="compra"><span class="demo-nav-icono">🛒</span> Compra Ágil</button>
+              <button type="button" class="demo-nav-item" data-ir="foros"><span class="demo-nav-icono">🔍</span> Foros inversos</button>
+
+              <span class="demo-nav-seccion">CONFIGURACIÓN</span>
+              <button type="button" class="demo-nav-item" data-ir="filtros"><span class="demo-nav-icono">⚗</span> Filtros</button>
+              <button type="button" class="demo-nav-item" data-ir="equipo"><span class="demo-nav-icono">👥</span> Equipo</button>
+              <button type="button" class="demo-nav-item" data-ir="config"><span class="demo-nav-icono">⚙</span> Configuración</button>
+            </nav>
+
+            <div class="demo-sidebar-pie">
+              <b>compras@empresademo.cl</b>
+              <span>Empresa Demo · admin</span>
+              <button type="button" class="demo-cerrar-sesion" data-demo-toast="En la app real desvincula este equipo del correo actual.">⏻ Cerrar sesión</button>
+            </div>
+
+            <div class="demo-sidebar-marca-ra">
+              <svg width="14" height="14" viewBox="0 0 64 64" aria-hidden="true">
+                <rect x="4" y="4" width="56" height="56" rx="18" fill="#1E3A8A"/>
+                <path d="M20 42 L32 30 L44 42" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M25 29 L32 22 L39 29" fill="none" stroke="#F97316" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              RendApps · v2.1.5
+            </div>
+          </aside>
+
+          <!-- ====== ZONA PRINCIPAL ====== -->
+          <div class="demo-main">
+            <div class="demo-topbar">
+              <button type="button" class="demo-hamburguesa" aria-label="Plegar la barra lateral">☰</button>
+              <span class="demo-topbar-textos">
+                <span class="demo-topbar-titulo">Inicio</span>
+                <span class="demo-topbar-sub">Resumen y accesos rápidos</span>
+              </span>
+              <button type="button" class="demo-toggle-tema">☀ Modo claro</button>
+            </div>
+
+            <div class="demo-contenido">
+
+              <!-- ====== PANTALLA: INICIO ====== -->
+              <div class="demo-pantalla" data-nombre="inicio">
+                <div class="demo-hero">
+                  <h3>Buenas tardes, Empresa Demo</h3>
+                  <p class="demo-hero-sub">Tienes 128 licitaciones descargadas y 3 foro(s) inverso(s) sin responder.</p>
+                  <div class="demo-hero-botones">
+                    <button type="button" class="demo-hero-btn" data-ir="api">☁ &nbsp;Revisar Mercado Público</button>
+                    <button type="button" class="demo-hero-btn demo-hero-btn-contorno" data-ir="filtros">⚗ &nbsp;Ajustar filtros</button>
+                  </div>
+                </div>
+
+                <div class="demo-stats">
+                  <button type="button" class="demo-stat" data-ir="api">
+                    <span class="demo-stat-icono demo-icono-azul">📄</span>
+                    <b class="demo-stat-num">128</b>
+                    <span class="demo-stat-txt">Licitaciones descargadas</span>
+                  </button>
+                  <button type="button" class="demo-stat" data-ir="compra">
+                    <span class="demo-stat-icono demo-icono-verde">🛒</span>
+                    <b class="demo-stat-num">57</b>
+                    <span class="demo-stat-txt">Compra Ágil vigentes</span>
+                  </button>
+                  <button type="button" class="demo-stat" data-ir="foros">
+                    <span class="demo-stat-icono demo-icono-rojo">🔔</span>
+                    <b class="demo-stat-num">3</b>
+                    <span class="demo-stat-txt">Foros inversos sin responder</span>
+                  </button>
+                  <button type="button" class="demo-stat" data-ir="filtros">
+                    <span class="demo-stat-icono demo-icono-magenta">⚗</span>
+                    <b class="demo-stat-num">39</b>
+                    <span class="demo-stat-txt">Filtros activos</span>
+                  </button>
+                </div>
+
+                <p class="demo-subtitulo">Acciones rápidas</p>
+                <div class="demo-acciones">
+                  <button type="button" class="demo-accion" data-ir="api">
+                    <span class="demo-accion-icono demo-icono-azul">☁</span>
+                    <b>Descargar de Mercado Público</b>
+                    <p>Obtén las licitaciones publicadas en el periodo que elijas.</p>
+                    <span class="demo-accion-abrir">Abrir →</span>
+                  </button>
+                  <button type="button" class="demo-accion" data-ir="compra">
+                    <span class="demo-accion-icono demo-icono-verde">🛒</span>
+                    <b>Compra Ágil</b>
+                    <p>Revisa cotizaciones vigentes y filtra por productos de interés.</p>
+                    <span class="demo-accion-abrir">Abrir →</span>
+                  </button>
+                  <button type="button" class="demo-accion" data-ir="filtros">
+                    <span class="demo-accion-icono demo-icono-magenta">⚗</span>
+                    <b>Gestionar filtros</b>
+                    <p>Define categorías y reglas de búsqueda de productos.</p>
+                    <span class="demo-accion-abrir">Abrir →</span>
+                  </button>
+                </div>
               </div>
-              <table class="demo-tabla demo-tabla-prod">
-                <thead><tr><th>Cantidad</th><th>Producto</th><th>Filtro</th></tr></thead>
-                <tbody>
-                  <tr class="demo-match"><td>10.0</td><td>☑ RESMA PAPEL CARTA 75G — papel multipropósito para impresión y copiado</td><td>papelería + suministro</td></tr>
-                  <tr class="demo-match"><td>4.0</td><td>☑ TÓNER LÁSER NEGRO — cartucho compatible para impresora multifuncional</td><td>impresión</td></tr>
-                  <tr class="demo-match"><td>6.0</td><td>☑ SILLA ERGONÓMICA GIRATORIA — respaldo alto con apoyo lumbar regulable</td><td>mobiliario</td></tr>
-                  <tr><td>2.0</td><td>◯ PIZARRA DE CORCHO 60×90 — panel mural con marco de madera</td><td>---</td></tr>
-                  <tr><td>1.0</td><td>◯ DISPENSADOR DE AGUA FRÍA/CALIENTE</td><td>---</td></tr>
-                </tbody>
-              </table>
+
+              <!-- ====== PANTALLA: MERCADO PÚBLICO ====== -->
+              <div class="demo-pantalla" data-nombre="api" hidden>
+                <div class="demo-toolbar">
+                  <div class="demo-toolbar-fila">
+                    <label>Desde <input type="text" value="10-07-2026" readonly> 🗓</label>
+                    <label>Hasta <input type="text" value="13-07-2026" readonly> 🗓</label>
+                    <span class="demo-toolbar-sep"></span>
+                    <button type="button" class="demo-btn demo-btn-primario demo-descargar">☁ Descargar datos</button>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real vuelve a leer lo que ya está guardado en la nube.">🔄 Actualizar desde la nube</button>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real abre la última descarga guardada.">🗂 Ver datos descargados</button>
+                  </div>
+                  <p class="demo-info demo-estado-api">ⓘ Selecciona un rango de fechas y descarga los datos.</p>
+                </div>
+
+                <div class="demo-progreso" hidden>
+                  <p class="demo-progreso-texto">Consultando la API de Mercado Público…</p>
+                  <div class="demo-progreso-barra"><i></i></div>
+                  <button type="button" class="demo-btn demo-btn-rojo demo-cancelar">✕ Cancelar descarga</button>
+                </div>
+
+                <div class="demo-resultados" hidden>
+                  <p class="demo-banner">✨ ¡Filtrado finalizado! Selecciona con un ticket las que quieras exportar.</p>
+
+                  <div class="demo-seccion-tabla">
+                    <div class="demo-tabla-cabecera">
+                      <b><span class="demo-lic-count">16</span> Licitaciones encontradas</b>
+                      <span class="demo-muted">· click en el ID para abrir en Mercado Público</span>
+                      <span class="demo-toolbar-sep"></span>
+                      <button type="button" class="demo-btn demo-btn-borde demo-exportar" disabled>⤓ Exportar seleccionadas</button>
+                    </div>
+                    <table class="demo-tabla demo-tabla-sel demo-tabla-lic">
+                      <thead><tr><th></th><th>ID</th><th>Nombre</th><th>Comprador</th><th>Publicación</th><th>Cierre</th></tr></thead>
+                      <tbody>
+                        <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">1001-24-LE26</td><td>ADQUISICIÓN DE ARTÍCULOS DE OFICINA Y PAPELERÍA</td><td>HOSPITAL DE VALLE CLARO</td><td class="demo-nowrap">10-07-2026 14:20</td><td class="demo-nowrap">20-07-2026 15:30</td></tr>
+                        <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">2045-95-LP26</td><td>SUMINISTRO DE TÓNER E INSUMOS DE IMPRESIÓN</td><td>I MUNICIPALIDAD DE PUERTO ALERCE</td><td class="demo-nowrap">10-07-2026 15:55</td><td class="demo-nowrap">21-07-2026 15:08</td></tr>
+                        <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">3310-10-LE26</td><td>MOBILIARIO PARA DEPENDENCIAS ADMINISTRATIVAS</td><td>INSTITUTO TÉCNICO COSTA AZUL</td><td class="demo-nowrap">11-07-2026 11:27</td><td class="demo-nowrap">22-07-2026 15:00</td></tr>
+                        <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">4471-71-LE26</td><td>SERVICIO DE ARRIENDO DE IMPRESORAS MULTIFUNCIONALES</td><td>CENTRO DE SALUD RÍO BLANCO</td><td class="demo-nowrap">12-07-2026 14:12</td><td class="demo-nowrap">22-07-2026 15:00</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="demo-seccion-tabla">
+                    <div class="demo-tabla-cabecera">
+                      <b>34 Productos</b>
+                      <span class="demo-muted">· los que calzan con tus filtros aparecen en verde</span>
+                    </div>
+                    <table class="demo-tabla">
+                      <thead><tr><th>Cantidad</th><th>Producto</th><th>Filtro</th></tr></thead>
+                      <tbody>
+                        <tr class="demo-match"><td>10.0</td><td>☑ RESMA PAPEL CARTA 75G — papel multipropósito para impresión y copiado</td><td>papelería + suministro</td></tr>
+                        <tr class="demo-match"><td>4.0</td><td>☑ TÓNER LÁSER NEGRO — cartucho compatible para impresora multifuncional</td><td>impresión</td></tr>
+                        <tr class="demo-match"><td>6.0</td><td>☑ SILLA ERGONÓMICA GIRATORIA — respaldo alto con apoyo lumbar regulable</td><td>mobiliario</td></tr>
+                        <tr><td>2.0</td><td>◯ PIZARRA DE CORCHO 60×90 — panel mural con marco de madera</td><td>---</td></tr>
+                        <tr><td>1.0</td><td>◯ DISPENSADOR DE AGUA FRÍA/CALIENTE</td><td>---</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ====== PANTALLA: COMPRA ÁGIL ====== -->
+              <div class="demo-pantalla" data-nombre="compra" hidden>
+                <div class="demo-toolbar">
+                  <p class="demo-info">ⓘ &nbsp;Las cotizaciones se actualizan solas: barrido completo de madrugada y repasos a las 10:00 y 16:00.</p>
+                  <div class="demo-toolbar-fila">
+                    <button type="button" class="demo-btn demo-btn-primario demo-actualizar-ca">🔄 Actualizar desde la nube</button>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real abre la última carga guardada.">🗂 Ver datos descargados</button>
+                    <span class="demo-toolbar-sep"></span>
+                    <button type="button" class="demo-btn demo-btn-borde demo-exportar-ca" disabled>⤓ Exportar seleccionadas</button>
+                  </div>
+                </div>
+
+                <p class="demo-banner demo-banner-ca" hidden>✨ ¡Filtrado finalizado! Selecciona con un ticket las que quieras exportar.</p>
+
+                <div class="demo-seccion-tabla">
+                  <div class="demo-tabla-cabecera">
+                    <b>9 Cotizaciones encontradas</b>
+                    <span class="demo-muted">· click en el ID para abrir en Mercado Público</span>
+                  </div>
+                  <table class="demo-tabla demo-tabla-sel demo-tabla-ca">
+                    <thead><tr><th></th><th>ID</th><th>Nombre</th><th>Comprador</th><th>Publicación</th><th>1er cierre</th><th>2do cierre</th><th>Llamado</th></tr></thead>
+                    <tbody>
+                      <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">1250341-88-COT26</td><td>TÓNER PARA IMPRESORA MULTIFUNCIONAL</td><td>LICEO POLITÉCNICO LOMA VERDE</td><td class="demo-nowrap">13-07-2026</td><td class="demo-nowrap">15-07-2026</td><td class="demo-nowrap">17-07-2026</td><td>1</td></tr>
+                      <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">1250412-13-COT26</td><td>RESMAS DE PAPEL TAMAÑO CARTA</td><td>JUNTA DE VECINOS BAHÍA NEGRA</td><td class="demo-nowrap">13-07-2026</td><td class="demo-nowrap">16-07-2026</td><td class="demo-nowrap">—</td><td>1</td></tr>
+                      <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">1249877-05-COT26</td><td>SILLAS ERGONÓMICAS PARA OFICINA</td><td>CORPORACIÓN MUNICIPAL COSTA AZUL</td><td class="demo-nowrap">12-07-2026</td><td class="demo-nowrap">15-07-2026</td><td class="demo-nowrap">18-07-2026</td><td>2</td></tr>
+                      <tr><td><input type="checkbox" aria-label="Seleccionar"></td><td class="demo-link">1249620-42-COT26</td><td>INSUMOS DE ESCRITORIO Y ARCHIVO</td><td>SERVICIO DE SALUD VALLE CLARO</td><td class="demo-nowrap">12-07-2026</td><td class="demo-nowrap">14-07-2026</td><td class="demo-nowrap">—</td><td>1</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="demo-seccion-tabla">
+                  <div class="demo-tabla-cabecera">
+                    <b>18 Productos</b>
+                    <span class="demo-muted">· pasa el mouse por un producto para ver el texto completo</span>
+                  </div>
+                  <table class="demo-tabla">
+                    <thead><tr><th>Cantidad</th><th>Producto</th><th>Filtro</th></tr></thead>
+                    <tbody>
+                      <tr class="demo-match"><td>3.0</td><td>☑ TÓNER NEGRO ALTO RENDIMIENTO — compatible multifuncional láser</td><td>cartucho + tóner</td></tr>
+                      <tr class="demo-match"><td>25.0</td><td>☑ RESMA CARTA 75 G — caja de 10 unidades</td><td>La palabra «resma»</td></tr>
+                      <tr class="demo-match"><td>8.0</td><td>☑ SILLA GIRATORIA CON APOYABRAZOS REGULABLES</td><td>silla + ergonómica</td></tr>
+                      <tr><td>4.0</td><td>◯ SET DE LIMPIEZA PARA SALA DE REUNIONES</td><td>---</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- ====== PANTALLA: FOROS INVERSOS ====== -->
+              <div class="demo-pantalla" data-nombre="foros" hidden>
+                <div class="demo-toolbar">
+                  <div class="demo-toolbar-fila">
+                    <button type="button" class="demo-btn demo-btn-primario demo-ver-foros">🔍 Revisar licitaciones</button>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real pegas o subes por Excel los códigos de las licitaciones que ofertaste.">➕ Ingresar ofertadas</button>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real lista las licitaciones ofertadas que el barrido nocturno vigila.">📋 Ver licitaciones ofertadas</button>
+                    <button type="button" class="demo-btn demo-btn-borde demo-ver-historial">📅 Historial mensual</button>
+                  </div>
+                  <div class="demo-toolbar-fila">
+                    <label>🔍 <input type="search" class="demo-filtro-foros" placeholder="Buscar por ID o cliente" aria-label="Buscar foros"></label>
+                    <span class="demo-foros-count demo-muted"></span>
+                    <span class="demo-toolbar-sep"></span>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real exporta a Excel los foros seleccionados.">⤓ Exportar seleccionadas</button>
+                  </div>
+                </div>
+
+                <p class="demo-banner demo-banner-neutro demo-historial-titulo" hidden>📅 Historial de los últimos 30 días: 47 licitación(es) revisada(s).</p>
+
+                <div class="demo-seccion-tabla">
+                  <table class="demo-tabla demo-tabla-foros">
+                    <thead><tr><th>ID</th><th>Cliente</th><th>Fecha de pregunta</th><th>Última revisión</th><th>Estado</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+
+                <div class="demo-explicacion">
+                  <b>✦ ¿Cómo funciona la revisión de foros inversos?</b>
+                  <p>Registras las licitaciones que ofertaste y un barrido nocturno revisa sus foros de aclaraciones. Cuando una pregunta menciona a tu empresa, aparece aquí con la fecha y su estado de respuesta.</p>
+                  <p>· <b>Respondida</b>: el comprador ya contestó. · <b>Pendiente</b>: la pregunta está hecha y sin respuesta. · <b>Sin mención</b>: hay foro, pero ninguna pregunta apunta a tu empresa. · <b>Sin foro</b>: la licitación no tiene aclaraciones.</p>
+                </div>
+              </div>
+
+              <!-- ====== PANTALLA: FILTROS ====== -->
+              <div class="demo-pantalla" data-nombre="filtros" hidden>
+                <div class="demo-toolbar">
+                  <div class="demo-toolbar-fila">
+                    <span class="demo-muted">Las reglas son de la empresa: si las cambias, las ve todo el equipo.</span>
+                    <span class="demo-toolbar-sep"></span>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real exporta todos los filtros a un Excel de cuatro columnas.">⤓ Exportar filtros</button>
+                    <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real importa los filtros desde ese mismo Excel.">⤒ Importar filtros</button>
+                  </div>
+                </div>
+
+                <div class="demo-filtros-grid" style="margin-top:1.1rem">
+                  <div class="demo-panel">
+                    <b>Categorías</b>
+                    <ul class="demo-lista-cat"></ul>
+                    <div class="demo-botonera">
+                      <button type="button" class="demo-btn demo-btn-primario" data-demo-toast="En la app real crea una categoría nueva.">+ Nueva</button>
+                      <button type="button" class="demo-btn demo-btn-rojo" data-demo-toast="En la app real elimina la categoría seleccionada.">Eliminar</button>
+                    </div>
+                  </div>
+                  <div class="demo-panel">
+                    <b class="demo-filtros-titulo">Filtros de IMPRESION</b>
+                    <table class="demo-tabla demo-tabla-filtros">
+                      <thead><tr><th>Tipo</th><th>Qué busca</th></tr></thead>
+                      <tbody></tbody>
+                    </table>
+                    <div class="demo-botonera">
+                      <button type="button" class="demo-btn demo-btn-primario" data-demo-toast="En la app real abre el editor de filtros.">+ Añadir filtro</button>
+                      <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real edita el filtro seleccionado.">Editar</button>
+                      <button type="button" class="demo-btn demo-btn-rojo" data-demo-toast="En la app real elimina el filtro seleccionado.">Eliminar</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="demo-explicacion">
+                  <b>✦ ¿Cómo funcionan los filtros?</b>
+                  <p>Cada categoría agrupa filtros; una licitación aparece en los resultados si cumple CUALQUIERA de ellos.</p>
+                  <p>· <b>Palabra exacta</b>: encuentra esa palabra tal cual (tóner). · <b>Palabra y derivados</b>: encuentra la raíz y sus variantes (impres… → impresora, impresión). · <b>Combinación</b>: exige varias condiciones a la vez; en cada condición basta una de sus alternativas.</p>
+                </div>
+              </div>
+
+              <!-- ====== PANTALLA: EQUIPO ====== -->
+              <div class="demo-pantalla" data-nombre="equipo" hidden>
+                <div class="demo-toolbar">
+                  <div class="demo-toolbar-fila">
+                    <b>Miembros</b>
+                    <span class="demo-muted">· elige a alguien y cámbiale el rol abajo</span>
+                    <span class="demo-toolbar-sep"></span>
+                    <label>Nuevo rol:
+                      <select class="demo-opcion demo-select-rol" aria-label="Nuevo rol">
+                        <option>Admin</option>
+                        <option>Seller</option>
+                        <option>User</option>
+                      </select>
+                    </label>
+                    <button type="button" class="demo-btn demo-btn-primario demo-cambiar-rol">Cambiar rol</button>
+                  </div>
+                </div>
+
+                <div class="demo-seccion-tabla">
+                  <table class="demo-tabla demo-tabla-sel demo-tabla-equipo">
+                    <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Último acceso</th></tr></thead>
+                    <tbody>
+                      <tr><td>Carolina Núñez</td><td>compras@empresademo.cl</td><td><span class="demo-chip">Admin</span></td><td class="demo-nowrap">Hoy, 09:12</td></tr>
+                      <tr><td>Rodrigo Fuentes</td><td>ventas@empresademo.cl</td><td><span class="demo-chip">Seller</span></td><td class="demo-nowrap">Hoy, 08:47</td></tr>
+                      <tr><td>Paula Ríos</td><td>licitaciones@empresademo.cl</td><td><span class="demo-chip">Seller</span></td><td class="demo-nowrap">Ayer, 17:30</td></tr>
+                      <tr><td>Mauricio Salas</td><td>gerencia@empresademo.cl</td><td><span class="demo-chip demo-chip-neutro">User</span></td><td class="demo-nowrap">08-07-2026</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p class="demo-subtitulo">Qué puede hacer cada rol</p>
+                <div class="demo-roles">
+                  <div class="demo-rol"><b>Admin</b><span>Todo: descargar, cancelar cualquier descarga, editar e importar filtros, borrar de la lista de foros y gestionar el equipo.</span></div>
+                  <div class="demo-rol"><b>Seller</b><span>Descarga y revisa foros. Cancela sólo sus propias descargas. Los filtros los ve y exporta, pero no los cambia.</span></div>
+                  <div class="demo-rol"><b>User</b><span>Sólo consulta: lee lo ya descargado y lo actualiza desde la nube. No lanza descargas ni revisiones.</span></div>
+                </div>
+              </div>
+
+              <!-- ====== PANTALLA: CONFIGURACIÓN ====== -->
+              <div class="demo-pantalla" data-nombre="config" hidden>
+                <div class="demo-config">
+                  <div class="demo-panel">
+                    <b>Apariencia</b>
+                    <p class="demo-muted">Tema</p>
+                    <div class="demo-config-fila" role="group" aria-label="Tema">
+                      <button type="button" class="demo-opcion demo-op-tema" data-tema-valor="oscuro" aria-pressed="true">🌙 Oscuro</button>
+                      <button type="button" class="demo-opcion demo-op-tema" data-tema-valor="claro" aria-pressed="false">☀ Claro</button>
+                    </div>
+                    <p class="demo-muted" style="margin-top:1rem">Escala de texto</p>
+                    <div class="demo-config-fila" role="group" aria-label="Escala de texto">
+                      <button type="button" class="demo-opcion demo-op-escala" data-escala-valor="0" aria-pressed="false">Compacto</button>
+                      <button type="button" class="demo-opcion demo-op-escala" data-escala-valor="1" aria-pressed="true">Normal</button>
+                      <button type="button" class="demo-opcion demo-op-escala" data-escala-valor="2" aria-pressed="false">Grande</button>
+                      <button type="button" class="demo-opcion demo-op-escala" data-escala-valor="3" aria-pressed="false">Muy grande</button>
+                    </div>
+                  </div>
+
+                  <div class="demo-panel">
+                    <b>Cuenta</b>
+                    <div class="demo-dato"><span>Correo</span><span>compras@empresademo.cl</span></div>
+                    <div class="demo-dato"><span>Empresa</span><span>Empresa Demo</span></div>
+                    <div class="demo-dato"><span>Rol</span><span>Administrador</span></div>
+                    <div class="demo-dato"><span>Versión instalada</span><span>2.1.5</span></div>
+                    <div class="demo-botonera">
+                      <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real busca una versión más nueva publicada y ofrece instalarla.">⬇ Buscar actualizaciones</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="demo-toast" role="status" aria-live="polite" hidden></div>
             </div>
           </div>
         </div>
-
-        <!-- ====== PANTALLA: FILTROS ====== -->
-        <div class="demo-pantalla demo-filtros" data-nombre="filtros" hidden>
-          <div class="demo-filtros-grid">
-            <div class="demo-categorias">
-              <b>Categorías</b>
-              <ul class="demo-lista-cat"></ul>
-              <div class="demo-cat-botones">
-                <button type="button" class="demo-btn demo-btn-primario" data-demo-toast="En la app real crea una categoría nueva.">+ Nueva</button>
-                <button type="button" class="demo-btn demo-btn-rojo" data-demo-toast="En la app real elimina la categoría seleccionada.">Eliminar</button>
-              </div>
-            </div>
-            <div class="demo-filtros-panel">
-              <b class="demo-filtros-titulo">Filtros de IMPRESION</b>
-              <table class="demo-tabla demo-tabla-filtros">
-                <thead><tr><th>Tipo</th><th>Qué busca</th></tr></thead>
-                <tbody></tbody>
-              </table>
-              <div class="demo-cat-botones">
-                <button type="button" class="demo-btn demo-btn-primario" data-demo-toast="En la app real abre el editor de filtros.">+ Añadir filtro</button>
-                <button type="button" class="demo-btn demo-btn-borde" data-demo-toast="En la app real edita el filtro seleccionado.">Editar</button>
-                <button type="button" class="demo-btn demo-btn-rojo" data-demo-toast="En la app real elimina el filtro seleccionado.">Eliminar</button>
-              </div>
-            </div>
-          </div>
-          <div class="demo-explicacion">
-            <b>✦ ¿Cómo funcionan los filtros?</b>
-            <p>Cada categoría agrupa filtros; una licitación aparece en los resultados si cumple CUALQUIERA de ellos.</p>
-            <p>· <b>Palabra exacta</b>: encuentra esa palabra tal cual (tóner). · <b>Palabra y derivados</b>: encuentra la raíz y sus variantes (impres… → impresora, impresión). · <b>Combinación</b>: exige varias condiciones a la vez.</p>
-          </div>
-        </div>
-
-        <!-- ====== PANTALLA: FOROS ====== -->
-        <div class="demo-pantalla demo-foros" data-nombre="foros" hidden>
-          <div class="demo-toolbar">
-            <b>🔔 Foros inversos detectados para tu empresa</b>
-            <span class="demo-toolbar-sep"></span>
-            <button type="button" class="demo-btn demo-btn-primario demo-ver-foros">🔎 Revisar licitaciones</button>
-            <button type="button" class="demo-btn demo-btn-borde demo-ver-historial">📋 Revisar historial mensual</button>
-          </div>
-          <div class="demo-toolbar demo-toolbar-busqueda">
-            <label class="demo-busqueda">🔍 <input type="search" class="demo-filtro-foros" placeholder="Buscar por ID o cliente" aria-label="Buscar foros"></label>
-            <span class="demo-foros-count demo-muted"></span>
-          </div>
-          <p class="demo-muted demo-historial-titulo" hidden>47 licitación(es) revisada(s) en los últimos 30 días.</p>
-          <table class="demo-tabla demo-tabla-foros">
-            <thead><tr><th>ID</th><th>Cliente</th><th>Fecha de pregunta</th><th>Estado</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-        <div class="demo-toast" role="status" aria-live="polite" hidden></div>
       </div>
     </div>
 
-    <p class="demo-nota demo-nota-pie reveal">Los datos mostrados son de ejemplo y no corresponden a licitaciones reales.</p>
+    <p class="demo-nota demo-nota-pie reveal">Los datos, la empresa y los organismos mostrados son de ejemplo y no corresponden a licitaciones reales.</p>
   </div>
 </section>
 
@@ -225,14 +454,29 @@
         <p>Se conecta a la API de Mercado Público, descarga las licitaciones del período y aplica las reglas de la empresa en segundos.</p>
       </article>
       <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'reloj', t: 24 }) %></span>
+        <h3>Compra Ágil sin esperas</h3>
+        <p>Un barrido automático recorre las cotizaciones vigentes de madrugada y las repasa a media mañana y a media tarde.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
         <span class="icono-caja"><%- include('partials/icono', { n: 'chat', t: 24 }) %></span>
         <h3>Vigilancia de foros inversos</h3>
-        <p>Revisa las licitaciones cerradas de los últimos 30 días y avisa si un comprador hizo preguntas dirigidas a la empresa.</p>
+        <p>Revisa los foros de las licitaciones ofertadas y avisa si un comprador hizo una pregunta dirigida a la empresa.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'candado', t: 24 }) %></span>
+        <h3>Cuentas por empresa</h3>
+        <p>Cada equipo entra con su correo autorizado y su rol define qué puede hacer: administrar, descargar o sólo consultar.</p>
       </article>
       <article class="tarjeta-confianza reveal">
         <span class="icono-caja"><%- include('partials/icono', { n: 'documento', t: 24 }) %></span>
         <h3>Exportación a Excel</h3>
-        <p>Las licitaciones seleccionadas se exportan listas para el flujo comercial, sin copiar y pegar.</p>
+        <p>Las licitaciones y cotizaciones seleccionadas se exportan listas para el flujo comercial, sin copiar y pegar.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'rocket', t: 24 }) %></span>
+        <h3>Actualizaciones automáticas</h3>
+        <p>Cuando publicamos una versión nueva, la app avisa y la instala sola: nadie se queda atrás con una versión vieja.</p>
       </article>
     </div>
   </div>
@@ -248,5 +492,5 @@
   </div>
 </section>
 
-<script src="/js/demo-filtro.js" defer></script>
+<script src="/js/demo-filtro.js?v=2" defer></script>
 <%- include('partials/footer') %>

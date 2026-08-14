@@ -1,4 +1,6 @@
-// Demo interactiva de la Filtradora de Licitaciones (datos de ejemplo)
+// Demo interactiva de la Filtradora de Licitaciones v2.1 (datos de ejemplo).
+// Reproduce el shell real de la app: barra lateral, barra superior con el
+// título de la vista, tema claro/oscuro y escala de texto.
 (function () {
   var demo = document.getElementById('demo');
   if (!demo) return;
@@ -6,9 +8,21 @@
   var $ = function (sel) { return demo.querySelector(sel); };
   var $$ = function (sel) { return Array.prototype.slice.call(demo.querySelectorAll(sel)); };
 
+  // ============ Metadatos de las vistas (gui.py · PANTALLAS_META) ============
+
+  var META = {
+    inicio: ['Inicio', 'Resumen y accesos rápidos'],
+    api: ['Mercado Público', 'Descarga de licitaciones publicadas'],
+    compra: ['Compra Ágil', 'Cotizaciones vigentes de Compra Ágil'],
+    foros: ['Foros inversos', 'Menciones a tu empresa en los portales'],
+    filtros: ['Filtros', 'Categorías y reglas de búsqueda'],
+    equipo: ['Equipo', 'Quién trabaja aquí y con qué permisos'],
+    config: ['Configuración', 'Apariencia y cuenta']
+  };
+
   // ============ Datos de ejemplo ============
 
-  // Filtros de ejemplo para un rubro ficticio (artículos de oficina e impresión).
+  // Filtros de un rubro ficticio (artículos de oficina e impresión).
   // No corresponden a reglas reales de ningún cliente.
   // t: P = palabra, D = derivados, C = combinación
   var FILTROS = {
@@ -73,26 +87,25 @@
   // Organismos e IDs ficticios: mantienen el formato de Mercado Público
   // pero no corresponden a licitaciones ni instituciones reales.
   var FOROS = [
-    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-05-18 09:16', estado: 'Respondida' },
-    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-06-01 12:58', estado: 'Respondida' },
-    { id: '4210-141-LP26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-06-26 14:40', estado: 'Respondida' },
-    { id: '105811-157-LP26', cliente: 'CENTRO CLÍNICO LAGUNA GRANDE', fecha: '2026-06-17 09:30', estado: 'Respondida' },
-    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:05', estado: 'Respondida' },
-    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
-    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
-    { id: '127900-26-LE26', cliente: 'CORPOSALUD BAHÍA NEGRA', fecha: '2026-06-12 12:59', estado: 'Respondida' }
+    { id: '100523-148-LP26', cliente: 'HOSPITAL PROVINCIAL DE VALLE CLARO', fecha: '2026-07-11 09:16', revision: '13-07-2026', estado: 'Pendiente' },
+    { id: '4210-141-LP26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-07-10 14:40', revision: '13-07-2026', estado: 'Pendiente' },
+    { id: '105811-157-LP26', cliente: 'CENTRO CLÍNICO LAGUNA GRANDE', fecha: '2026-07-09 09:30', revision: '13-07-2026', estado: 'Pendiente' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:05', revision: '13-07-2026', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', revision: '13-07-2026', estado: 'Respondida' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', revision: '13-07-2026', estado: 'Respondida' },
+    { id: '127900-26-LE26', cliente: 'CORPOSALUD BAHÍA NEGRA', fecha: '2026-06-12 12:59', revision: '12-07-2026', estado: 'Respondida' },
+    { id: '105733-100-LP26', cliente: 'HOSPITAL DE NIÑOS RÍO BLANCO', fecha: '2026-06-02 11:04', revision: '12-07-2026', estado: 'Respondida' }
   ];
 
   var HISTORIAL = [
-    { id: '105733-100-LP26', cliente: 'HOSPITAL DE NIÑOS RÍO BLANCO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
-    { id: '2307-21-LP26', cliente: 'I MUNICIPALIDAD DE BAHÍA NEGRA', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
-    { id: '1398-47-LE26', cliente: 'SERVICIO DE SALUD VALLE CLARO', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
-    { id: '3191-58-LE26', cliente: 'HOSPITAL COSTA AZUL', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
-    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', estado: 'Respondida' },
-    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:12', estado: 'Respondida' },
-    { id: '2777-10-LE26', cliente: 'I MUNICIPALIDAD DE PUERTO ALERCE', fecha: '2026-07-10 09:43', estado: 'Sin foro' },
-    { id: '4210-139-LE26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '2026-07-10 09:43', estado: 'Sin mención' },
-    { id: '105744-37-LP26', cliente: 'CENTRO DE SALUD LOMA VERDE', fecha: '2026-07-10 09:43', estado: 'Sin foro' }
+    { id: '105733-100-LP26', cliente: 'HOSPITAL DE NIÑOS RÍO BLANCO', fecha: '2026-06-02 11:04', revision: '13-07-2026', estado: 'Respondida' },
+    { id: '2307-21-LP26', cliente: 'I MUNICIPALIDAD DE BAHÍA NEGRA', fecha: '—', revision: '13-07-2026', estado: 'Sin mención' },
+    { id: '1398-47-LE26', cliente: 'SERVICIO DE SALUD VALLE CLARO', fecha: '—', revision: '13-07-2026', estado: 'Sin foro' },
+    { id: '3191-58-LE26', cliente: 'HOSPITAL COSTA AZUL', fecha: '—', revision: '13-07-2026', estado: 'Sin mención' },
+    { id: '940217-44-LP26', cliente: 'FUNDACIÓN SALUD CORDILLERA ALTA', fecha: '2026-07-06 15:21', revision: '13-07-2026', estado: 'Respondida' },
+    { id: '2777-10-LE26', cliente: 'I MUNICIPALIDAD DE PUERTO ALERCE', fecha: '—', revision: '12-07-2026', estado: 'Sin foro' },
+    { id: '4210-139-LE26', cliente: 'HOSPITAL GENERAL DE PUERTO ALERCE', fecha: '—', revision: '12-07-2026', estado: 'Sin mención' },
+    { id: '105744-37-LP26', cliente: 'CENTRO DE SALUD LOMA VERDE', fecha: '—', revision: '12-07-2026', estado: 'Sin foro' }
   ];
 
   // ============ Utilidades ============
@@ -103,16 +116,21 @@
     toastEl.textContent = mensaje;
     toastEl.hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2600);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2800);
   }
 
   function mostrarPantalla(nombre) {
+    if (!META[nombre]) return;
     $$('.demo-pantalla').forEach(function (p) { p.hidden = p.getAttribute('data-nombre') !== nombre; });
     demo.setAttribute('data-pantalla', nombre);
-    $('.demo-volver').hidden = nombre === 'inicio';
+    $('.demo-topbar-titulo').textContent = META[nombre][0];
+    $('.demo-topbar-sub').textContent = META[nombre][1];
+    $$('.demo-nav-item').forEach(function (b) {
+      b.setAttribute('aria-current', b.getAttribute('data-ir') === nombre ? 'true' : 'false');
+    });
   }
 
-  // ============ Navegación y tema ============
+  // ============ Navegación, plegado y tema ============
 
   demo.addEventListener('click', function (evento) {
     var ir = evento.target.closest('[data-ir]');
@@ -121,62 +139,125 @@
     if (conToast) { toast(conToast.getAttribute('data-demo-toast')); }
   });
 
-  $('.demo-volver').addEventListener('click', function () { mostrarPantalla('inicio'); });
-
-  $('.demo-toggle-tema').addEventListener('click', function () {
-    var claro = demo.getAttribute('data-tema') === 'claro';
-    demo.setAttribute('data-tema', claro ? 'oscuro' : 'claro');
-    this.textContent = claro ? '☀ Modo claro' : '🌙 Modo oscuro';
+  $('.demo-hamburguesa').addEventListener('click', function () {
+    var oculta = demo.getAttribute('data-sidebar') === 'oculta';
+    demo.setAttribute('data-sidebar', oculta ? 'visible' : 'oculta');
+    this.setAttribute('aria-label', oculta ? 'Plegar la barra lateral' : 'Desplegar la barra lateral');
   });
 
-  // ============ Pantalla Descarga ============
+  var btnTema = $('.demo-toggle-tema');
+  function aplicarTema(modo) {
+    demo.setAttribute('data-tema', modo);
+    btnTema.textContent = modo === 'oscuro' ? '☀ Modo claro' : '🌙 Modo oscuro';
+    $$('.demo-op-tema').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-tema-valor') === modo ? 'true' : 'false');
+    });
+  }
+
+  btnTema.addEventListener('click', function () {
+    aplicarTema(demo.getAttribute('data-tema') === 'oscuro' ? 'claro' : 'oscuro');
+  });
+
+  $$('.demo-op-tema').forEach(function (b) {
+    b.addEventListener('click', function () { aplicarTema(b.getAttribute('data-tema-valor')); });
+  });
+
+  $$('.demo-op-escala').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var valor = b.getAttribute('data-escala-valor');
+      demo.setAttribute('data-escala', valor);
+      $$('.demo-op-escala').forEach(function (o) {
+        o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+      });
+    });
+  });
+
+  // ============ Selección de filas + exportar ============
+
+  // Conecta una tabla seleccionable con su botón de exportar.
+  function conectarSeleccion(selTabla, selBoton, etiqueta, archivo) {
+    var boton = $(selBoton);
+    function actualizar() {
+      var n = $$(selTabla + ' tbody input:checked').length;
+      boton.disabled = n === 0;
+      boton.textContent = n > 0 ? '⤓ Exportar seleccionadas (' + n + ')' : '⤓ Exportar seleccionadas';
+    }
+    $$(selTabla + ' tbody tr').forEach(function (fila) {
+      fila.addEventListener('click', function (evento) {
+        var caja = fila.querySelector('input[type="checkbox"]');
+        if (!caja) return;
+        if (evento.target !== caja) caja.checked = !caja.checked;
+        fila.classList.toggle('demo-seleccionada', caja.checked);
+        actualizar();
+      });
+    });
+    boton.addEventListener('click', function () {
+      var n = $$(selTabla + ' tbody input:checked').length;
+      toast(archivo + ' exportado con ' + n + ' ' + etiqueta + ' — demo');
+    });
+    actualizar();
+  }
+
+  // ============ Pantalla Mercado Público ============
 
   var progreso = $('.demo-progreso');
   var resultados = $('.demo-resultados');
   var btnDescargar = $('.demo-descargar');
+  var estadoApi = $('.demo-estado-api');
+  var pasos = [];
+
+  function limpiarPasos() {
+    pasos.forEach(clearTimeout);
+    pasos = [];
+  }
 
   btnDescargar.addEventListener('click', function () {
+    limpiarPasos();
     resultados.hidden = true;
     progreso.hidden = false;
     btnDescargar.disabled = true;
+
     var barra = $('.demo-progreso-barra i');
     var texto = $('.demo-progreso-texto');
     barra.style.width = '0';
-    texto.textContent = 'Consultando API de Mercado Público…';
+    texto.textContent = 'Consultando la API de Mercado Público…';
+    estadoApi.textContent = 'ⓘ Descargando el período 10-07-2026 a 13-07-2026…';
 
-    setTimeout(function () { barra.style.width = '45%'; }, 60);
-    setTimeout(function () {
-      texto.textContent = 'Aplicando filtros por categoría…';
-      barra.style.width = '85%';
-    }, 900);
-    setTimeout(function () { barra.style.width = '100%'; }, 1500);
-    setTimeout(function () {
+    pasos.push(setTimeout(function () { barra.style.width = '45%'; }, 60));
+    pasos.push(setTimeout(function () {
+      texto.textContent = '✅ Descarga completada en el servidor. Filtrando…';
+      barra.style.width = '80%';
+    }, 1000));
+    pasos.push(setTimeout(function () {
+      texto.textContent = '⚙️ Cargando y filtrando los datos de la nube…';
+      barra.style.width = '100%';
+    }, 1700));
+    pasos.push(setTimeout(function () {
       progreso.hidden = true;
       resultados.hidden = false;
       btnDescargar.disabled = false;
-    }, 1900);
+      estadoApi.textContent = '✅ Filtrado finalizado: 16 licitaciones de 128 descargadas.';
+    }, 2300));
   });
 
-  // Selección de licitaciones + exportación
-  var btnExportar = $('.demo-exportar');
-  function actualizarExportar() {
-    var n = $$('.demo-tabla-lic tbody input:checked').length;
-    btnExportar.disabled = n === 0;
-    btnExportar.textContent = n > 0 ? '↓ Exportar seleccionadas (' + n + ')' : '↓ Exportar seleccionadas';
-  }
-
-  $$('.demo-tabla-lic tbody tr').forEach(function (fila) {
-    fila.addEventListener('click', function (evento) {
-      var caja = fila.querySelector('input[type="checkbox"]');
-      if (evento.target !== caja) caja.checked = !caja.checked;
-      fila.classList.toggle('demo-seleccionada', caja.checked);
-      actualizarExportar();
-    });
+  $('.demo-cancelar').addEventListener('click', function () {
+    limpiarPasos();
+    progreso.hidden = true;
+    btnDescargar.disabled = false;
+    estadoApi.textContent = '🚫 La descarga fue cancelada.';
+    toast('Descarga cancelada — en la app real también se detiene en el servidor.');
   });
 
-  btnExportar.addEventListener('click', function () {
-    var n = $$('.demo-tabla-lic tbody input:checked').length;
-    toast('Resultado_Filtrado.xlsx exportado con ' + n + ' licitación(es) — demo');
+  conectarSeleccion('.demo-tabla-lic', '.demo-exportar', 'licitación(es)', 'Resultado_Filtrado.xlsx');
+
+  // ============ Pantalla Compra Ágil ============
+
+  conectarSeleccion('.demo-tabla-ca', '.demo-exportar-ca', 'cotización(es)', 'CompraAgil_Filtrado.xlsx');
+
+  var bannerCa = $('.demo-banner-ca');
+  $('.demo-actualizar-ca').addEventListener('click', function () {
+    bannerCa.hidden = false;
+    toast('9 cotizaciones vigentes cargadas desde la nube — último barrido: hoy 04:12');
   });
 
   // ============ Pantalla Filtros ============
@@ -192,6 +273,7 @@
       var tr = document.createElement('tr');
       var td1 = document.createElement('td');
       td1.textContent = TIPO_NOMBRE[filtro.t];
+      td1.className = 'demo-muted demo-nowrap';
       var td2 = document.createElement('td');
       td2.textContent = filtro.q;
       tr.appendChild(td1);
@@ -214,7 +296,7 @@
   });
   pintarCategoria('IMPRESION');
 
-  // ============ Pantalla Foros ============
+  // ============ Pantalla Foros inversos ============
 
   var cuerpoForos = $('.demo-tabla-foros tbody');
   var contadorForos = $('.demo-foros-count');
@@ -228,28 +310,84 @@
     var visibles = datos.filter(function (f) {
       return !q || f.id.toLowerCase().indexOf(q) !== -1 || f.cliente.toLowerCase().indexOf(q) !== -1;
     });
+
     cuerpoForos.innerHTML = '';
+
+    if (visibles.length === 0) {
+      var vacia = document.createElement('tr');
+      var celda = document.createElement('td');
+      celda.colSpan = 5;
+      celda.className = 'demo-vacio';
+      celda.textContent = 'Sin resultados para «' + busquedaForos.value.trim() + '».';
+      vacia.appendChild(celda);
+      cuerpoForos.appendChild(vacia);
+    }
+
     visibles.forEach(function (f) {
       var tr = document.createElement('tr');
-      var esOk = f.estado === 'Respondida';
-      [f.id, f.cliente, f.fecha].forEach(function (valor, i) {
+      var conMencion = f.estado === 'Respondida' || f.estado === 'Pendiente';
+      [f.id, f.cliente, f.fecha, f.revision].forEach(function (valor, i) {
         var td = document.createElement('td');
         td.textContent = valor;
-        if (i === 0 && esOk) td.className = 'demo-link';
+        if (i === 0) td.className = conMencion ? 'demo-link' : 'demo-nowrap';
+        if (i === 2 || i === 3) td.className = 'demo-nowrap';
         tr.appendChild(td);
       });
       var tdEstado = document.createElement('td');
-      tdEstado.textContent = (esOk ? '✓ ' : '') + f.estado;
-      tdEstado.className = esOk ? 'demo-estado-ok' : 'demo-estado-neutro';
+      if (f.estado === 'Respondida') {
+        tdEstado.textContent = '✓ Respondida';
+        tdEstado.className = 'demo-estado-ok';
+      } else if (f.estado === 'Pendiente') {
+        tdEstado.textContent = '● Pendiente';
+        tdEstado.className = 'demo-estado-ok';
+        tdEstado.style.color = 'var(--d-rojo)';
+      } else {
+        tdEstado.textContent = f.estado;
+        tdEstado.className = 'demo-estado-neutro';
+      }
       tr.appendChild(tdEstado);
       cuerpoForos.appendChild(tr);
     });
+
     contadorForos.textContent = visibles.length + ' foro(s)';
     tituloHistorial.hidden = vistaForos !== 'historial';
   }
 
   busquedaForos.addEventListener('input', pintarForos);
-  $('.demo-ver-foros').addEventListener('click', function () { vistaForos = 'foros'; pintarForos(); });
+  $('.demo-ver-foros').addEventListener('click', function () {
+    vistaForos = 'foros';
+    pintarForos();
+    toast('Revisión finalizada: 8 mención(es) a tu empresa en las licitaciones ofertadas.');
+  });
   $('.demo-ver-historial').addEventListener('click', function () { vistaForos = 'historial'; pintarForos(); });
   pintarForos();
+
+  // ============ Pantalla Equipo ============
+
+  var filasEquipo = $$('.demo-tabla-equipo tbody tr');
+  var seleccionado = null;
+
+  filasEquipo.forEach(function (fila) {
+    fila.addEventListener('click', function () {
+      filasEquipo.forEach(function (f) { f.classList.remove('demo-seleccionada'); });
+      fila.classList.add('demo-seleccionada');
+      seleccionado = fila;
+    });
+  });
+
+  $('.demo-cambiar-rol').addEventListener('click', function () {
+    if (!seleccionado) {
+      toast('Elige primero a un miembro del equipo en la tabla.');
+      return;
+    }
+    var nuevo = $('.demo-select-rol').value;
+    var chip = seleccionado.querySelector('.demo-chip');
+    if (chip.textContent === nuevo) {
+      toast('Ya tiene ese rol.');
+      return;
+    }
+    chip.textContent = nuevo;
+    chip.classList.toggle('demo-chip-neutro', nuevo === 'User');
+    toast('✅ Rol actualizado: ' + seleccionado.cells[0].textContent + ' ahora es ' + nuevo + '.');
+  });
 })();

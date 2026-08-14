@@ -4,17 +4,20 @@
   <div class="contenedor pie-int">
     <div class="pie-marca">
       <a class="logo" href="/" aria-label="RendApps, inicio">
-        <svg class="logo-icono" width="38" height="38" viewBox="0 0 40 40" aria-hidden="true">
+        <svg class="logo-icono" width="38" height="38" viewBox="0 0 64 64" aria-hidden="true">
           <defs>
-            <linearGradient id="gradLogoPie" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="gradLogoPieAzul" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#3B82F6"/>
               <stop offset="1" stop-color="#1E3A8A"/>
             </linearGradient>
+            <linearGradient id="gradLogoPieNaranja" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#FDBA74"/>
+              <stop offset="1" stop-color="#F97316"/>
+            </linearGradient>
           </defs>
-          <rect x="5" y="5" width="30" height="30" rx="10" fill="url(#gradLogoPie)" transform="rotate(-8 20 20)"/>
-          <text x="20" y="27" text-anchor="middle" font-family="'Space Grotesk','Arial',sans-serif" font-size="19" font-weight="700" fill="#fff">R</text>
-          <circle class="logo-chispa" cx="33" cy="8" r="4" fill="#F97316"/>
-          <circle cx="33" cy="8" r="1.6" fill="#fff"/>
+          <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#gradLogoPieAzul)"/>
+          <path d="M20 42 L32 30 L44 42" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="logo-chevron" d="M25 29 L32 22 L39 29" fill="none" stroke="url(#gradLogoPieNaranja)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="logo-texto">Rend<em>Apps</em></span>
       </a>

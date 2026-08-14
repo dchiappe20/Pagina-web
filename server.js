@@ -79,14 +79,14 @@ const proyectos = [
     estado: null
   },
   {
-    id: 'aplicacion-1',
-    nombre: 'Aplicación 1',
-    tipo: 'App móvil · SaaS',
-    mockup: 'proyecto-telefono-a',
-    desc: 'Producto propio por suscripción. El nombre y el detalle se publicarán en su lanzamiento.',
+    id: 'gatheryx',
+    nombre: 'Gatheryx',
+    tipo: 'App móvil y de escritorio · SaaS',
+    mockup: 'proyecto-gatheryx',
+    desc: 'Control de accesos para eventos: registro de asistentes, acreditación por QR y métricas en vivo, incluso sin conexión.',
     cliente: 'Producto RendApps',
-    estado: 'En desarrollo',
-    placeholder: true
+    url: '/proyectos/gatheryx',
+    estado: 'En desarrollo'
   },
   {
     id: 'aplicacion-2',
@@ -142,6 +142,11 @@ app.get('/proyectos', (req, res) => {
 
 app.get('/proyectos/filtro-licitaciones', (req, res) => {
   res.render('proyecto-filtro', { titulo: 'Filtro de Licitaciones', pagina: 'proyectos' });
+});
+
+app.get('/proyectos/gatheryx', (req, res) => {
+  // fuentesApp: la demo replica la app real, que usa Sora + JetBrains Mono.
+  res.render('proyecto-gatheryx', { titulo: 'Gatheryx', pagina: 'proyectos', fuentesApp: true });
 });
 
 app.get('/nosotros', (req, res) => {

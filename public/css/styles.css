@@ -202,7 +202,7 @@ a:hover { color: var(--azul-oscuro); }
   font-family: var(--fuente-display);
   font-weight: 700;
   font-size: 1.35rem;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.015em;
   color: var(--tinta);
 }
 
@@ -894,15 +894,20 @@ a:hover { color: var(--azul-oscuro); }
   .cabecera .nav-enlace:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
 }
 
-/* ---------- Chispa del logo ---------- */
-.logo-chispa {
-  animation: chispaLogo 2.8s ease-in-out infinite;
+/* ---------- Chevrón naranja del logo ---------- */
+/* El isotipo es un doble chevrón ascendente: el pequeño (naranja) sube y baja
+   apenas, como el "impulso" que da nombre a la marca. */
+.logo-chevron {
+  animation: impulsoLogo 3s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
-@keyframes chispaLogo {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.35); opacity: 0.75; }
+@keyframes impulsoLogo {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-2.5px); opacity: 0.85; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-chevron { animation: none; }
 }
 
 /* ---------- Héroe con más color y movimiento ---------- */

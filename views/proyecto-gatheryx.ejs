@@ -1,0 +1,508 @@
+<%
+/* Íconos de la app (trazo feather, como los Ionicons "outline" del producto). */
+const trazos = {
+  persona:   '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>',
+  qr:        '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="18"/><line x1="18" y1="14" x2="21" y2="14"/><line x1="21" y1="18" x2="21" y2="21"/><line x1="14" y1="21" x2="17" y2="21"/>',
+  tic:       '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  lupa:      '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/>',
+  grafico:   '<line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="5"/><line x1="18" y1="20" x2="18" y2="9"/>',
+  ajustes:   '<line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="9" cy="8" r="2.4"/><circle cx="15" cy="16" r="2.4"/>',
+  mas:       '<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  lapiz:     '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  equipo:    '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  descarga:  '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  derecha:   '<polyline points="9 18 15 12 9 6"/>',
+  izquierda: '<polyline points="15 18 9 12 15 6"/>',
+  cambiar:   '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  calendario:'<rect x="3" y="4.5" width="18" height="16" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  nube_off:  '<line x1="2" y1="2" x2="22" y2="22"/><path d="M6.5 18a4.5 4.5 0 0 1-.6-8.96"/><path d="M9 5.2A6 6 0 0 1 18 10h.5a4.5 4.5 0 0 1 3 7.8"/><line x1="8" y1="18" x2="17" y2="18"/>',
+  embudo:    '<polygon points="21 4 3 4 10.5 12.5 10.5 19 13.5 20.5 13.5 12.5 21 4"/>',
+  sobre:     '<rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/>',
+  basura:    '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',
+  lista:     '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'
+};
+const ico = (n, t) => `<svg width="${t || 20}" height="${t || 20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${trazos[n]}</svg>`;
+
+/* Isotipo de Gatheryx: un auditorio visto en planta (mismo trazo que el ícono real). */
+const marca = (t) => `<svg width="${t}" height="${t}" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M14 38 A18 18 0 0 1 50 38" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/><path d="M23 38 A9 9 0 0 1 41 38" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/><rect x="13" y="42" width="38" height="4.5" rx="2.2" fill="currentColor"/></svg>`;
+%>
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/css/demo-gatheryx.css?v=1">
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Producto propio · App móvil y de escritorio</p>
+    <h1>Gatheryx</h1>
+    <p class="cabecera-sub">Control de accesos para eventos: registra asistentes, acredita por QR y mira las métricas en vivo, aunque el recinto se quede sin señal.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor proyecto-detalle">
+    <div class="reveal">
+      <h2>Qué es y qué hace</h2>
+      <p>
+        Gatheryx es la aplicación con la que un equipo controla la puerta de un evento. Se crea el
+        evento, se comparte un formulario público de inscripción y, el día del evento, cada asistente
+        se acredita escaneando el <strong>QR</strong> que recibió por correo o buscándolo por nombre
+        en la lista.
+      </p>
+      <p>
+        Está pensada para el mundo real: los salones de eventos suelen tener mala señal, así que la
+        app guarda todo en el teléfono y <strong>sincroniza sola</strong> cuando vuelve la conexión.
+        Mientras tanto sigue registrando y acreditando sin detenerse.
+      </p>
+      <p>
+        Cada organización tiene sus usuarios con rol de <strong>administrador</strong> —crea eventos,
+        gestiona el equipo y exporta a Excel— u <strong>operador</strong>, que solo registra y acredita.
+        La misma app corre en Android, iOS y como aplicación de escritorio para Windows.
+      </p>
+    </div>
+    <aside class="ficha-proyecto reveal">
+      <h3>Ficha del proyecto</h3>
+      <ul>
+        <li><strong>Producto</strong><span>Desarrollo propio de RendApps</span></li>
+        <li><strong>Tipo</strong><span>App móvil (Android · iOS) y escritorio Windows</span></li>
+        <li><strong>Tecnología</strong><span>React Native · Expo · Electron · base de datos en la nube</span></li>
+        <li><strong>Acreditación</strong><span>Escaneo de QR o búsqueda manual en la lista</span></li>
+        <li><strong>Sin conexión</strong><span>Cola local que se sincroniza al reconectar</span></li>
+        <li><strong>Personalización</strong><span>Seis temas de color y formulario configurable por evento</span></li>
+        <li><strong>Estado</strong><span>En desarrollo · versiones de prueba en uso</span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Demo interactiva</p>
+      <h2>Toma el control del evento</h2>
+    </div>
+    <p class="demo-nota reveal">
+      Réplica navegable de la app con datos de ejemplo: cambia de evento, registra a un asistente,
+      simula el escaneo de un QR, mira el KPI y prueba los seis temas de color reales del producto.
+    </p>
+
+    <div class="gx reveal" id="gx" data-tema="aurora" data-vista="inicio">
+
+      <!-- ====================== TELÉFONO ====================== -->
+      <div class="gx-telefono">
+        <div class="gx-pantalla">
+          <div class="gx-notch" aria-hidden="true"></div>
+
+          <div class="gx-status">
+            <span>9:41</span>
+            <span class="gx-status-red">▮▮▮ ⌁ 87%</span>
+          </div>
+
+          <div class="gx-scroll">
+
+            <!-- ====== VISTA: INICIO ====== -->
+            <div class="gx-vista gx-activa" data-nombre="inicio">
+              <div class="gx-cabecera">
+                <span class="gx-badge"><%- marca(38) %></span>
+                <span class="gx-cabecera-txt">
+                  <small>Hola de nuevo</small>
+                  <b>Carolina Núñez</b>
+                </span>
+                <button type="button" class="gx-icono-btn" data-ir="config" aria-label="Configuración"><%- ico('ajustes', 19) %></button>
+              </div>
+
+              <div class="gx-offline" hidden>
+                <%- ico('nube_off', 15) %>
+                <span>MODO LOCAL · SIN CONEXIÓN</span>
+              </div>
+
+              <span class="gx-mono" style="margin:16px 0 9px">Evento activo</span>
+
+              <div class="gx-evento-marco">
+                <div class="gx-evento">
+                  <div class="gx-evento-fila">
+                    <div style="flex:1;min-width:0">
+                      <div class="gx-evento-nombre">Congreso de Innovación 2026</div>
+                      <div class="gx-evento-meta">
+                        <%- ico('calendario', 13) %>
+                        <span class="gx-evento-fecha">14-08-2026</span>
+                        <span class="gx-punto"></span>
+                        <span class="gx-evento-lugar">Centro de Eventos Vista Norte</span>
+                      </div>
+                    </div>
+                    <span class="gx-tipo">CON QR</span>
+                  </div>
+
+                  <div class="gx-ministats">
+                    <div class="gx-ministat"><b class="gx-n-total">248</b><span>Registrados</span></div>
+                    <div class="gx-ministat gx-verde"><b class="gx-n-acred">171</b><span>Acreditados</span></div>
+                    <div class="gx-ministat"><b class="gx-n-pend">77</b><span>Pendientes</span></div>
+                  </div>
+
+                  <div class="gx-barra"><i class="gx-avance"></i></div>
+
+                  <button type="button" class="gx-btn-suave gx-cambiar-evento">
+                    <%- ico('cambiar', 15) %> Cambiar evento
+                  </button>
+                </div>
+              </div>
+
+              <span class="gx-mono" style="margin:24px 0 11px">Operación</span>
+              <div class="gx-ops">
+                <button type="button" class="gx-op" data-ir="registrar">
+                  <span class="gx-op-icono"><%- ico('persona', 23) %></span>
+                  <b>Registrar</b><span class="gx-op-sub">Nuevo asistente</span>
+                </button>
+                <button type="button" class="gx-op gx-op-acreditar" data-ir="escaner">
+                  <span class="gx-op-icono"><%- ico('qr', 23) %></span>
+                  <b>Acreditar</b><span class="gx-op-sub gx-op-acreditar-sub">Escanear QR</span>
+                </button>
+                <button type="button" class="gx-op" data-ir="registrados">
+                  <span class="gx-op-icono"><%- ico('lupa', 23) %></span>
+                  <b>Registrados</b><span class="gx-op-sub">Ver asistentes</span>
+                </button>
+                <button type="button" class="gx-op" data-ir="kpi">
+                  <span class="gx-op-icono"><%- ico('grafico', 23) %></span>
+                  <b>KPI</b><span class="gx-op-sub">Métricas en vivo</span>
+                </button>
+              </div>
+
+              <span class="gx-mono" style="margin:24px 0 11px">Administración</span>
+              <div class="gx-filas">
+                <button type="button" class="gx-fila" data-ir="crear">
+                  <span class="gx-fila-icono"><%- ico('mas', 19) %></span>
+                  <span class="gx-fila-txt"><b>Crear evento</b><span>Comercial o con QR</span></span>
+                  <span class="gx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="gx-fila" data-gx-toast="En la app real abre la lista de eventos para modificarlos.">
+                  <span class="gx-fila-icono"><%- ico('lapiz', 19) %></span>
+                  <span class="gx-fila-txt"><b>Editar evento</b><span>Modificar existentes</span></span>
+                  <span class="gx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="gx-fila" data-gx-toast="En la app real gestiona los usuarios de la organización y sus roles.">
+                  <span class="gx-fila-icono"><%- ico('equipo', 19) %></span>
+                  <span class="gx-fila-txt"><b>Gestionar usuarios</b><span>Roles y accesos</span></span>
+                  <span class="gx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="gx-fila" data-gx-toast="Registrados_Congreso2026.xlsx descargado — demo">
+                  <span class="gx-fila-icono"><%- ico('descarga', 19) %></span>
+                  <span class="gx-fila-txt"><b>Exportar datos</b><span>Registrados y acreditados en Excel</span></span>
+                  <span class="gx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+              </div>
+
+              <div class="gx-pie-usuario">
+                <p>Carolina Núñez · Administradora</p>
+                <button type="button" data-gx-toast="En la app real cierra la sesión y vuelve al login.">Cerrar sesión</button>
+              </div>
+            </div>
+
+            <!-- ====== VISTA: REGISTRAR ====== -->
+            <div class="gx-vista" data-nombre="registrar">
+              <div class="gx-volver">
+                <button type="button" class="gx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="gx-volver-txt"><small class="gx-nombre-evento">Congreso de Innovación 2026</small><b>Registrar asistente</b></span>
+              </div>
+
+              <form class="gx-form-registro" autocomplete="off">
+                <input class="gx-campo" name="nombre" placeholder="Nombre y apellido *" required>
+                <input class="gx-campo" name="empresa" placeholder="Empresa *" required>
+                <input class="gx-campo" name="cargo" placeholder="Cargo *" required>
+                <input class="gx-campo" name="correo" type="email" placeholder="Correo electrónico *" required>
+                <input class="gx-campo" name="telefono" placeholder="Teléfono (opcional)">
+                <input class="gx-campo" name="rut" placeholder="RUT">
+                <input class="gx-campo" name="patente" placeholder="Patente">
+                <button type="submit" class="gx-btn">Guardar registro</button>
+                <button type="button" class="gx-btn gx-btn-contorno" style="margin-top:9px" data-gx-toast="En la app real sube un Excel y registra a varias personas de una vez.">Registro múltiple (Excel)</button>
+              </form>
+
+              <p class="gx-mono" style="margin-top:16px;text-transform:none;letter-spacing:0.3px;line-height:1.6">
+                Los campos RUT y Patente sólo aparecen si el evento los pide: el formulario se
+                configura al crear cada evento.
+              </p>
+            </div>
+
+            <!-- ====== VISTA: REGISTRADOS ====== -->
+            <div class="gx-vista" data-nombre="registrados">
+              <div class="gx-volver">
+                <button type="button" class="gx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="gx-volver-txt"><small>Ver registrados</small><b class="gx-nombre-evento">Congreso de Innovación 2026</b></span>
+              </div>
+
+              <div class="gx-stats">
+                <div class="gx-stat"><b class="gx-n-total">248</b><span>Total</span></div>
+                <div class="gx-stat gx-verde"><b class="gx-n-acred">171</b><span>Acreditados</span></div>
+                <div class="gx-stat gx-acento"><b class="gx-n-pct">69%</b><span>Avance</span></div>
+              </div>
+
+              <div class="gx-buscador">
+                <span class="gx-buscador-lupa"><%- ico('lupa', 16) %></span>
+                <input class="gx-campo gx-buscar" type="search" placeholder="Buscar…" aria-label="Buscar asistente">
+                <button type="button" class="gx-orden"><%- ico('embudo', 14) %> <span class="gx-orden-txt">Nombre (A-Z)</span></button>
+              </div>
+
+              <div class="gx-lista-personas"></div>
+
+              <div style="display:flex;gap:8px;margin-top:12px">
+                <button type="button" class="gx-btn gx-btn-contorno" data-ir="escaner">Acreditar</button>
+                <button type="button" class="gx-btn gx-btn-contorno" data-ir="registrar">Registrar nuevo</button>
+              </div>
+            </div>
+
+            <!-- ====== VISTA: KPI ====== -->
+            <div class="gx-vista" data-nombre="kpi">
+              <div class="gx-volver">
+                <button type="button" class="gx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="gx-volver-txt"><small>KPI del evento</small><b class="gx-nombre-evento">Congreso de Innovación 2026</b></span>
+              </div>
+
+              <div class="gx-total-marco">
+                <div class="gx-total">
+                  <span class="gx-mono" style="letter-spacing:2px">Total registrados</span>
+                  <b class="gx-total-num">0</b>
+                  <p><span class="gx-kpi-usuarios">4</span> usuarios contabilizados</p>
+                </div>
+              </div>
+
+              <p style="font-size:13px;font-weight:700;color:var(--txd);margin:20px 0 12px">Registros por usuario</p>
+              <div class="gx-kpi-lista"></div>
+            </div>
+
+            <!-- ====== VISTA: CREAR EVENTO ====== -->
+            <div class="gx-vista" data-nombre="crear">
+              <div class="gx-volver">
+                <button type="button" class="gx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="gx-volver-txt"><small>Administración</small><b>Crear evento</b></span>
+              </div>
+
+              <input class="gx-campo" placeholder="Nombre del evento *">
+              <input class="gx-campo" placeholder="Lugar">
+              <div style="display:flex;gap:9px">
+                <input class="gx-campo" placeholder="Fecha" value="20-09-2026">
+                <input class="gx-campo" placeholder="Hora" value="09:00 – 18:00">
+              </div>
+
+              <span class="gx-mono" style="margin:6px 0 9px">Tipo de registro</span>
+              <div class="gx-segmentado gx-tipo-registro">
+                <button type="button" aria-pressed="true" data-tipo="cliente">Con QR</button>
+                <button type="button" aria-pressed="false" data-tipo="comercial">Comercial</button>
+              </div>
+
+              <span class="gx-mono" style="margin:18px 0 9px">Datos a solicitar</span>
+              <div class="gx-filas">
+                <button type="button" class="gx-fila gx-campo-opcional" aria-pressed="true">
+                  <span class="gx-fila-icono"><%- ico('tic', 18) %></span>
+                  <span class="gx-fila-txt"><b>RUT / RUC</b><span>Documento de identidad del asistente</span></span>
+                </button>
+                <button type="button" class="gx-fila gx-campo-opcional" aria-pressed="false">
+                  <span class="gx-fila-icono"><%- ico('tic', 18) %></span>
+                  <span class="gx-fila-txt"><b>Patente</b><span>Patente del vehículo</span></span>
+                </button>
+                <button type="button" class="gx-fila gx-campo-opcional" aria-pressed="false">
+                  <span class="gx-fila-icono"><%- ico('tic', 18) %></span>
+                  <span class="gx-fila-txt"><b>Certificación de capacitación</b><span>Marca el evento como certificación</span></span>
+                </button>
+              </div>
+
+              <span class="gx-mono" style="margin:18px 0 9px">Imagen del evento</span>
+              <button type="button" class="gx-fila" data-gx-toast="En la app real subes la imagen y eliges el encuadre por formato.">
+                <span class="gx-fila-icono"><%- ico('lapiz', 18) %></span>
+                <span class="gx-fila-txt"><b>Subir imagen</b><span>Se usa de fondo en el formulario público</span></span>
+                <span class="gx-chevron"><%- ico('derecha', 16) %></span>
+              </button>
+
+              <button type="button" class="gx-btn" style="margin-top:16px" data-gx-toast="Evento creado — en la app real ya queda disponible con su enlace de inscripción.">Crear evento</button>
+            </div>
+
+            <!-- ====== VISTA: CONFIGURACIÓN ====== -->
+            <div class="gx-vista" data-nombre="config">
+              <div class="gx-volver">
+                <button type="button" class="gx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="gx-volver-txt"><small>Preferencias</small><b>Configuración</b></span>
+              </div>
+
+              <div class="gx-config-bloque">
+                <span class="gx-mono">Tema de color</span>
+                <div class="gx-temas">
+                  <button type="button" class="gx-tema" data-tema-valor="aurora" aria-pressed="true">
+                    <span class="gx-tema-muestra" style="background:linear-gradient(135deg,#7C5CFF,#00E5A0)"></span>
+                    <span><b>Aurora</b><span>Violeta y menta · por defecto</span></span>
+                  </button>
+                  <button type="button" class="gx-tema" data-tema-valor="lima" aria-pressed="false">
+                    <span class="gx-tema-muestra" style="background:linear-gradient(135deg,#9BE800,#38BDF8)"></span>
+                    <span><b>Lima Pro</b><span>Herencia de la marca actual</span></span>
+                  </button>
+                  <button type="button" class="gx-tema" data-tema-valor="cian" aria-pressed="false">
+                    <span class="gx-tema-muestra" style="background:linear-gradient(135deg,#00D4FF,#7CFFB2)"></span>
+                    <span><b>Ciánico</b><span>Frío, técnico, alto contraste</span></span>
+                  </button>
+                  <button type="button" class="gx-tema" data-tema-valor="sunset" aria-pressed="false">
+                    <span class="gx-tema-muestra" style="background:linear-gradient(135deg,#FF5C7A,#FFB020)"></span>
+                    <span><b>Sunset</b><span>Cálido, coral y ámbar</span></span>
+                  </button>
+                  <button type="button" class="gx-tema" data-tema-valor="ambar" aria-pressed="false">
+                    <span class="gx-tema-muestra" style="background:linear-gradient(135deg,#FFC24B,#FF8A4B)"></span>
+                    <span><b>Ámbar</b><span>Dorado sobre negro profundo</span></span>
+                  </button>
+                  <button type="button" class="gx-tema" data-tema-valor="ejecutivo" aria-pressed="false">
+                    <span class="gx-tema-muestra" style="background:linear-gradient(135deg,#2563EB,#0EA5E9)"></span>
+                    <span><b>Ejecutivo</b><span>Modo claro · blanco y azul</span></span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="gx-config-bloque">
+                <span class="gx-mono">Tamaño de letra</span>
+                <div class="gx-segmentado gx-letra">
+                  <button type="button" aria-pressed="false" data-letra="13.6">Pequeño</button>
+                  <button type="button" aria-pressed="true" data-letra="15">Normal</button>
+                  <button type="button" aria-pressed="false" data-letra="16.4">Grande</button>
+                </div>
+              </div>
+
+              <div class="gx-config-bloque">
+                <span class="gx-mono">Plantillas</span>
+                <button type="button" class="gx-fila" data-gx-toast="Plantilla_Registro_Multiple.xlsx descargada — demo">
+                  <span class="gx-fila-icono"><%- ico('descarga', 18) %></span>
+                  <span class="gx-fila-txt"><b>Descargar formato de Excel</b><span>Plantilla para registro múltiple</span></span>
+                  <span class="gx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+              </div>
+
+              <div class="gx-config-bloque">
+                <span class="gx-mono">Cuenta</span>
+                <div class="gx-filas">
+                  <div class="gx-fila" style="cursor:default">
+                    <span class="gx-fila-icono"><%- ico('sobre', 18) %></span>
+                    <span class="gx-fila-txt"><b>carolina@empresademo.cl</b><span>Administradora · Empresa Demo</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.gx-scroll -->
+
+          <!-- ====== ESCÁNER QR (capa completa) ====== -->
+          <div class="gx-escaner" data-nombre="escaner">
+            <div class="gx-escaner-cab">
+              <button type="button" class="gx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+              <span><small>Acreditación por QR</small><b>Escáner</b></span>
+            </div>
+            <div class="gx-escaner-cuerpo">
+              <div class="gx-escaner-buscando">
+                <div class="gx-mira">
+                  <span class="gx-esquina gx-esquina-1"></span>
+                  <span class="gx-esquina gx-esquina-2"></span>
+                  <span class="gx-esquina gx-esquina-3"></span>
+                  <span class="gx-esquina gx-esquina-4"></span>
+                  <span class="gx-linea"></span>
+                </div>
+                <p class="gx-escaner-ayuda">Apunta la cámara al código QR<br>de la invitación</p>
+                <p class="gx-escaner-evento">Congreso de Innovación 2026</p>
+                <div style="text-align:center">
+                  <button type="button" class="gx-escaner-btn gx-simular"><%- ico('qr', 18) %> Simular escaneo</button>
+                </div>
+                <div style="text-align:center">
+                  <button type="button" class="gx-escaner-btn" data-ir="registrados"><%- ico('lista', 18) %> Ir a acreditación manual</button>
+                </div>
+              </div>
+
+              <div class="gx-exito" hidden>
+                <div class="gx-exito-tic">✓</div>
+                <b class="gx-exito-nombre">—</b>
+                <p class="gx-exito-detalle">—</p>
+                <span class="gx-exito-etq">ACREDITADO ✓</span>
+                <button type="button" class="gx-btn gx-btn-contorno gx-siguiente" style="margin-top:20px">Escanear siguiente</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== HOJA: CAMBIAR EVENTO ====== -->
+          <div class="gx-hoja-fondo">
+            <div class="gx-hoja">
+              <div class="gx-hoja-tirador"></div>
+              <h4>Eventos activos</h4>
+              <div class="gx-hoja-lista"></div>
+            </div>
+          </div>
+
+        </div><!-- /.gx-pantalla -->
+      </div><!-- /.gx-telefono -->
+
+      <!-- ====================== PANEL LATERAL ====================== -->
+      <div class="gx-panel">
+        <p class="gx-panel-titulo">Recorre la app</p>
+        <p class="gx-panel-sub">Pulsa dentro del teléfono o usa estos accesos directos.</p>
+
+        <div class="gx-menu">
+          <button type="button" data-ir="inicio" aria-current="true"><span class="gx-menu-num">1</span> Inicio <small>Evento activo y accesos</small></button>
+          <button type="button" data-ir="registrar"><span class="gx-menu-num">2</span> Registrar <small>Alta de un asistente</small></button>
+          <button type="button" data-ir="escaner"><span class="gx-menu-num">3</span> Acreditar por QR <small>Escáner y confirmación</small></button>
+          <button type="button" data-ir="registrados"><span class="gx-menu-num">4</span> Registrados <small>Lista, búsqueda y detalle</small></button>
+          <button type="button" data-ir="kpi"><span class="gx-menu-num">5</span> KPI <small>Quién registró cuánto</small></button>
+          <button type="button" data-ir="crear"><span class="gx-menu-num">6</span> Crear evento <small>Formulario configurable</small></button>
+          <button type="button" data-ir="config"><span class="gx-menu-num">7</span> Configuración <small>Los seis temas reales</small></button>
+        </div>
+
+        <div class="gx-explica">
+          <h4 class="gx-explica-titulo">Inicio</h4>
+          <p class="gx-explica-texto">El evento activo manda: los contadores, la barra de avance y todo lo que hagas debajo se refieren a él. Con «Cambiar evento» saltas a otro sin salir de la pantalla.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="demo-nota demo-nota-pie reveal">Los asistentes, empresas y eventos mostrados son de ejemplo y no corresponden a personas ni eventos reales.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Resultados</p>
+      <h2>Qué resuelve en la puerta</h2>
+    </div>
+    <div class="grid-3 tarjetas-confianza">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'movil', t: 24 }) %></span>
+        <h3>Acreditación en segundos</h3>
+        <p>Se escanea el QR de la invitación y el asistente queda marcado al instante, con confirmación en pantalla para el operador.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'escudo', t: 24 }) %></span>
+        <h3>Funciona sin señal</h3>
+        <p>Si el recinto se queda sin internet, la app sigue registrando y acreditando en local y sincroniza sola al reconectar.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'web', t: 24 }) %></span>
+        <h3>Inscripción pública</h3>
+        <p>Cada evento tiene su formulario web: el asistente se inscribe solo y recibe su QR por correo, sin trabajo del equipo.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'consultoria', t: 24 }) %></span>
+        <h3>Métricas en vivo</h3>
+        <p>Cuántos llegaron, cuántos faltan y quién del equipo registró a cada uno, actualizado durante el evento.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'diseno', t: 24 }) %></span>
+        <h3>Se adapta a tu marca</h3>
+        <p>Seis temas de color, tamaño de letra ajustable y un formulario que pide sólo los datos que ese evento necesita.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'documento', t: 24 }) %></span>
+        <h3>Exportación a Excel</h3>
+        <p>Registrados y acreditados salen en una planilla lista para el informe posterior al evento.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿Organizas eventos y la puerta es un cuello de botella?</h2>
+      <p>Cuéntanos cómo lo haces hoy y te mostramos Gatheryx funcionando con tus datos.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<script src="/js/demo-gatheryx.js?v=1" defer></script>
+<%- include('partials/footer') %>

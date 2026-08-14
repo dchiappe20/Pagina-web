@@ -1,12 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="RendApps">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="a" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#3B82F6"/>
       <stop offset="1" stop-color="#1E3A8A"/>
     </linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDBA74"/>
+      <stop offset="1" stop-color="#F97316"/>
+    </linearGradient>
   </defs>
-  <rect x="5" y="5" width="30" height="30" rx="10" fill="url(#g)" transform="rotate(-8 20 20)"/>
-  <text x="20" y="27" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#ffffff">R</text>
-  <circle cx="33" cy="8" r="4" fill="#F97316"/>
-  <circle cx="33" cy="8" r="1.6" fill="#fff"/>
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#a)"/>
+  <path d="M20 42 L32 30 L44 42" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M25 29 L32 22 L39 29" fill="none" stroke="url(#b)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
