@@ -155,11 +155,16 @@
    Modal de alta
    ============================================================ */
 
+/* Sin `backdrop-filter`.
+   Un desenfoque a pantalla completa obliga al navegador a re-rasterizar todo
+   lo que hay detrás en cada fotograma, y detrás siguen corriendo animaciones
+   infinitas (el chevrón del logo, los orbes de las secciones, la banda CTA).
+   El resultado era que, con el modal abierto, hasta escribir en un input se
+   arrastraba. Un velo sólido logra el mismo efecto visual y no cuesta nada. */
 .modal-fondo {
   position: fixed;
   inset: 0;
-  background: rgba(17, 24, 39, 0.55);
-  backdrop-filter: blur(2px);
+  background: rgba(17, 24, 39, 0.62);
   display: none;
   align-items: center;
   justify-content: center;
@@ -167,6 +172,17 @@
   z-index: 100;
 }
 .modal-fondo.abierto { display: flex; }
+
+/* Con el modal abierto, lo de atrás no se ve ni se usa: no tiene sentido
+   seguir gastando fotogramas en animarlo. */
+body.modal-abierto .logo-chevron,
+body.modal-abierto .hero::before,
+body.modal-abierto .hero::after,
+body.modal-abierto .hero .acento,
+body.modal-abierto .cabecera-pagina::after,
+body.modal-abierto .banda-cta::before {
+  animation: none !important;
+}
 
 .modal {
   background: var(--blanco);

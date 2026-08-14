@@ -146,6 +146,9 @@
     aviso.classList.remove('visible');
     modal.hidden = false;
     modal.classList.add('abierto');
+    // La clase, además de bloquear el scroll, pausa las animaciones de fondo
+    // (ver planes.css): con el modal abierto no se ven y sólo gastan CPU.
+    document.body.classList.add('modal-abierto');
     document.body.style.overflow = 'hidden';
     formulario.querySelector('#alta-nombre').focus();
   }
@@ -153,6 +156,7 @@
   function cerrarModal() {
     modal.classList.remove('abierto');
     modal.hidden = true;
+    document.body.classList.remove('modal-abierto');
     document.body.style.overflow = '';
     if (ultimoFoco) ultimoFoco.focus();
   }
