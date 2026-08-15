@@ -313,6 +313,80 @@ body.modal-abierto .banda-cta::before {
 .retorno p { margin-top: 0.9rem; }
 .retorno-acciones { margin-top: 1.8rem; display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
 
+/* ============================================================
+   Pantalla de creación de cuenta (tras el pago)
+   ============================================================ */
+
+.cuenta {
+  max-width: 30rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.cuenta h1 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); }
+.cuenta > .cuenta-paso > p { margin-top: 0.9rem; }
+.cuenta-intro { margin-bottom: 1.6rem; }
+
+.cuenta-cargando {
+  width: 34px; height: 34px;
+  margin: 2.5rem auto 0;
+  border: 3px solid var(--borde);
+  border-top-color: var(--azul);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .cuenta-cargando { animation-duration: 2.4s; }
+}
+.cuenta-esperando { color: var(--texto-suave); font-size: 0.95rem; }
+
+.cuenta-form { text-align: left; margin-top: 0.5rem; }
+.cuenta-form .campo { margin-bottom: 1.15rem; }
+.campo-ayuda { font-size: 0.82rem; color: var(--texto-suave); margin-top: 0.3rem; }
+
+/* Un campo de sólo lectura debe *parecerlo*: si se ve igual que los demás,
+   el usuario intenta escribir en él y no entiende por qué no puede. */
+.cuenta-form input[readonly] {
+  background: var(--fondo-alt);
+  color: var(--texto);
+  cursor: default;
+}
+.cuenta-form input[readonly]:focus { border-color: var(--borde); box-shadow: none; }
+
+.campo-clave { position: relative; display: flex; align-items: center; }
+.campo-clave input { padding-right: 5.2rem; }
+.campo-ojo {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--azul);
+  font-family: var(--fuente-texto);
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+}
+.campo-ojo:hover { color: var(--azul-oscuro); }
+
+.fuerza {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--borde);
+  overflow: hidden;
+  margin-top: 0.55rem;
+}
+.fuerza i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+.fuerza-texto { font-size: 0.8rem; margin-top: 0.3rem; min-height: 1.1rem; font-weight: 600; }
+
+.cuenta .modal-aviso { text-align: left; }
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 780px) {

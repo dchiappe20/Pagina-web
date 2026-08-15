@@ -111,8 +111,8 @@ const planes = [
   {
     id: 'filt', // debe coincidir con core.apps.codigo
     app: 'Filtro de Licitaciones',
-    nombre: 'Plan Pymes',
-    sub: 'Filtro de Licitaciones · Mercado Público y Compra Ágil',
+    nombre: 'Plan general Filtro de Licitaciones',
+    sub: 'Mercado Público y Compra Ágil, revisados todos los días',
     icono: 'documento',
     uf: 3,
     features: [
@@ -128,8 +128,8 @@ const planes = [
   {
     id: 'gatheryx', // debe coincidir con core.apps.codigo
     app: 'Gatheryx',
-    nombre: 'Plan Pymes',
-    sub: 'Gatheryx · Control de accesos y acreditación para eventos',
+    nombre: 'Plan general Gatheryx',
+    sub: 'Control de accesos y acreditación para eventos',
     icono: 'movil',
     uf: 1,
     features: [
@@ -215,6 +215,18 @@ app.get('/pago/retorno', (req, res) => {
   const estado = permitidos.includes(req.query.estado) ? req.query.estado : 'error';
   res.set('Cache-Control', 'no-store, must-revalidate');
   res.render('pago-retorno', { titulo: 'Estado de tu suscripción', pagina: 'planes', estado });
+});
+
+// Creación de la cuenta tras el pago. A esta pantalla sólo se llega con el
+// token de un solo uso que emite `flow-retorno`; quien decide si vale es la
+// Edge Function `activar-cuenta`, no este servidor.
+app.get('/crear-cuenta', (req, res) => {
+  res.set('Cache-Control', 'no-store, must-revalidate');
+  res.render('crear-cuenta', {
+    titulo: 'Crea tu cuenta',
+    pagina: 'planes',
+    configCuenta: { urlActivarCuenta: process.env.URL_ACTIVAR_CUENTA || '' }
+  });
 });
 
 app.get('/nosotros', (req, res) => {

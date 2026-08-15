@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/css/planes.css?v=2">
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="cuenta" id="cuenta">
+
+      <%# Estado 1: comprobando el enlace %>
+      <div class="cuenta-paso" data-paso="cargando">
+        <div class="cuenta-cargando" aria-hidden="true"></div>
+        <p class="cuenta-esperando">Comprobando tu enlace…</p>
+      </div>
+
+      <%# Estado 2: el enlace no sirve %>
+      <div class="cuenta-paso" data-paso="invalido" hidden>
+        <div class="retorno-icono error">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h1>No pudimos abrir tu enlace</h1>
+        <p class="cuenta-motivo"></p>
+        <p>Tu cuenta y tu suscripción no corren peligro: esto sólo afecta a este enlace.</p>
+        <div class="retorno-acciones">
+          <a class="btn btn-contorno" href="/contacto">Escribirnos</a>
+        </div>
+      </div>
+
+      <%# Estado 3: el formulario %>
+      <div class="cuenta-paso" data-paso="formulario" hidden>
+        <div class="retorno-icono ok">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>Ya está tu pago. Crea tu cuenta</h1>
+        <p class="cuenta-intro">
+          Elige la contraseña con la que entrarás a <strong class="cuenta-empresa"></strong>.
+          Con ella y tu correo accedes a la aplicación.
+        </p>
+
+        <div class="modal-aviso error" role="alert"></div>
+
+        <form id="form-cuenta" class="cuenta-form" novalidate>
+          <div class="campo">
+            <label for="cuenta-email">Tu correo</label>
+            <%# De sólo lectura: es el correo con el que se pagó y con el que
+                quedó creada la cuenta. Cambiarlo aquí no tendría efecto. %>
+            <input id="cuenta-email" name="email" type="email" readonly>
+            <p class="campo-ayuda">Es el correo con el que contrataste.</p>
+          </div>
+
+          <div class="campo">
+            <label for="cuenta-password">Contraseña</label>
+            <div class="campo-clave">
+              <input id="cuenta-password" name="password" type="password"
+                     autocomplete="new-password" minlength="8" required>
+              <button type="button" class="campo-ojo" aria-label="Mostrar la contraseña">Mostrar</button>
+            </div>
+            <p class="campo-error">La contraseña debe tener al menos 8 caracteres.</p>
+            <div class="fuerza" aria-hidden="true"><i></i></div>
+            <p class="fuerza-texto"></p>
+          </div>
+
+          <div class="campo">
+            <label for="cuenta-password2">Repite la contraseña</label>
+            <input id="cuenta-password2" name="password2" type="password"
+                   autocomplete="new-password" required>
+            <p class="campo-error">Las dos contraseñas no coinciden.</p>
+          </div>
+
+          <button type="submit" class="btn modal-enviar">
+            Crear mi cuenta <span class="btn-flecha" aria-hidden="true">→</span>
+          </button>
+        </form>
+      </div>
+
+      <%# Estado 4: listo %>
+      <div class="cuenta-paso" data-paso="listo" hidden>
+        <div class="retorno-icono ok">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>¡Cuenta creada!</h1>
+        <p>Ya puedes entrar a la aplicación con <strong class="cuenta-email-final"></strong> y la contraseña que acabas de elegir.</p>
+        <p>Tus <strong>14 días de prueba</strong> ya están corriendo. El primer cobro es al terminarlos.</p>
+        <div class="retorno-acciones">
+          <a class="btn" href="/">Volver al inicio <span class="btn-flecha" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  window.CONFIG_CUENTA = <%- JSON.stringify(configCuenta) %>;
+</script>
+<script src="/js/crear-cuenta.js?v=1" defer></script>
+<%- include('partials/footer') %>
