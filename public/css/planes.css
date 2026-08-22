@@ -226,6 +226,18 @@ body.modal-abierto .banda-cta::before {
 .modal-plan { font-weight: 600; color: var(--azul); }
 
 .campo { margin-bottom: 0.95rem; }
+
+/* Nombre y apellido comparten línea: son un solo dato partido en dos, y en
+   filas separadas parecían campos sin relación. */
+.campo-doble {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .campo-doble { grid-template-columns: 1fr; }
+}
 .campo label {
   display: block;
   font-size: 0.85rem;

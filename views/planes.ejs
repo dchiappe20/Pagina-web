@@ -65,7 +65,7 @@
       <article class="tarjeta-confianza reveal">
         <span class="icono-caja"><%- include('partials/icono', { n: 'documento', t: 24 }) %></span>
         <h3>1 · Completas tus datos</h3>
-        <p>Nombre, correo, empresa y RUT. Con eso creamos la cuenta de tu empresa y sus usuarios.</p>
+        <p>Nombre, apellido, correo, empresa y RUT. Con eso creamos la cuenta de tu empresa y sus usuarios.</p>
       </article>
       <article class="tarjeta-confianza reveal">
         <span class="icono-caja"><%- include('partials/icono', { n: 'candado', t: 24 }) %></span>
@@ -93,10 +93,20 @@
     <div class="modal-aviso error" role="alert"></div>
 
     <form id="form-alta" novalidate>
-      <div class="campo">
-        <label for="alta-nombre">Nombre y apellido</label>
-        <input id="alta-nombre" name="nombre" type="text" autocomplete="name" required>
-        <p class="campo-error">Escribe tu nombre y apellido.</p>
+      <!-- Nombre y apellido van separados a propósito: es lo que se guarda en
+           el registro central y lo que después muestran la Filtradora, Gatheryx
+           y Leadyx. Con un solo campo había que adivinar dónde partirlo. -->
+      <div class="campo-doble">
+        <div class="campo">
+          <label for="alta-nombre">Nombre</label>
+          <input id="alta-nombre" name="nombre" type="text" autocomplete="given-name" required>
+          <p class="campo-error">Escribe tu nombre.</p>
+        </div>
+        <div class="campo">
+          <label for="alta-apellido">Apellido</label>
+          <input id="alta-apellido" name="apellido" type="text" autocomplete="family-name" required>
+          <p class="campo-error">Escribe tu apellido.</p>
+        </div>
       </div>
       <div class="campo">
         <label for="alta-correo">Correo electrónico</label>

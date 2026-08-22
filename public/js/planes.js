@@ -189,12 +189,16 @@
   }
 
   function validar(datos) {
-    var okNombre = marcar(formulario.nombre, datos.nombre.length >= 3 && datos.nombre.indexOf(' ') > 0);
+    // Nombre y apellido se validan por separado: son dos campos y cada uno
+    // marca su propio error. La regla de "tiene que llevar un espacio" que
+    // había antes sobra, y dejaba fuera a quien escribía sólo su nombre.
+    var okNombre = marcar(formulario.nombre, datos.nombre.length >= 2);
+    var okApellido = marcar(formulario.apellido, datos.apellido.length >= 2);
     var okCorreo = marcar(formulario.correo, /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(datos.correo));
     var okEmpresa = marcar(formulario.empresa, datos.empresa.length >= 2);
     var okRut = marcar(formulario.rut, rutValido(datos.rut));
 
-    return okNombre && okCorreo && okEmpresa && okRut;
+    return okNombre && okApellido && okCorreo && okEmpresa && okRut;
   }
 
   function mostrarError(mensaje) {
@@ -208,6 +212,7 @@
 
     var datos = {
       nombre: formulario.nombre.value.trim(),
+      apellido: formulario.apellido.value.trim(),
       correo: formulario.correo.value.trim().toLowerCase(),
       empresa: formulario.empresa.value.trim(),
       rut: normalizarRut(formulario.rut.value),

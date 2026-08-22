@@ -57,6 +57,9 @@
     .then(function (datos) {
       $('#cuenta-email').value = datos.email || '';
       $('.cuenta-empresa').textContent = datos.empresa || 'tu empresa';
+      // El nombre lo dio al contratar: se saluda con él en vez de volver a
+      // pedirlo. Se usa textContent, nunca innerHTML: viene de un formulario.
+      $('.cuenta-saludo').textContent = datos.nombre ? ', ' + datos.nombre : '';
       mostrarPaso('formulario');
       $('#cuenta-password').focus();
 

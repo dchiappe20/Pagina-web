@@ -258,16 +258,18 @@ function cuandoTexto(ev){
 async function cargarEvento(){
   if(!eventoId){ $('titulo').textContent = 'Enlace inválido'; showMsg('El enlace no incluye un evento. Solicita uno nuevo al organizador.', 'err'); $('submit').disabled = true; return; }
   try{
-    const base = SUPABASE_URL + '/rest/v1/eventos?id=eq.' + encodeURIComponent(eventoId) + '&select=';
-    // Intento con las columnas de personalización; si aún no existen en la BD, fallback al select básico.
-    let res = await fetch(base + 'nombre,certificacion_capacitacion,activo,imagen_url,form_usar_imagen,form_bg_color,form_img_movil,form_img_pc,form_campos,fecha,hora_inicio,hora_fin', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
-    if(!res.ok){
-      res = await fetch(base + 'nombre,certificacion_capacitacion,activo', { headers: { ...headersBase, 'Accept-Profile': SCHEMA } });
-    }
+    // Se pide el evento por una función acotada en vez de leer la tabla.
+    // Antes esto era un SELECT directo: la policy que lo permitía dejaba
+    // listar TODOS los eventos activos de TODAS las empresas a quien quitara
+    // el filtro `?id=eq.`. La función devuelve uno y sólo si está activo.
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/evento_publico', {
+      method: 'POST',
+      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA },
+      body: JSON.stringify({ p_id: eventoId })
+    });
     if(!res.ok) throw new Error('http ' + res.status);
-    const rows = await res.json();
-    if(!rows.length){ throw new Error('no-event'); }
-    const ev = rows[0];
+    const ev = await res.json();
+    if(!ev){ throw new Error('no-event'); }
     aplicarFondo(ev);
     $('titulo').textContent = ev.nombre || 'Registro al evento';
     document.title = (ev.nombre || 'Registro') + ' · RendApps';
@@ -304,29 +306,47 @@ $('form').addEventListener('submit', async (e) => {
   btn.disabled = true; const prev = btn.textContent; btn.innerHTML = '<span class="spin"></span>';
   $('msg').className = 'msg';
 
-  const nuevoId = uuidv4();
-  const payload = {
-    id: nuevoId,
-    evento_id: eventoId,
-    nombre_completo: nombre,
-    empresa: $('empresa').value.trim() || null,
-    cargo: $('cargo').value.trim() || null,
-    telefono: $('telefono').value.trim() || null,
-    email: email,
-    rut: campos.rut ? ($('rut').value.trim() || null) : null,
-    patente: campos.patente ? ($('patente').value.trim() || null) : null,
-    ingresado_por: null,
-    acreditado: false
+  const datos = {
+    p_evento_id: eventoId,
+    p_nombre_completo: nombre,
+    p_email: email,
+    p_empresa: $('empresa').value.trim() || null,
+    p_cargo: $('cargo').value.trim() || null,
+    p_telefono: $('telefono').value.trim() || null,
+    p_rut: campos.rut ? ($('rut').value.trim() || null) : null,
+    p_patente: campos.patente ? ($('patente').value.trim() || null) : null
   };
 
+  let nuevoId;
+
   try{
-    // return=minimal: NO pedimos la fila de vuelta (evita el SELECT que anon no tiene).
-    const res = await fetch(SUPABASE_URL + '/rest/v1/registrados', {
+    // El alta va por una función acotada. La empresa NO se manda desde aquí:
+    // la toma del evento, así que nadie puede inscribir gente en otra empresa
+    // manipulando la petición. El id lo genera la base y se devuelve.
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/inscribir_publico', {
       method: 'POST',
-      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA, Prefer: 'return=minimal' },
-      body: JSON.stringify(payload)
+      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA },
+      body: JSON.stringify(datos)
     });
     if(!res.ok){ const t = await res.text(); throw new Error(t || ('http ' + res.status)); }
+
+    nuevoId = await res.json();
+    if(!nuevoId) throw new Error('sin-id');
+
+    // La Edge Function del QR espera la forma de la fila, no los parámetros.
+    const payload = {
+      id: nuevoId,
+      evento_id: eventoId,
+      nombre_completo: nombre,
+      email: email,
+      empresa: datos.p_empresa,
+      cargo: datos.p_cargo,
+      telefono: datos.p_telefono,
+      rut: datos.p_rut,
+      patente: datos.p_patente,
+      ingresado_por: null,
+      acreditado: false
+    };
 
     // 3) Disparar el correo con el QR (best-effort; no bloquea el éxito)
     try{
