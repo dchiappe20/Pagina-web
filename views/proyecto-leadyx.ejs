@@ -1,0 +1,629 @@
+<%
+/* Íconos de la app (trazo feather, como los Ionicons "outline" del producto). */
+const trazos = {
+  ajustes:    '<line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="9" cy="8" r="2.4"/><circle cx="15" cy="16" r="2.4"/>',
+  mas:        '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  equipo:     '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  lupa:       '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/>',
+  persona:    '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  documento:  '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>',
+  lapiz:      '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  carpeta:    '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  descarga:   '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  derecha:    '<polyline points="9 18 15 12 9 6"/>',
+  izquierda:  '<polyline points="15 18 9 12 15 6"/>',
+  cambiar:    '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  calendario: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  nube_off:   '<line x1="2" y1="2" x2="22" y2="22"/><path d="M6.5 18a4.5 4.5 0 0 1-.6-8.96"/><path d="M9 5.2A6 6 0 0 1 18 10h.5a4.5 4.5 0 0 1 3 7.8"/><line x1="8" y1="18" x2="17" y2="18"/>',
+  nube_ok:    '<path d="M6.5 19a4.5 4.5 0 0 1 0-9 6 6 0 0 1 11.5-1.5A4.5 4.5 0 0 1 17.5 19z"/><polyline points="9 14 11 16 15.5 11.5"/>',
+  nube_baja:  '<path d="M6.5 19a4.5 4.5 0 0 1 0-9 6 6 0 0 1 11.5-1.5A4.5 4.5 0 0 1 17.5 19"/><polyline points="9 16 12 19 15 16"/><line x1="12" y1="12" x2="12" y2="19"/>',
+  mic:        '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/>',
+  stop:       '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/>',
+  camara:     '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-3h8l2 3h3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  tic:        '<polyline points="4 12.5 9.5 18 20 6.5"/>',
+  telefono:   '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  sobre:      '<rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/>',
+  sobre_ok:   '<path d="M3 10.5 12 4l9 6.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="3 10.5 12 17 21 10.5"/>',
+  enviar:     '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  candado:    '<rect x="3.5" y="11" width="17" height="10" rx="2"/><path d="M7.5 11V7a4.5 4.5 0 0 1 9 0v4"/>',
+  chispas:    '<path d="M12 3 13.7 8.3 19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7z"/><path d="M18.5 15.5 19.3 18l2.5.8-2.5.8-.8 2.5-.8-2.5-2.5-.8 2.5-.8z"/>',
+  embudo:     '<polygon points="21 4 3 4 10.5 12.5 10.5 19 13.5 20.5 13.5 12.5 21 4"/>',
+  bandeja:    '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  credencial: '<rect x="2" y="4.5" width="20" height="15" rx="2"/><circle cx="8.5" cy="11" r="2.4"/><path d="M4.8 16.4a4 4 0 0 1 7.4 0"/><line x1="15" y1="10" x2="19" y2="10"/><line x1="15" y1="14" x2="19" y2="14"/>',
+  salir:      '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+  reloj:      '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>',
+  hoja:       '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'
+};
+const ico = (n, t) => `<svg width="${t || 20}" height="${t || 20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${trazos[n]}</svg>`;
+
+/* Isotipo de Leadyx: la L y la X trazadas igual que el LogoMark de la app. */
+const marca = (t) => `<svg width="${t}" height="${Math.round(t * 48 / 58)}" viewBox="0 0 58 48" fill="none" aria-hidden="true"><path d="M16 9V35h24" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 23 50 47M50 23 30 47" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>`;
+%>
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/css/demo-leadyx.css?v=1">
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Producto propio · App móvil y de escritorio</p>
+    <h1>Leadyx</h1>
+    <p class="cabecera-sub">Captura de leads en ferias y congresos: el vendedor dicta el contacto en voz alta, la IA lo reparte en los campos y el correo de agradecimiento sale solo.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor proyecto-detalle">
+    <div class="reveal">
+      <h2>Qué es y qué hace</h2>
+      <p>
+        Leadyx es la aplicación con la que un equipo comercial captura contactos en terreno. En un
+        stand de feria nadie tiene tiempo de escribir seis campos: el vendedor pulsa una vez,
+        <strong>dice el contacto en voz alta</strong> —«Andrea Villalobos, de Nexa Ingeniería,
+        gerenta de operaciones, su correo es…»— y la app transcribe el audio y reparte cada dato en
+        su campo. Después se corrige lo que haga falta y se guarda.
+      </p>
+      <p>
+        Cada lead queda asociado al <strong>evento activo</strong>, con las fotos de evidencia que se
+        quieran adjuntar —la tarjeta de visita, el equipo que interesaba— y, si dejó correo, sale
+        automáticamente un <strong>correo de agradecimiento</strong> con los folletos y catálogos que
+        el vendedor haya marcado. La ficha del lead muestra si ese correo salió y permite reenviarlo.
+      </p>
+      <p>
+        Las ferias son sitios con mala señal, así que la app guarda en el teléfono y
+        <strong>sincroniza sola</strong> al recuperar conexión; si además está descargada la voz sin
+        conexión, se puede seguir dictando sin internet. El administrador decide qué ve cada
+        vendedor de los leads de sus compañeros, gestiona los roles del equipo y exporta todo a CSV.
+        La misma app corre en Android y como aplicación de escritorio para Windows.
+      </p>
+    </div>
+    <aside class="ficha-proyecto reveal">
+      <h3>Ficha del proyecto</h3>
+      <ul>
+        <li><strong>Producto</strong><span>Desarrollo propio de RendApps</span></li>
+        <li><strong>Tipo</strong><span>App móvil (Android) y escritorio Windows</span></li>
+        <li><strong>Tecnología</strong><span>React Native · Expo · Electron · base de datos en la nube</span></li>
+        <li><strong>Captura por voz</strong><span>Transcripción del audio y reparto de campos con IA</span></li>
+        <li><strong>Sin conexión</strong><span>Cola local, dictado en el propio teléfono y sincronización al reconectar</span></li>
+        <li><strong>Seguimiento</strong><span>Correo de agradecimiento automático con documentos adjuntos</span></li>
+        <li><strong>Privacidad</strong><span>Tres niveles de visibilidad entre vendedores</span></li>
+        <li><strong>Estado</strong><span>En desarrollo · versiones de prueba en uso</span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<section class="seccion seccion-alterna">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Demo interactiva</p>
+      <h2>Captura un lead sin escribir</h2>
+    </div>
+    <p class="demo-nota reveal">
+      Réplica navegable de la app con datos de ejemplo: dicta un lead completo y mira cómo se
+      reparten los campos, revisa la lista del evento, abre una ficha, exporta y prueba los seis
+      temas de color reales del producto.
+    </p>
+
+    <div class="lx reveal" id="lx" data-tema="aurora" data-vista="inicio">
+
+      <!-- ====================== TELÉFONO ====================== -->
+      <div class="lx-telefono">
+        <div class="lx-pantalla">
+          <span class="lx-halo lx-halo-1" aria-hidden="true"></span>
+          <span class="lx-halo lx-halo-2" aria-hidden="true"></span>
+          <div class="lx-notch" aria-hidden="true"></div>
+
+          <div class="lx-status">
+            <span>9:41</span>
+            <span class="lx-status-red">▮▮▮ ⌁ 87%</span>
+          </div>
+
+          <div class="lx-offline" hidden>
+            <%- ico('nube_off', 15) %>
+            <span>MODO LOCAL · SIN CONEXIÓN</span>
+          </div>
+
+          <div class="lx-scroll">
+
+            <!-- ====== VISTA: INICIO ====== -->
+            <div class="lx-vista lx-activa" data-nombre="inicio">
+              <div class="lx-cabecera">
+                <span class="lx-badge"><%- marca(30) %></span>
+                <span class="lx-cabecera-txt">
+                  <small>Hola de nuevo</small>
+                  <b>Carolina Núñez</b>
+                </span>
+                <button type="button" class="lx-icono-btn" data-ir="config" aria-label="Configuración"><%- ico('ajustes', 20) %></button>
+              </div>
+
+              <span class="lx-mono" style="margin:18px 0 10px">Evento activo</span>
+
+              <div class="lx-evento-marco">
+                <div class="lx-evento">
+                  <div class="lx-evento-fila">
+                    <div class="lx-evento-nombre">Expomin 2026</div>
+                    <span class="lx-envivo"><i class="lx-pulso"></i> EN VIVO</span>
+                  </div>
+                  <div class="lx-evento-meta">
+                    <%- ico('calendario', 14) %>
+                    <span class="lx-evento-fecha">22-04-2026 · Santiago, Chile</span>
+                  </div>
+
+                  <div class="lx-ministats">
+                    <div class="lx-ministat"><b class="lx-n-total">0</b><span>Leads</span></div>
+                    <div class="lx-ministat lx-verde"><b class="lx-n-hoy">0</b><span>Hoy</span></div>
+                    <div class="lx-ministat lx-stat-pend"><b class="lx-n-pend">0</b><span>Por sincr.</span></div>
+                  </div>
+
+                  <div class="lx-barra"><i class="lx-avance"></i></div>
+                  <p class="lx-barra-pie">—</p>
+
+                  <button type="button" class="lx-btn-suave lx-cambiar-evento">
+                    <%- ico('cambiar', 16) %> Cambiar evento
+                  </button>
+                </div>
+              </div>
+
+              <span class="lx-mono" style="margin:24px 0 11px">Operación</span>
+              <div class="lx-ops">
+                <button type="button" class="lx-op" data-ir="capturar">
+                  <span class="lx-op-icono"><%- ico('mas', 22) %></span>
+                  <b>Nuevo lead</b><span class="lx-op-sub">Capturar en terreno</span>
+                </button>
+                <button type="button" class="lx-op" data-ir="leads">
+                  <span class="lx-op-icono"><%- ico('equipo', 21) %></span>
+                  <b>Ver leads</b><span class="lx-op-sub">Lista del evento</span>
+                </button>
+                <button type="button" class="lx-op lx-op-buscar" data-ir="leads">
+                  <span class="lx-op-icono"><%- ico('lupa', 21) %></span>
+                  <b>Buscar</b><span class="lx-op-sub">Encontrar un lead</span>
+                </button>
+                <button type="button" class="lx-op" data-ir="mis-leads">
+                  <span class="lx-op-icono"><%- ico('persona', 21) %></span>
+                  <b>Mis leads</b><span class="lx-op-sub">Tu carpeta personal</span>
+                </button>
+              </div>
+
+              <span class="lx-mono" style="margin:24px 0 11px">Administración</span>
+              <div class="lx-filas">
+                <button type="button" class="lx-fila" data-lx-toast="En la app real abre el formulario del nuevo evento comercial.">
+                  <span class="lx-fila-icono"><%- ico('documento', 18) %></span>
+                  <span class="lx-fila-txt"><b>Crear evento</b><span>Nuevo evento comercial</span></span>
+                  <span class="lx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="lx-fila" data-lx-toast="En la app real lista los eventos para modificar fecha, lugar o temática.">
+                  <span class="lx-fila-icono"><%- ico('lapiz', 18) %></span>
+                  <span class="lx-fila-txt"><b>Editar evento</b><span>Modificar existentes</span></span>
+                  <span class="lx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="lx-fila" data-lx-toast="El rol vive en el registro central: al cambiarlo aquí se aplica en todas las apps a la vez.">
+                  <span class="lx-fila-icono"><%- ico('equipo', 18) %></span>
+                  <span class="lx-fila-txt"><b>Gestionar usuarios</b><span>Roles y accesos</span></span>
+                  <span class="lx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="lx-fila" data-lx-toast="Los folletos y catálogos que se adjuntan al correo de agradecimiento.">
+                  <span class="lx-fila-icono"><%- ico('carpeta', 18) %></span>
+                  <span class="lx-fila-txt"><b>Documentos</b><span>Folletos y catálogos del correo</span></span>
+                  <span class="lx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+                <button type="button" class="lx-fila" data-ir="exportar">
+                  <span class="lx-fila-icono"><%- ico('descarga', 18) %></span>
+                  <span class="lx-fila-txt"><b>Exportar</b><span>Descargar la base del evento</span></span>
+                  <span class="lx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+              </div>
+
+              <div class="lx-pie-usuario">
+                <p><%- marca(16) %> Carolina Núñez · Administradora · Demo SpA</p>
+                <button type="button" data-lx-toast="En la app real cierra la sesión y vuelve al login.">Cerrar sesión</button>
+              </div>
+            </div>
+
+            <!-- ====== VISTA: CAPTURAR LEAD ====== -->
+            <div class="lx-vista" data-nombre="capturar">
+              <div class="lx-volver">
+                <button type="button" class="lx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="lx-volver-txt"><small>Nuevo lead</small><b class="lx-nombre-evento">Expomin 2026</b></span>
+              </div>
+
+              <!-- Ingreso general: un solo dictado para todo el lead -->
+              <button type="button" class="lx-dictado lx-ingreso-general">
+                <span class="lx-dictado-int">
+                  <span class="lx-dictado-icono"><%- ico('mic', 22) %></span>
+                  <span class="lx-dictado-txt">
+                    <span class="lx-dictado-titulo">
+                      <b class="lx-dictado-nombre">Ingreso general</b>
+                      <span class="lx-etq-local" hidden>LOCAL</span>
+                    </span>
+                    <span class="lx-dictado-sub">Dilo todo de corrido y la IA lo reparte en cada campo</span>
+                  </span>
+                  <span class="lx-dictado-fin"><%- ico('derecha', 17) %></span>
+                </span>
+              </button>
+
+              <div class="lx-separador"><i></i><span>O CAMPO A CAMPO</span><i></i></div>
+
+              <div class="lx-campos">
+                <div class="lx-campo-caja" data-campo="nombre">
+                  <input class="lx-campo" placeholder="Nombre y Apellido *" autocomplete="off">
+                  <button type="button" class="lx-mic" aria-label="Dictar nombre"><%- ico('mic', 17) %></button>
+                </div>
+                <div class="lx-campo-caja" data-campo="empresa">
+                  <input class="lx-campo" placeholder="Empresa *" autocomplete="off">
+                  <button type="button" class="lx-mic" aria-label="Dictar empresa"><%- ico('mic', 17) %></button>
+                </div>
+                <div class="lx-campo-caja" data-campo="cargo">
+                  <input class="lx-campo" placeholder="Cargo" autocomplete="off">
+                  <button type="button" class="lx-mic" aria-label="Dictar cargo"><%- ico('mic', 17) %></button>
+                </div>
+                <div class="lx-campo-caja" data-campo="telefono">
+                  <input class="lx-campo" placeholder="Teléfono" autocomplete="off">
+                  <button type="button" class="lx-mic" aria-label="Dictar teléfono"><%- ico('mic', 17) %></button>
+                </div>
+                <div class="lx-campo-caja" data-campo="email">
+                  <input class="lx-campo" placeholder="Email" autocomplete="off">
+                  <button type="button" class="lx-mic" aria-label="Dictar email"><%- ico('mic', 17) %></button>
+                </div>
+                <div class="lx-campo-caja lx-multilinea" data-campo="descripcion">
+                  <textarea class="lx-campo" rows="3" placeholder="Comentarios…"></textarea>
+                  <button type="button" class="lx-mic" aria-label="Dictar comentarios"><%- ico('mic', 17) %></button>
+                </div>
+              </div>
+
+              <div class="lx-titulo-bloque"><b>Fotos de evidencia</b><i></i></div>
+              <div class="lx-fotos">
+                <button type="button" class="lx-foto" aria-label="Añadir foto 1"><%- ico('camara', 24) %></button>
+                <button type="button" class="lx-foto" aria-label="Añadir foto 2"><%- ico('camara', 24) %></button>
+                <button type="button" class="lx-foto" aria-label="Añadir foto 3"><%- ico('camara', 24) %></button>
+              </div>
+
+              <div class="lx-bloque-adjuntos" hidden>
+                <div class="lx-titulo-bloque">
+                  <b>Adjuntar al correo</b><i></i>
+                  <span class="lx-contador lx-n-adjuntos" hidden>0</span>
+                </div>
+                <div class="lx-docs"></div>
+                <p class="lx-nota-correo">
+                  El correo se redacta mencionando lo que adjuntes; si no eliges nada, ofrece
+                  enviarlo por respuesta.
+                </p>
+              </div>
+
+              <button type="button" class="lx-btn lx-guardar" style="margin-top:20px">Guardar Lead</button>
+              <button type="button" class="lx-btn lx-btn-contorno" style="margin-top:10px" data-ir="leads">Ver leads</button>
+
+              <p class="lx-ayuda">Mantén pulsado el micrófono de cada campo para dictarlo.</p>
+            </div>
+
+            <!-- ====== VISTA: LEADS DEL EVENTO ====== -->
+            <div class="lx-vista" data-nombre="leads">
+              <div class="lx-volver">
+                <button type="button" class="lx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="lx-volver-txt"><small>Todos los leads</small><b class="lx-nombre-evento">Expomin 2026</b></span>
+              </div>
+
+              <span class="lx-chip-total"><%- ico('equipo', 14) %> Total: <span class="lx-n-lista">0</span></span>
+
+              <div class="lx-buscador">
+                <div class="lx-buscador-campo">
+                  <span class="lx-buscador-lupa"><%- ico('lupa', 17) %></span>
+                  <input class="lx-campo lx-buscar" type="search" placeholder="Buscar…" aria-label="Buscar lead">
+                </div>
+                <button type="button" class="lx-orden"><%- ico('ajustes', 15) %> <span class="lx-orden-txt">Nuevo</span></button>
+              </div>
+
+              <div class="lx-lista-leads"></div>
+            </div>
+
+            <!-- ====== VISTA: FICHA DEL LEAD ====== -->
+            <div class="lx-vista" data-nombre="detalle">
+              <div class="lx-volver">
+                <button type="button" class="lx-icono-btn lx-volver-lista" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="lx-volver-txt"><small>Ficha del lead</small><b>Detalle</b></span>
+                <span style="flex:1"></span>
+                <button type="button" class="lx-icono-btn" data-lx-toast="En la app real abre el formulario para corregir los datos del lead."><%- ico('lapiz', 17) %></button>
+              </div>
+              <div class="lx-ficha-contenedor"></div>
+            </div>
+
+            <!-- ====== VISTA: MIS LEADS ====== -->
+            <div class="lx-vista" data-nombre="mis-leads">
+              <div class="lx-volver">
+                <button type="button" class="lx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="lx-volver-txt"><small>Leadyx</small><b>Mis leads</b></span>
+              </div>
+
+              <span class="lx-chip-total"><%- ico('persona', 14) %> <span class="lx-n-mios">0</span> leads capturados</span>
+
+              <span class="lx-mono" style="margin:16px 0 8px">Por evento</span>
+              <div class="lx-chips-evento"></div>
+
+              <div class="lx-buscador">
+                <div class="lx-buscador-campo">
+                  <span class="lx-buscador-lupa"><%- ico('lupa', 17) %></span>
+                  <input class="lx-campo lx-buscar-mios" type="search" placeholder="Buscar entre tus leads…" aria-label="Buscar entre mis leads">
+                </div>
+              </div>
+
+              <div class="lx-lista-mios"></div>
+
+              <button type="button" class="lx-btn lx-btn-punteado" style="margin-top:12px" data-lx-toast="En la app real captura un lead suelto, sin evento asignado, y queda en tu bandeja.">
+                <%- ico('mas', 17) %> Capturar lead sin evento
+              </button>
+            </div>
+
+            <!-- ====== VISTA: EXPORTAR ====== -->
+            <div class="lx-vista" data-nombre="exportar">
+              <div class="lx-volver">
+                <button type="button" class="lx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="lx-volver-txt"><small>Administración</small><b>Exportar leads</b></span>
+              </div>
+
+              <span class="lx-mono" style="margin:4px 0 10px">Eventos a descargar</span>
+
+              <button type="button" class="lx-evento-check lx-marcar-todos" aria-pressed="false">
+                <span class="lx-casilla"><%- ico('tic', 14) %></span>
+                <span class="lx-evento-check-txt"><b>Marcar todos</b></span>
+                <em class="lx-marcados">0/3</em>
+              </button>
+
+              <div class="lx-lista-exportar" style="margin-top:12px"></div>
+
+              <button type="button" class="lx-btn lx-descargar" style="margin-top:8px" disabled>
+                <%- ico('descarga', 18) %> <span class="lx-descargar-txt">Descargar CSV</span>
+              </button>
+            </div>
+
+            <!-- ====== VISTA: CONFIGURACIÓN ====== -->
+            <div class="lx-vista" data-nombre="config">
+              <div class="lx-volver">
+                <button type="button" class="lx-icono-btn" data-ir="inicio" aria-label="Volver"><%- ico('izquierda', 19) %></button>
+                <span class="lx-volver-txt"><small>Preferencias</small><b>Configuración</b></span>
+              </div>
+
+              <div class="lx-config-bloque">
+                <span class="lx-mono">Tema de color</span>
+                <div class="lx-temas">
+                  <button type="button" class="lx-tema" data-tema-valor="aurora" aria-pressed="true">
+                    <span class="lx-tema-cab">
+                      <span class="lx-tema-muestra" style="background:linear-gradient(135deg,#7C5CFF 50%,#00E5A0 50%)"></span>
+                      <span class="lx-tema-tic" style="color:#00E5A0"><%- ico('tic', 18) %></span>
+                    </span>
+                    <b>Aurora</b><span class="lx-tema-desc">Violeta y menta · por defecto</span>
+                    <span class="lx-tema-franja">
+                      <i style="background:#0A0E1C"></i><i style="background:#121A30"></i><i style="background:#1A2440"></i><i style="background:#7C5CFF"></i><i style="background:#00E5A0"></i>
+                    </span>
+                  </button>
+                  <button type="button" class="lx-tema" data-tema-valor="ejecutivo" aria-pressed="false">
+                    <span class="lx-tema-cab">
+                      <span class="lx-tema-muestra" style="background:linear-gradient(135deg,#2563EB 50%,#3B9EFF 50%)"></span>
+                      <span class="lx-tema-tic" style="color:#3B9EFF"><%- ico('tic', 18) %></span>
+                    </span>
+                    <b>Ejecutivo</b><span class="lx-tema-desc">Claro · blanco y azul</span>
+                    <span class="lx-tema-franja">
+                      <i style="background:#F3F6FB"></i><i style="background:#FFFFFF"></i><i style="background:#EAF1FA"></i><i style="background:#2563EB"></i><i style="background:#3B9EFF"></i>
+                    </span>
+                  </button>
+                  <button type="button" class="lx-tema" data-tema-valor="lima" aria-pressed="false">
+                    <span class="lx-tema-cab">
+                      <span class="lx-tema-muestra" style="background:linear-gradient(135deg,#9BE800 50%,#38BDF8 50%)"></span>
+                      <span class="lx-tema-tic" style="color:#38BDF8"><%- ico('tic', 18) %></span>
+                    </span>
+                    <b>Lima</b><span class="lx-tema-desc">Verde lima y celeste</span>
+                    <span class="lx-tema-franja">
+                      <i style="background:#0C1424"></i><i style="background:#152039"></i><i style="background:#1E2C4E"></i><i style="background:#9BE800"></i><i style="background:#38BDF8"></i>
+                    </span>
+                  </button>
+                  <button type="button" class="lx-tema" data-tema-valor="cian" aria-pressed="false">
+                    <span class="lx-tema-cab">
+                      <span class="lx-tema-muestra" style="background:linear-gradient(135deg,#00D4FF 50%,#7CFFB2 50%)"></span>
+                      <span class="lx-tema-tic" style="color:#7CFFB2"><%- ico('tic', 18) %></span>
+                    </span>
+                    <b>Ciánico</b><span class="lx-tema-desc">Frío, técnico, alto contraste</span>
+                    <span class="lx-tema-franja">
+                      <i style="background:#051318"></i><i style="background:#0C2029"></i><i style="background:#123240"></i><i style="background:#00D4FF"></i><i style="background:#7CFFB2"></i>
+                    </span>
+                  </button>
+                  <button type="button" class="lx-tema" data-tema-valor="sunset" aria-pressed="false">
+                    <span class="lx-tema-cab">
+                      <span class="lx-tema-muestra" style="background:linear-gradient(135deg,#FF5C7A 50%,#FFB020 50%)"></span>
+                      <span class="lx-tema-tic" style="color:#FFB020"><%- ico('tic', 18) %></span>
+                    </span>
+                    <b>Sunset</b><span class="lx-tema-desc">Cálido, coral y ámbar</span>
+                    <span class="lx-tema-franja">
+                      <i style="background:#150D16"></i><i style="background:#221528"></i><i style="background:#301D3A"></i><i style="background:#FF5C7A"></i><i style="background:#FFB020"></i>
+                    </span>
+                  </button>
+                  <button type="button" class="lx-tema" data-tema-valor="ambar" aria-pressed="false">
+                    <span class="lx-tema-cab">
+                      <span class="lx-tema-muestra" style="background:linear-gradient(135deg,#FFC24B 50%,#FF8A4B 50%)"></span>
+                      <span class="lx-tema-tic" style="color:#FF8A4B"><%- ico('tic', 18) %></span>
+                    </span>
+                    <b>Ámbar</b><span class="lx-tema-desc">Dorado sobre negro profundo</span>
+                    <span class="lx-tema-franja">
+                      <i style="background:#151007"></i><i style="background:#231C10"></i><i style="background:#332918"></i><i style="background:#FFC24B"></i><i style="background:#FF8A4B"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="lx-config-bloque">
+                <span class="lx-mono">Movimiento</span>
+                <button type="button" class="lx-fila lx-animaciones" aria-pressed="true">
+                  <span class="lx-fila-icono"><%- ico('chispas', 18) %></span>
+                  <span class="lx-fila-txt">
+                    <b>Animaciones</b>
+                    <span class="lx-animaciones-sub">Transiciones, halos y efectos activados</span>
+                  </span>
+                  <span class="lx-interruptor"><i></i></span>
+                </button>
+              </div>
+
+              <div class="lx-config-bloque">
+                <span class="lx-mono">Privacidad entre vendedores</span>
+                <p class="lx-config-texto">
+                  Qué puede ver un vendedor de los leads que capturaron sus compañeros.
+                  Tú, como administrador, siempre lo ves todo.
+                </p>
+                <button type="button" class="lx-opcion lx-privacidad" data-nivel="privado" aria-pressed="true">
+                  <span class="lx-radio"><i></i></span>
+                  <span class="lx-opcion-txt">
+                    <b>Cada uno ve sólo lo suyo <em>· por defecto</em></b>
+                    <span>Los vendedores no ven nada de los leads de los demás.</span>
+                  </span>
+                </button>
+                <button type="button" class="lx-opcion lx-privacidad" data-nivel="nombres" aria-pressed="false">
+                  <span class="lx-radio"><i></i></span>
+                  <span class="lx-opcion-txt">
+                    <b>Ven los nombres, no el detalle</b>
+                    <span>Aparecen en la lista, pero al abrirlos los datos salen ocultos.</span>
+                  </span>
+                </button>
+                <button type="button" class="lx-opcion lx-privacidad" data-nivel="todo" aria-pressed="false">
+                  <span class="lx-radio"><i></i></span>
+                  <span class="lx-opcion-txt">
+                    <b>Ven todo</b>
+                    <span>Cualquier vendedor puede consultar los leads de sus compañeros.</span>
+                  </span>
+                </button>
+              </div>
+
+              <div class="lx-config-bloque">
+                <span class="lx-mono">Dictado por voz</span>
+                <button type="button" class="lx-fila lx-voz-offline" aria-pressed="false">
+                  <span class="lx-fila-icono lx-voz-icono"><%- ico('nube_baja', 18) %></span>
+                  <span class="lx-fila-txt">
+                    <b class="lx-voz-titulo">Descargar voz sin conexión</b>
+                    <span class="lx-voz-sub">Permite dictar en terreno aunque no haya señal</span>
+                  </span>
+                  <span class="lx-chevron"><%- ico('derecha', 16) %></span>
+                </button>
+              </div>
+
+              <div class="lx-config-bloque">
+                <span class="lx-mono">Conexión</span>
+                <button type="button" class="lx-fila lx-fila-alerta lx-modo-local" aria-pressed="false">
+                  <span class="lx-fila-icono lx-modo-local-icono"><%- ico('nube_ok', 18) %></span>
+                  <span class="lx-fila-txt">
+                    <b>Modo local (sin conexión)</b>
+                    <span class="lx-modo-local-sub">Los leads se suben a la nube al guardar</span>
+                  </span>
+                  <span class="lx-interruptor"><i></i></span>
+                </button>
+              </div>
+
+              <div class="lx-config-bloque">
+                <span class="lx-mono">Cuenta</span>
+                <div class="lx-cuenta">
+                  <div class="lx-cuenta-cab">
+                    <span class="lx-cuenta-avatar"><%- ico('persona', 22) %></span>
+                    <span class="lx-cuenta-txt">
+                      <b>Carolina Núñez</b>
+                      <span>Administradora · Demo SpA · carolina@empresademo.cl</span>
+                    </span>
+                  </div>
+                  <div class="lx-linea"></div>
+                  <button type="button" class="lx-cuenta-accion" data-lx-toast="En la app real muestra tu perfil y tus datos del registro central.">
+                    <%- ico('credencial', 17) %><span>Ver mi perfil</span><%- ico('derecha', 16) %>
+                  </button>
+                  <button type="button" class="lx-cuenta-accion lx-cuenta-salir" data-lx-toast="En la app real cierra la sesión y vuelve al login.">
+                    <%- ico('salir', 17) %><span>Cerrar sesión</span>
+                  </button>
+                </div>
+              </div>
+
+              <p class="lx-version">LEADYX · V2.0</p>
+            </div>
+
+          </div><!-- /.lx-scroll -->
+
+          <!-- ====== HOJA: CAMBIAR EVENTO / ORDENAR ====== -->
+          <div class="lx-hoja-fondo">
+            <div class="lx-hoja">
+              <div class="lx-hoja-tirador"></div>
+              <h4 class="lx-hoja-titulo">Selecciona el evento activo</h4>
+              <div class="lx-hoja-lista"></div>
+            </div>
+          </div>
+
+        </div><!-- /.lx-pantalla -->
+      </div><!-- /.lx-telefono -->
+
+      <!-- ====================== PANEL LATERAL ====================== -->
+      <div class="lx-panel">
+        <p class="lx-panel-titulo">Recorre la app</p>
+        <p class="lx-panel-sub">Pulsa dentro del teléfono o usa estos accesos directos.</p>
+
+        <div class="lx-menu">
+          <button type="button" data-ir="inicio" aria-current="true"><span class="lx-menu-num">1</span> Inicio <small>Evento activo y accesos</small></button>
+          <button type="button" data-ir="capturar"><span class="lx-menu-num">2</span> Capturar por voz <small>Dictado y reparto con IA</small></button>
+          <button type="button" data-ir="leads"><span class="lx-menu-num">3</span> Leads del evento <small>Lista, búsqueda y orden</small></button>
+          <button type="button" data-ir="detalle"><span class="lx-menu-num">4</span> Ficha del lead <small>Contacto, correo y evidencias</small></button>
+          <button type="button" data-ir="mis-leads"><span class="lx-menu-num">5</span> Mis leads <small>Tu carpeta personal</small></button>
+          <button type="button" data-ir="exportar"><span class="lx-menu-num">6</span> Exportar <small>La base del evento en CSV</small></button>
+          <button type="button" data-ir="config"><span class="lx-menu-num">7</span> Configuración <small>Los seis temas reales</small></button>
+        </div>
+
+        <div class="lx-explica">
+          <h4 class="lx-explica-titulo">Inicio</h4>
+          <p class="lx-explica-texto">El evento activo manda: los leads, los de hoy y los que quedan por subir se refieren a él. Tocando la señal de la barra superior ves cómo se comporta la app cuando el recinto se queda sin cobertura.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="demo-nota demo-nota-pie reveal">Los contactos, empresas y eventos mostrados son de ejemplo y no corresponden a personas ni eventos reales.</p>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="seccion-cabeza centrada reveal">
+      <p class="eyebrow">Resultados</p>
+      <h2>Qué resuelve en el stand</h2>
+    </div>
+    <div class="grid-3 tarjetas-confianza">
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'movil', t: 24 }) %></span>
+        <h3>Un lead en diez segundos</h3>
+        <p>El vendedor dicta el contacto de corrido y la IA reparte nombre, empresa, cargo, teléfono, correo y comentarios en su campo. Sin teclear en medio de la feria.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'escudo', t: 24 }) %></span>
+        <h3>Funciona sin señal</h3>
+        <p>Los recintos de feria tienen mala cobertura: la app guarda en el teléfono, marca lo que falta por subir y sincroniza sola al reconectar.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'mail', t: 24 }) %></span>
+        <h3>Seguimiento automático</h3>
+        <p>Al guardar, el lead recibe un correo de agradecimiento con los folletos y catálogos que se marcaron. La ficha muestra si salió y permite reenviarlo.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'candado', t: 24 }) %></span>
+        <h3>Cada cartera, protegida</h3>
+        <p>El administrador decide en tres niveles qué ve un vendedor de los leads de sus compañeros, y la regla se aplica también en la base de datos.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'diseno', t: 24 }) %></span>
+        <h3>Se adapta a tu equipo</h3>
+        <p>Seis temas de color, tamaño de letra ajustable en la versión de PC y modo sin animaciones para los equipos más lentos.</p>
+      </article>
+      <article class="tarjeta-confianza reveal">
+        <span class="icono-caja"><%- include('partials/icono', { n: 'documento', t: 24 }) %></span>
+        <h3>La feria, en una planilla</h3>
+        <p>Se eligen los eventos y sale un CSV con todos los leads capturados, listo para el CRM o el informe posterior a la feria.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="banda-cta">
+  <div class="contenedor banda-cta-int">
+    <div>
+      <h2>¿Tu equipo vuelve de la feria con un taco de tarjetas?</h2>
+      <p>Cuéntanos cómo capturan hoy sus contactos y te mostramos Leadyx funcionando con tus datos.</p>
+    </div>
+    <a class="btn" href="/contacto">Hablemos de tu proyecto <span class="btn-flecha" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<script src="/js/demo-leadyx.js?v=1" defer></script>
+<%- include('partials/footer') %>
