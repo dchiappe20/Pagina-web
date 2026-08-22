@@ -61,9 +61,17 @@
                 <p class="plan-sub"><%= n.descripcion %></p>
               <% } %>
 
+              <%# El periodo lo dice el plan, no esta plantilla: «Por evento»
+                  es un pago único y anunciarlo como mensual sería mentir. %>
               <div class="plan-precio">
                 <span class="plan-precio-uf"><%= n.uf %> UF</span>
-                <span class="plan-precio-periodo">/mes + IVA</span>
+                <% if (n.periodo === 'mes') { %>
+                  <span class="plan-precio-periodo">/mes + IVA</span>
+                <% } else { %>
+                  <span class="plan-precio-periodo es-unico">
+                    <%= n.periodo === 'evento' ? 'por evento' : 'pago único' %> + IVA
+                  </span>
+                <% } %>
               </div>
               <%# El CLP lo rellena planes.js con el valor de la UF del día. %>
               <p class="plan-clp" data-uf="<%= n.uf %>" data-estado="cargando">Calculando valor referencial…</p>
@@ -79,16 +87,30 @@
                 <% }); %>
               </ul>
 
-              <button
-                type="button"
-                class="btn plan-cta"
-                data-plan="<%= a.id %>"
-                data-nivel="<%= n.plan %>"
-                data-plan-nombre="<%= a.nombre %> · <%= n.nombre %>"
-              >
-                Empezar 14 días gratis <span class="btn-flecha" aria-hidden="true">→</span>
-              </button>
-              <p class="plan-nota">No se cobra nada durante la prueba. Puedes cancelar cuando quieras.</p>
+              <%# Un plan de pago único no pasa por el alta de cargo automático:
+                  ese formulario crea una suscripción mensual en Flow. Hasta que
+                  exista el camino de pago único, se ofrece escribir. %>
+              <% if (n.contratable) { %>
+                <button
+                  type="button"
+                  class="btn plan-cta"
+                  data-plan="<%= a.id %>"
+                  data-nivel="<%= n.plan %>"
+                  data-plan-nombre="<%= a.nombre %> · <%= n.nombre %>"
+                >
+                  Empezar 14 días gratis <span class="btn-flecha" aria-hidden="true">→</span>
+                </button>
+                <p class="plan-nota">No se cobra nada durante la prueba. Puedes cancelar cuando quieras.</p>
+              <% } else { %>
+                <a class="btn plan-cta" href="/contacto?plan=<%= a.id %>-<%= n.plan %>">
+                  Escríbenos para contratarlo <span class="btn-flecha" aria-hidden="true">→</span>
+                </a>
+                <p class="plan-nota es-unico">
+                  <%= n.periodo === 'mes'
+                        ? 'Este plan se contrata con nosotros directamente.'
+                        : 'Se paga una vez, no es una suscripción: lo coordinamos contigo.' %>
+                </p>
+              <% } %>
             </article>
           <% }); %>
         </div>

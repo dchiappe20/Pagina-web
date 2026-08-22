@@ -8,13 +8,16 @@
 
 .planes-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.6rem;
-  max-width: 56rem;
+  /* Tres columnas: son los tres niveles de un producto y se comparan en
+     horizontal. Estaba en dos, de cuando cada app tenía un solo plan, y el
+     tercero se caía a una segunda fila. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4rem;
+  max-width: 72rem;
   margin: 0 auto;
-  /* `stretch` (por defecto) iguala el alto de las dos tarjetas; junto con el
-     `flex-grow` de la lista, deja los dos CTA alineados abajo aunque las
-     listas de características ocupen distinto número de líneas. */
+  /* `stretch` (por defecto) iguala el alto de las tarjetas; junto con el
+     `flex-grow` de la lista, deja los CTA alineados abajo aunque las listas de
+     características ocupen distinto número de líneas. */
 }
 
 /* ---------- Tarjeta ---------- */
@@ -401,7 +404,13 @@ body.modal-abierto .banda-cta::before {
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 780px) {
+@media (max-width: 1040px) {
+  /* Dos y una: bajar de tres a una de golpe desperdicia el ancho de una
+     tableta, donde dos tarjetas todavía se comparan bien. */
+  .planes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 48rem; }
+}
+
+@media (max-width: 700px) {
   .planes-grid { grid-template-columns: 1fr; max-width: 27rem; }
 }
 
@@ -513,3 +522,11 @@ body.modal-abierto .banda-cta::before {
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* Un pago único no es una cuota: se destaca para que no se lea como mensual. */
+.plan-precio-periodo.es-unico {
+  color: var(--color-app);
+  font-weight: 700;
+}
+
+.plan-nota.es-unico { color: var(--texto-suave); }

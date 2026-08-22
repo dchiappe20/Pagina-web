@@ -151,7 +151,7 @@ const PLANES_RESPALDO = [
   { app: 'filt', plan: 'holding', nombre: 'Holding', precio_uf: 9,
     descripcion: 'Grupo con varias razones sociales.' },
   { app: 'gatheryx', plan: 'por_evento', nombre: 'Por evento', precio_uf: 2,
-    descripcion: 'Un evento, prepago.' },
+    descripcion: 'Un evento, prepago.', periodo: 'evento', contratable: false },
   { app: 'gatheryx', plan: 'anual', nombre: 'Anual', precio_uf: 1,
     descripcion: 'Empresa con calendario propio de eventos.' },
   { app: 'gatheryx', plan: 'productora', nombre: 'Productora', precio_uf: 3,
@@ -206,6 +206,13 @@ function agruparPlanes(filas) {
           nombre: f.nombre,
           descripcion: f.descripcion || '',
           uf: Number(f.precio_uf),
+          // Por defecto mensual: es lo que era todo antes de que existiera la
+          // columna, y lo que sigue siendo la mayoría.
+          periodo: f.periodo || 'mes',
+          // Sólo lo que se puede contratar en línea de verdad. Un plan sin
+          // plan de Flow, o de pago único, muestra «Escríbenos» en vez de un
+          // botón que iba a fallar después de pedirle los datos al visitante.
+          contratable: f.contratable !== false && (f.periodo || 'mes') === 'mes',
           destacados: DESTACADOS[codigo + ':' + f.plan] || []
         }))
     }))
