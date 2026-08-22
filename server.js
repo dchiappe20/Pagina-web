@@ -106,47 +106,150 @@ const proyectos = [
 // El precio va en UF porque los planes están creados en UF dentro de Flow y
 // es Flow quien convierte a pesos en cada cobro. El valor en CLP que ve el
 // visitante es referencial y lo calcula el navegador con la UF del día.
+//
+// El catálogo vive en el registro central (`core.planes`) y se lee al arrancar
+// con `core.planes_publicos()`. Antes estaba escrito aquí a mano y había que
+// mantenerlo en paralelo con lo que realmente se cobra: la web decía una cosa
+// y Flow hacía otra en cuanto se cambiaba un precio en un solo lado.
+//
+// El respaldo de abajo se usa sólo si la base no responde al arrancar, para
+// que /planes nunca salga vacía. Es una copia del catálogo, no la fuente.
 // ================================
-const planes = [
-  {
-    id: 'filt', // debe coincidir con core.apps.codigo
-    app: 'Filtro de Licitaciones',
-    nombre: 'Plan general Filtro de Licitaciones',
+
+// Identidad visual de cada producto. Son los mismos colores de las apps.
+const APPS = {
+  filt: {
+    nombre: 'Filtradora de licitaciones',
     sub: 'Mercado Público y Compra Ágil, revisados todos los días',
+    color: '#D81B60',
     icono: 'documento',
-    uf: 3,
-    features: [
-      'Descarga y filtrado diario de licitaciones desde Mercado Público',
-      'Barrido automático de Compra Ágil (madrugada, media mañana y media tarde)',
-      'Vigilancia de foros de licitaciones (avisa preguntas dirigidas a tu empresa)',
-      'Cuentas y roles por empresa (administrar, descargar o consultar)',
-      'Exportación de licitaciones y cotizaciones a Excel',
-      'Actualizaciones automáticas de la aplicación',
-      'Soporte por correo'
-    ]
+    url: '/proyectos/filtro-licitaciones'
   },
-  {
-    id: 'gatheryx', // debe coincidir con core.apps.codigo
-    app: 'Gatheryx',
-    nombre: 'Plan general Gatheryx',
+  gatheryx: {
+    nombre: 'Gatheryx',
     sub: 'Control de accesos y acreditación para eventos',
+    color: '#6D48F0',
     icono: 'movil',
-    uf: 1,
-    features: [
-      'Acreditación de asistentes por lectura de código QR en tiempo real',
-      'Operación sin conexión con sincronización automática al recuperar señal',
-      'Formulario de inscripción pública por evento, con envío automático del QR',
-      'Métricas de asistencia en vivo durante el evento',
-      'Personalización de marca: colores, tipografía y campos del formulario',
-      'Exportación de registrados y acreditados a Excel',
-      'Soporte por correo'
-    ]
+    url: '/proyectos/gatheryx'
+  },
+  leads: {
+    nombre: 'Leadyx',
+    sub: 'Captura de contactos en ferias y terreno',
+    color: '#00806A',
+    icono: 'chat',
+    url: '/proyectos/leadyx'
   }
+};
+
+const ORDEN_APPS = ['filt', 'gatheryx', 'leads'];
+
+const PLANES_RESPALDO = [
+  { app: 'filt', plan: 'terreno', nombre: 'Terreno', precio_uf: 3,
+    descripcion: 'La pyme que licita de vez en cuando.' },
+  { app: 'filt', plan: 'oficina', nombre: 'Oficina', precio_uf: 5,
+    descripcion: 'La que tiene a alguien dedicado a licitar.' },
+  { app: 'filt', plan: 'holding', nombre: 'Holding', precio_uf: 9,
+    descripcion: 'Grupo con varias razones sociales.' },
+  { app: 'gatheryx', plan: 'por_evento', nombre: 'Por evento', precio_uf: 2,
+    descripcion: 'Un evento, prepago.' },
+  { app: 'gatheryx', plan: 'anual', nombre: 'Anual', precio_uf: 1,
+    descripcion: 'Empresa con calendario propio de eventos.' },
+  { app: 'gatheryx', plan: 'productora', nombre: 'Productora', precio_uf: 3,
+    descripcion: 'Quien organiza eventos para terceros.' },
+  { app: 'leads', plan: 'feria', nombre: 'Feria', precio_uf: 1,
+    descripcion: 'Stand chico, dos o tres personas.' },
+  { app: 'leads', plan: 'comercial', nombre: 'Comercial', precio_uf: 2,
+    descripcion: 'Equipo comercial que vive de ferias.' },
+  { app: 'leads', plan: 'equipo', nombre: 'Equipo', precio_uf: 4,
+    descripcion: 'Fuerza de venta grande o varias sucursales.' }
 ];
 
-// Config que el navegador necesita. Sólo datos públicos: la URL de la Edge
-// Function y el valor de respaldo de la UF. Ninguna credencial de Flow pasa
-// por aquí — viven como secrets en Supabase.
+// Qué incluye cada nivel, en palabras del cliente. Los topes numéricos vienen
+// de `limites` en la base; esto es lo que no se puede deducir de un número.
+const DESTACADOS = {
+  'filt:terreno': ['2 computadores', 'Revisión una vez al día', '15 reglas de filtro',
+                   'Una razón social', 'Exportación a Excel'],
+  'filt:oficina': ['6 computadores', 'Tres revisiones al día',
+                   'Vigilancia de foros de aclaración', 'Reglas de filtro ilimitadas',
+                   'Conexión propia a Mercado Público'],
+  'filt:holding': ['Computadores ilimitados', 'Varias razones sociales en un panel',
+                   'Te dejamos las conexiones configuradas', 'Respuesta en 24 h hábiles',
+                   'Todo lo del plan Oficina'],
+  'gatheryx:por_evento': ['1 evento', 'Hasta 300 registrados', '60 días de acceso',
+                          'Acreditación por QR completa', 'Exportación a Excel'],
+  'gatheryx:anual': ['Eventos ilimitados', '3.000 registrados al año',
+                     'Un evento activo a la vez', 'Formulario público de inscripción',
+                     'Métricas en vivo'],
+  'gatheryx:productora': ['Eventos simultáneos ilimitados', '15.000 registrados al año',
+                          'Formulario con la marca de tu cliente', 'Sub-cuentas por cliente',
+                          'Informe por evento listo para entregar'],
+  'leads:feria': ['3 vendedores', '1.000 contactos al mes', 'Captura sin conexión',
+                  '12 meses de histórico', 'Exportación a Excel'],
+  'leads:comercial': ['8 vendedores', 'Contactos ilimitados', 'Dictado por voz',
+                      'Correo de agradecimiento automático', '5 GB de fotos y documentos'],
+  'leads:equipo': ['Vendedores ilimitados', 'Histórico permanente',
+                   'Reporte automático al correo', 'Reglas de privacidad por equipo',
+                   'Almacenamiento ilimitado']
+};
+
+/** Agrupa el catálogo por app, en el orden en que se muestran las pestañas. */
+function agruparPlanes(filas) {
+  return ORDEN_APPS
+    .filter((codigo) => APPS[codigo])
+    .map((codigo) => ({
+      id: codigo,
+      ...APPS[codigo],
+      niveles: filas
+        .filter((f) => f.app === codigo)
+        .map((f) => ({
+          plan: f.plan,
+          nombre: f.nombre,
+          descripcion: f.descripcion || '',
+          uf: Number(f.precio_uf),
+          destacados: DESTACADOS[codigo + ':' + f.plan] || []
+        }))
+    }))
+    .filter((a) => a.niveles.length > 0);
+}
+
+// Se rellena al arrancar; hasta entonces vale el respaldo.
+let planesPorApp = agruparPlanes(PLANES_RESPALDO);
+
+async function cargarPlanes() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    console.warn('[planes] sin SUPABASE_URL/ANON_KEY: se usa el catálogo de respaldo');
+    return;
+  }
+
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/planes_publicos', {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: 'Bearer ' + key,
+        'Content-Type': 'application/json',
+        'Accept-Profile': 'core',
+        'Content-Profile': 'core'
+      },
+      body: '{}'
+    });
+
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const filas = await r.json();
+    if (!Array.isArray(filas) || filas.length === 0) throw new Error('catálogo vacío');
+
+    planesPorApp = agruparPlanes(filas);
+    console.log('[planes] catálogo cargado del registro central: ' +
+                filas.length + ' planes');
+  } catch (e) {
+    console.warn('[planes] no se pudo leer el catálogo, se usa el respaldo:', e.message);
+  }
+}
+
+cargarPlanes();
+
 const configPlanes = {
   urlCrearSuscripcion: process.env.URL_CREAR_SUSCRIPCION || '',
   // Sólo se usa si mindicador.cl no responde, y sólo para mostrar.
@@ -208,7 +311,18 @@ app.get('/proyectos/leadyx', (req, res) => {
 });
 
 app.get('/planes', (req, res) => {
-  res.render('planes', { titulo: 'Planes y precios', pagina: 'planes', planes, configPlanes });
+  // `?app=gatheryx` abre directamente esa pestaña. Es lo que enlazan los
+  // botones de cada página de producto y el «Cambiar plan» de las apps.
+  const pedida = String(req.query.app || '').trim();
+  const inicial = planesPorApp.some((a) => a.id === pedida) ? pedida : planesPorApp[0]?.id;
+
+  res.render('planes', {
+    titulo: 'Planes y precios',
+    pagina: 'planes',
+    planesPorApp,
+    appInicial: inicial,
+    configPlanes
+  });
 });
 
 // Página a la que Flow devuelve al cliente tras registrar la tarjeta.

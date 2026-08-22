@@ -11,40 +11,89 @@
 
 <section class="seccion">
   <div class="contenedor">
-    <div class="planes-grid">
-      <% planes.forEach(function (p) { %>
-        <article class="plan reveal" id="plan-<%= p.id %>">
-          <div class="plan-cabecera">
-            <h2 class="plan-nombre"><%= p.nombre %></h2>
-            <span class="plan-icono"><%- include('partials/icono', { n: p.icono, t: 22 }) %></span>
-          </div>
-          <p class="plan-sub"><%= p.sub %></p>
 
-          <div class="plan-precio">
-            <span class="plan-precio-uf"><%= p.uf %> UF</span>
-            <span class="plan-precio-periodo">/mes + IVA</span>
-          </div>
-          <%# El CLP lo rellena planes.js con el valor de la UF del día. %>
-          <p class="plan-clp" data-uf="<%= p.uf %>" data-estado="cargando">Calculando valor referencial…</p>
-
-          <ul class="plan-lista">
-            <% p.features.forEach(function (f) { %>
-              <li>
-                <span class="plan-check" aria-hidden="true">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </span>
-                <span><%= f %></span>
-              </li>
-            <% }); %>
-          </ul>
-
-          <button type="button" class="btn plan-cta" data-plan="<%= p.id %>" data-plan-nombre="<%= p.nombre %>">
-            Empezar 14 días gratis <span class="btn-flecha" aria-hidden="true">→</span>
-          </button>
-          <p class="plan-nota">No se cobra nada durante la prueba. Puedes cancelar cuando quieras.</p>
-        </article>
+    <%# Una pestaña por producto. El color de cada una es el de su app, para
+        que la asociación se haga sin leer: magenta es la Filtradora, violeta
+        Gatheryx, verde Leadyx. %>
+    <div class="planes-pestanas" role="tablist" aria-label="Productos">
+      <% planesPorApp.forEach(function (a) { %>
+        <button
+          type="button"
+          role="tab"
+          class="pestana<%= a.id === appInicial ? ' activa' : '' %>"
+          id="pestana-<%= a.id %>"
+          data-app="<%= a.id %>"
+          style="--color-app: <%= a.color %>"
+          aria-selected="<%= a.id === appInicial ? 'true' : 'false' %>"
+          aria-controls="panel-<%= a.id %>"
+        >
+          <span class="pestana-icono" aria-hidden="true"><%- include('partials/icono', { n: a.icono, t: 18 }) %></span>
+          <span><%= a.nombre %></span>
+        </button>
       <% }); %>
     </div>
+
+    <% planesPorApp.forEach(function (a) { %>
+      <div
+        class="planes-panel"
+        id="panel-<%= a.id %>"
+        role="tabpanel"
+        aria-labelledby="pestana-<%= a.id %>"
+        style="--color-app: <%= a.color %>"
+        <%= a.id === appInicial ? '' : 'hidden' %>
+      >
+        <div class="panel-intro">
+          <p class="panel-sub"><%= a.sub %></p>
+          <a class="panel-enlace" href="<%= a.url %>">Ver cómo funciona <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="planes-grid">
+          <% a.niveles.forEach(function (n, i) { %>
+            <article class="plan reveal<%= i === 1 ? ' plan-destacado' : '' %>" id="plan-<%= a.id %>-<%= n.plan %>">
+              <% if (i === 1) { %>
+                <span class="plan-etiqueta">El más elegido</span>
+              <% } %>
+
+              <div class="plan-cabecera">
+                <h2 class="plan-nombre"><%= n.nombre %></h2>
+              </div>
+              <% if (n.descripcion) { %>
+                <p class="plan-sub"><%= n.descripcion %></p>
+              <% } %>
+
+              <div class="plan-precio">
+                <span class="plan-precio-uf"><%= n.uf %> UF</span>
+                <span class="plan-precio-periodo">/mes + IVA</span>
+              </div>
+              <%# El CLP lo rellena planes.js con el valor de la UF del día. %>
+              <p class="plan-clp" data-uf="<%= n.uf %>" data-estado="cargando">Calculando valor referencial…</p>
+
+              <ul class="plan-lista">
+                <% n.destacados.forEach(function (f) { %>
+                  <li>
+                    <span class="plan-check" aria-hidden="true">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span><%= f %></span>
+                  </li>
+                <% }); %>
+              </ul>
+
+              <button
+                type="button"
+                class="btn plan-cta"
+                data-plan="<%= a.id %>"
+                data-nivel="<%= n.plan %>"
+                data-plan-nombre="<%= a.nombre %> · <%= n.nombre %>"
+              >
+                Empezar 14 días gratis <span class="btn-flecha" aria-hidden="true">→</span>
+              </button>
+              <p class="plan-nota">No se cobra nada durante la prueba. Puedes cancelar cuando quieras.</p>
+            </article>
+          <% }); %>
+        </div>
+      </div>
+    <% }); %>
 
     <p class="planes-aclaracion">
       <strong>Sobre el precio:</strong> los planes están fijados en <strong>UF</strong> y el cobro lo

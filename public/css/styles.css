@@ -1006,3 +1006,21 @@ a:hover { color: var(--azul-oscuro); }
 @media (prefers-reduced-motion: reduce) {
   .js .titulo-anim .palabra > span { transform: none; opacity: 1; }
 }
+
+
+/* Dos acciones en la banda de cierre: el precio primero, la conversación
+   después. Quien ya vio la app funcionando quiere el número, no un formulario. */
+.banda-cta-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.btn.btn-contorno {
+  background: transparent;
+  color: var(--texto);
+  border: 1.5px solid var(--borde);
+}
+
+.btn.btn-contorno:hover { border-color: var(--texto); }

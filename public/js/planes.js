@@ -125,7 +125,58 @@
   }
 
   // =========================================================================
-  // 3. Modal de alta
+  // 3. Pestañas de producto
+  //
+  // Cambiar de pestaña actualiza la URL con `?app=`, sin recargar: así el
+  // enlace se puede copiar y compartir, y el botón «atrás» del navegador hace
+  // lo que se espera.
+  // =========================================================================
+
+  var pestanas = document.querySelectorAll('.pestana');
+  var paneles = document.querySelectorAll('.planes-panel');
+
+  function mostrarApp(id, actualizarUrl) {
+    var existe = false;
+
+    Array.prototype.forEach.call(paneles, function (panel) {
+      var suyo = panel.id === 'panel-' + id;
+      if (suyo) existe = true;
+      panel.hidden = !suyo;
+    });
+
+    if (!existe) return;
+
+    Array.prototype.forEach.call(pestanas, function (p) {
+      var activa = p.getAttribute('data-app') === id;
+      p.classList.toggle('activa', activa);
+      p.setAttribute('aria-selected', activa ? 'true' : 'false');
+    });
+
+    if (actualizarUrl && window.history && window.history.replaceState) {
+      window.history.replaceState({}, '', '?app=' + id);
+    }
+  }
+
+  Array.prototype.forEach.call(pestanas, function (p) {
+    p.addEventListener('click', function () {
+      mostrarApp(p.getAttribute('data-app'), true);
+    });
+  });
+
+  // Un enlace con hash (#plan-gatheryx-anual) abre su pestaña y baja hasta él.
+  if (window.location.hash) {
+    var destino = document.querySelector(window.location.hash);
+    if (destino) {
+      var panel = destino.closest ? destino.closest('.planes-panel') : null;
+      if (panel) {
+        mostrarApp(panel.id.replace('panel-', ''), false);
+        destino.scrollIntoView({ block: 'center' });
+      }
+    }
+  }
+
+  // =========================================================================
+  // 4. Modal de alta
   // =========================================================================
 
   var modal = document.getElementById('modal-alta');
@@ -135,11 +186,13 @@
   var aviso = modal.querySelector('.modal-aviso');
   var etiquetaPlan = modal.querySelector('.modal-plan');
   var botonEnviar = formulario.querySelector('.modal-enviar');
-  var planActual = null;
+  var planActual = null;   // código de app: filt | gatheryx | leads
+  var nivelActual = null;  // código del nivel dentro de esa app
   var ultimoFoco = null;
 
   function abrirModal(boton) {
     planActual = boton.getAttribute('data-plan');
+    nivelActual = boton.getAttribute('data-nivel');
     etiquetaPlan.textContent = boton.getAttribute('data-plan-nombre');
     ultimoFoco = boton;
 
@@ -180,7 +233,7 @@
   });
 
   // =========================================================================
-  // 4. Validación y envío
+  // 5. Validación y envío
   // =========================================================================
 
   function marcar(campo, ok) {
@@ -216,7 +269,8 @@
       correo: formulario.correo.value.trim().toLowerCase(),
       empresa: formulario.empresa.value.trim(),
       rut: normalizarRut(formulario.rut.value),
-      app: planActual
+      app: planActual,
+      plan: nivelActual
     };
 
     if (!validar(datos)) {

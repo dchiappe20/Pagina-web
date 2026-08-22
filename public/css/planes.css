@@ -404,3 +404,112 @@ body.modal-abierto .banda-cta::before {
 @media (max-width: 780px) {
   .planes-grid { grid-template-columns: 1fr; max-width: 27rem; }
 }
+
+
+/* === Pestañas de producto ==================================================
+   Cada pestaña lleva el color real de su app en `--color-app`, y todo lo que
+   hay dentro del panel lo hereda. Así el visitante asocia color y producto sin
+   tener que leer el título — es el mismo criterio de la presentación.
+   ========================================================================== */
+
+.planes-pestanas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.pestana {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  background: transparent;
+  border: 1.5px solid var(--borde);
+  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  transition: color .18s, border-color .18s, background .18s;
+}
+
+.pestana:hover { color: var(--texto); border-color: var(--color-app); }
+
+.pestana.activa {
+  color: #fff;
+  background: var(--color-app);
+  border-color: var(--color-app);
+}
+
+.pestana-icono { display: inline-flex; }
+.pestana-icono svg { display: block; }
+
+.pestana:focus-visible {
+  outline: 2px solid var(--color-app);
+  outline-offset: 3px;
+}
+
+.planes-panel { animation: panel-entra .25s ease both; }
+
+@keyframes panel-entra {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planes-panel { animation: none; }
+}
+
+.panel-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel-sub { margin: 0; color: var(--texto-suave); }
+
+.panel-enlace {
+  color: var(--color-app);
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.panel-enlace:hover { text-decoration: underline; }
+
+/* El acento de las tarjetas es el del producto, no el de la marca. */
+.planes-panel .plan-precio-uf,
+.planes-panel .plan-check { color: var(--color-app); }
+
+.planes-panel .plan-cta {
+  background: var(--color-app);
+  border-color: var(--color-app);
+}
+
+.planes-panel .plan-destacado {
+  border-color: var(--color-app);
+  box-shadow: 0 0 0 1px var(--color-app);
+  position: relative;
+}
+
+.plan-etiqueta {
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-app);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
