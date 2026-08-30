@@ -167,9 +167,13 @@ const PLANES_RESPALDO = [
 // Qué incluye cada nivel, en palabras del cliente. Los topes numéricos vienen
 // de `limites` en la base; esto es lo que no se puede deducir de un número.
 const DESTACADOS = {
-  'filt:terreno': ['2 computadores', 'Revisión una vez al día', '15 reglas de filtro',
+  // Las revisiones al día ya no se listan: desde el 28-08-2026 todos los planes
+  // tienen las mismas (una completa de madrugada y un repaso al mediodía), así
+  // que nombrarlas no distingue nada y sólo invita a comparar lo que es igual.
+  // Lo que separa a Oficina de Terreno es, entre otras, el módulo de clientes.
+  'filt:terreno': ['2 computadores', '15 reglas de filtro',
                    'Una razón social', 'Exportación a Excel'],
-  'filt:oficina': ['6 computadores', 'Tres revisiones al día',
+  'filt:oficina': ['6 computadores', 'Módulo de clientes favoritos',
                    'Vigilancia de foros de aclaración', 'Reglas de filtro ilimitadas',
                    'Conexión propia a Mercado Público'],
   'filt:holding': ['Computadores ilimitados', 'Varias razones sociales en un panel',
@@ -224,7 +228,10 @@ let planesPorApp = agruparPlanes(PLANES_RESPALDO);
 
 async function cargarPlanes() {
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY;
+  // Se aceptan los dos nombres: en Render la variable ya existía como
+  // SUPABASE_KEY, y obligar a renombrarla sólo añadía un paso manual donde
+  // equivocarse. Es la publishable key, no la de servicio.
+  const key = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
   if (!url || !key) {
     console.warn('[planes] sin SUPABASE_URL/ANON_KEY: se usa el catálogo de respaldo');
     return;
