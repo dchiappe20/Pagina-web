@@ -143,6 +143,18 @@ const APPS = {
 
 const ORDEN_APPS = ['filt', 'gatheryx', 'leads'];
 
+// En qué orden se ponen los niveles dentro de una pestaña y cuál lleva la
+// etiqueta. Es una decisión de escaparate y por eso vive aquí y no en la base:
+// `core.planes.orden` manda para cobrar y para los límites, y ahí Holding iba
+// antes que Oficina, lo que dejaba al plan más caro en el centro y recomendado.
+// Lo que queremos destacar es el del medio: Oficina.
+// Un plan que no esté nombrado aquí se pone al final, en el orden de la base.
+const ESCAPARATE = {
+  filt:     { orden: ['terreno', 'oficina', 'holding'],       recomendado: 'oficina' },
+  gatheryx: { orden: ['por_evento', 'anual', 'productora'],   recomendado: 'anual' },
+  leads:    { orden: ['feria', 'comercial', 'equipo'],        recomendado: 'comercial' }
+};
+
 const PLANES_RESPALDO = [
   { app: 'filt', plan: 'terreno', nombre: 'Terreno', precio_uf: 3,
     descripcion: 'La pyme que licita de vez en cuando.' },
@@ -196,6 +208,13 @@ const DESTACADOS = {
                    'Almacenamiento ilimitado']
 };
 
+/** Dónde va este nivel en la pestaña. Los que no estén listados, al final. */
+function posicionEnEscaparate(app, plan) {
+  const orden = (ESCAPARATE[app] || {}).orden || [];
+  const i = orden.indexOf(plan);
+  return i === -1 ? orden.length : i;
+}
+
 /** Agrupa el catálogo por app, en el orden en que se muestran las pestañas. */
 function agruparPlanes(filas) {
   return ORDEN_APPS
@@ -205,6 +224,8 @@ function agruparPlanes(filas) {
       ...APPS[codigo],
       niveles: filas
         .filter((f) => f.app === codigo)
+        .sort((a, b) => posicionEnEscaparate(codigo, a.plan) -
+                        posicionEnEscaparate(codigo, b.plan))
         .map((f) => ({
           plan: f.plan,
           nombre: f.nombre,
@@ -217,6 +238,9 @@ function agruparPlanes(filas) {
           // plan de Flow, o de pago único, muestra «Escríbenos» en vez de un
           // botón que iba a fallar después de pedirle los datos al visitante.
           contratable: f.contratable !== false && (f.periodo || 'mes') === 'mes',
+          // Cuál se recomienda lo dice el plan, no su posición: si mañana una
+          // pestaña tiene cuatro niveles, «el del medio» deja de existir.
+          recomendado: (ESCAPARATE[codigo] || {}).recomendado === f.plan,
           destacados: DESTACADOS[codigo + ':' + f.plan] || []
         }))
     }))

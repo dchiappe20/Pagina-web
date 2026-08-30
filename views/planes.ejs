@@ -49,9 +49,10 @@
 
         <div class="planes-grid">
           <% a.niveles.forEach(function (n, i) { %>
-            <article class="plan reveal<%= i === 1 ? ' plan-destacado' : '' %>" id="plan-<%= a.id %>-<%= n.plan %>">
-              <% if (i === 1) { %>
-                <span class="plan-etiqueta">El más elegido</span>
+            <article class="plan reveal<%= n.recomendado ? ' plan-destacado' : '' %>" id="plan-<%= a.id %>-<%= n.plan %>">
+              <%# Cuál se destaca lo decide server.js (ESCAPARATE), no la posición. %>
+              <% if (n.recomendado) { %>
+                <span class="plan-etiqueta">Recomendado</span>
               <% } %>
 
               <div class="plan-cabecera">
