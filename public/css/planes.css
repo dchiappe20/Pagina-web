@@ -402,6 +402,35 @@ body.modal-abierto .banda-cta::before {
 
 .cuenta .modal-aviso { text-align: left; }
 
+/* ---------- La descarga al terminar el alta ----------
+   Antes esta pantalla decía «ya puedes entrar a la aplicación» y ahí se
+   acababa. El bloque de abajo es el enlace al instalador de la app que se
+   acaba de contratar, que es lo que faltaba para poder usarla. */
+.cuenta-descarga,
+.cuenta-descarga-falta {
+  margin-top: 1.6rem;
+  padding: 1.2rem;
+  border: 1px solid var(--borde);
+  border-radius: 0.9rem;
+  background: var(--fondo-suave, #FAFAFA);
+}
+.cuenta-descarga-enlace { display: inline-flex; align-items: center; gap: 0.45rem; }
+.cuenta-descarga-meta {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+.cuenta-descarga-falta p { margin-top: 0; }
+.cuenta-descarga-falta .retorno-acciones { margin-top: 1.1rem; }
+.cuenta-descarga-nota {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+/* `hidden` pierde contra `display:flex`/`block` de las reglas de arriba. */
+.cuenta-descarga[hidden],
+.cuenta-descarga-falta[hidden],
+.cuenta-descarga-nota[hidden] { display: none; }
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1040px) {

@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const https = require('https');
+const { Readable } = require('stream');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -364,11 +365,19 @@ app.get('/planes', (req, res) => {
 });
 
 // Página a la que Flow devuelve al cliente tras registrar la tarjeta.
+//
 // El estado real lo determina la Edge Function `flow-retorno`, que valida
-// contra Flow y redirige aquí con ?estado=ok|pendiente|error. Nunca se decide
-// nada mirando sólo este parámetro: es únicamente para elegir qué mostrar.
+// contra Flow y redirige aquí con ?estado=... Nunca se decide nada mirando sólo
+// este parámetro: cualquiera puede escribirlo en la barra de direcciones, y por
+// eso lo que no esté en la lista cae en 'error', que es el estado que no
+// promete nada.
+//
+// 'duplicado' e 'incompleto' son los dos que antes se disfrazaban de 'ok':
+// recargar la página y quedarse con el alta a medias acababan los dos en la
+// pantalla de éxito, que además prometía un correo con los accesos que nadie
+// enviaba. 'ok' se conserva por si queda alguna redirección vieja cacheada.
 app.get('/pago/retorno', (req, res) => {
-  const permitidos = ['ok', 'pendiente', 'error'];
+  const permitidos = ['ok', 'duplicado', 'incompleto', 'pendiente', 'error'];
   const estado = permitidos.includes(req.query.estado) ? req.query.estado : 'error';
   res.set('Cache-Control', 'no-store, must-revalidate');
   res.render('pago-retorno', { titulo: 'Estado de tu suscripción', pagina: 'planes', estado });
@@ -414,6 +423,177 @@ app.post('/contacto', (req, res) => {
 
   console.log('Mensaje de contacto recibido:', datos);
   res.render('contacto', { titulo: 'Contacto', pagina: 'contacto', enviado: true, error: null, datos: {} });
+});
+
+// ================================
+// Descarga del instalador
+//
+// POR QUÉ EL ARCHIVO PASA POR AQUÍ Y NO SE ENLAZA GITHUB DIRECTO
+//
+// Dos motivos, y el segundo es el importante:
+//
+//   1. El cliente no acaba en GitHub. Pulsa un botón en rendapps.cl y empieza
+//      la descarga; no ve otro dominio ni una página intermedia.
+//
+//   2. El enlace no caduca. La dirección del .exe lleva la versión dentro
+//      (`.../leads-v1.1.2/LeadyxSetup_1.1.2.exe`), así que un correo enviado
+//      hoy seguiría bajando la 1.1.2 dentro de un año. `/descargar/leads` no
+//      cambia nunca y resuelve la última publicada en el momento en que se
+//      pulsa: el correo de bienvenida de enero instala lo de diciembre.
+//
+// Lo que sale a GitHub es este servidor, no el navegador del cliente.
+// ================================
+
+// Qué se puede pedir. La lista está aquí y no sale de la base a propósito: es
+// la puerta de entrada, y una tabla que se edita desde el panel no debería
+// poder ampliar lo que este servidor acepta servir.
+const APPS_DESCARGABLES = {
+  filt: { nombre: 'la Filtradora de licitaciones', pagina: '/proyectos/filtro-licitaciones' },
+  gatheryx: { nombre: 'Gatheryx', pagina: '/proyectos/gatheryx' },
+  leads: { nombre: 'Leadyx', pagina: '/proyectos/leadyx' }
+};
+
+// De dónde aceptamos traernos un archivo. Sin esto, alguien con acceso al panel
+// podría poner cualquier dirección en `core.app_versiones.url` y convertir este
+// servidor en un reenviador de descargas ajenas con nuestro dominio delante.
+const ORIGENES_INSTALADOR = new Set([
+  'github.com',
+  'objects.githubusercontent.com',
+  'release-assets.githubusercontent.com'
+]);
+
+// Resolver la versión es una consulta a la base, y bajar un instalador de 50 MB
+// no debería costar una consulta más. Cinco minutos es corto para lo que tarda
+// en publicarse una versión y largo para una ráfaga de descargas.
+const CACHE_DESCARGA_MS = 5 * 60 * 1000;
+const cacheDescarga = new Map();
+
+async function resolverDescarga(app) {
+  const guardado = cacheDescarga.get(app);
+  if (guardado && Date.now() - guardado.en < CACHE_DESCARGA_MS) return guardado.dato;
+
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
+  if (!url || !key) throw new Error('sin SUPABASE_URL/ANON_KEY');
+
+  const r = await fetch(url + '/rest/v1/rpc/descarga_publica', {
+    method: 'POST',
+    headers: {
+      apikey: key,
+      Authorization: 'Bearer ' + key,
+      'Content-Type': 'application/json',
+      'Accept-Profile': 'core',
+      'Content-Profile': 'core'
+    },
+    body: JSON.stringify({ p_app_codigo: app })
+  });
+
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const dato = await r.json();
+
+  cacheDescarga.set(app, { en: Date.now(), dato: dato || null });
+  return dato || null;
+}
+
+/** El nombre con el que se guarda el archivo. Sale de la URL, ya limpio. */
+function nombreDeArchivo(url, app) {
+  try {
+    const ultimo = decodeURIComponent(new URL(url).pathname.split('/').pop() || '');
+    const limpio = ultimo.replace(/[^A-Za-z0-9._-]/g, '');
+    if (limpio && /\.[A-Za-z0-9]{2,5}$/.test(limpio)) return limpio;
+  } catch (e) { /* url rara: se usa el respaldo */ }
+  return app + '-setup.exe';
+}
+
+function noSePudo(res, codigo, motivo, app) {
+  const meta = APPS_DESCARGABLES[app];
+  res.status(codigo).render('descarga', {
+    titulo: 'Descarga',
+    // `pagina` es qué pestaña se marca en el menú; el enlace al producto va
+    // aparte. Llamarlos igual dejaba el menú apuntando a una URL.
+    pagina: 'proyectos',
+    motivo,
+    appNombre: meta ? meta.nombre : 'la aplicación',
+    paginaProducto: meta ? meta.pagina : null
+  });
+}
+
+app.get('/descargar/:app', async (req, res) => {
+  const app_ = String(req.params.app || '').toLowerCase();
+
+  if (!Object.prototype.hasOwnProperty.call(APPS_DESCARGABLES, app_)) {
+    return noSePudo(res, 404, 'desconocida', app_);
+  }
+
+  let dato;
+  try {
+    dato = await resolverDescarga(app_);
+  } catch (e) {
+    console.error('[descarga] No se pudo resolver ' + app_ + ':', e.message);
+    return noSePudo(res, 503, 'fallo', app_);
+  }
+
+  if (!dato || !dato.url) return noSePudo(res, 503, 'sin-version', app_);
+
+  let origen;
+  try {
+    origen = new URL(dato.url);
+  } catch (e) {
+    console.error('[descarga] URL inválida para ' + app_ + ':', dato.url);
+    return noSePudo(res, 503, 'fallo', app_);
+  }
+
+  if (origen.protocol !== 'https:' || !ORIGENES_INSTALADOR.has(origen.hostname)) {
+    console.error('[descarga] Origen no permitido para ' + app_ + ':', origen.hostname);
+    return noSePudo(res, 503, 'fallo', app_);
+  }
+
+  try {
+    // Se reenvía el `Range` que mande el navegador: con 50 MB por medio, poder
+    // reanudar una descarga cortada no es un lujo.
+    const cabeceras = {};
+    if (req.headers.range) cabeceras.range = req.headers.range;
+
+    const arriba = await fetch(origen.href, { redirect: 'follow', headers: cabeceras });
+
+    if (!arriba.ok && arriba.status !== 206) {
+      console.error('[descarga] GitHub respondió ' + arriba.status + ' para ' + app_);
+      return noSePudo(res, 503, 'fallo', app_);
+    }
+
+    res.status(arriba.status === 206 ? 206 : 200);
+    for (const h of ['content-length', 'content-range', 'accept-ranges']) {
+      const v = arriba.headers.get(h);
+      if (v) res.set(h, v);
+    }
+    // Se fuerza octet-stream y `attachment`: da igual con qué tipo lo sirva el
+    // origen, esto se guarda en disco, no se abre en una pestaña.
+    res.set('Content-Type', 'application/octet-stream');
+    res.set('Content-Disposition',
+      'attachment; filename="' + nombreDeArchivo(origen.href, app_) + '"');
+    if (dato.version) res.set('X-Version', String(dato.version));
+
+    // HEAD lo mandan algunos gestores de descargas antes de empezar. Se les
+    // contesta con las cabeceras y sin cuerpo.
+    if (req.method === 'HEAD' || !arriba.body) return res.end();
+
+    const flujo = Readable.fromWeb(arriba.body);
+    flujo.on('error', (err) => {
+      console.error('[descarga] Se cortó la transferencia de ' + app_ + ':', err.message);
+      res.destroy(err);
+    });
+    // Si el cliente cierra a media descarga, se corta la lectura en vez de
+    // seguir bajando de GitHub para nadie.
+    res.on('close', () => flujo.destroy());
+    flujo.pipe(res);
+
+  } catch (e) {
+    console.error('[descarga] Fallo al servir ' + app_ + ':', e.message);
+    // Puede haber empezado a escribir: si ya salieron cabeceras, lo único
+    // honesto es cortar. Renderizar HTML encima daría un archivo corrupto.
+    if (res.headersSent) return res.destroy();
+    return noSePudo(res, 503, 'fallo', app_);
+  }
 });
 
 // Formulario público de registro a eventos (Registro Pro Eventos).

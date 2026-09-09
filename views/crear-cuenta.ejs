@@ -1,5 +1,5 @@
 <%- include('partials/header') %>
-<link rel="stylesheet" href="/css/planes.css?v=2">
+<link rel="stylesheet" href="/css/planes.css?v=3">
 
 <section class="seccion">
   <div class="contenedor">
@@ -71,16 +71,47 @@
         </form>
       </div>
 
-      <%# Estado 4: listo %>
+      <%# Estado 4: listo
+          Aquí es donde antes se le decía «ya puedes entrar a la aplicación» sin
+          decirle cuál ni de dónde bajarla. El bloque de descarga lo rellena
+          crear-cuenta.js con lo que devuelve `activar-cuenta`, que a su vez lo
+          saca de la última versión publicada en el registro central. %>
       <div class="cuenta-paso" data-paso="listo" hidden>
         <div class="retorno-icono ok">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <h1>¡Cuenta creada!</h1>
-        <p>Ya puedes entrar a la aplicación con <strong class="cuenta-email-final"></strong> y la contraseña que acabas de elegir.</p>
+        <p>Entra con <strong class="cuenta-email-final"></strong> y la contraseña que acabas de elegir.</p>
         <p>Tus <strong>14 días de prueba</strong> ya están corriendo. El primer cobro es al terminarlos.</p>
+
+        <%# Hay instalador publicado %>
+        <div class="cuenta-descarga" hidden>
+          <a class="btn cuenta-descarga-enlace" href="#" download>
+            Descargar <span class="cuenta-descarga-app"></span>
+            <span class="btn-flecha" aria-hidden="true">↓</span>
+          </a>
+          <p class="cuenta-descarga-meta"></p>
+        </div>
+
+        <%# Todavía no lo hay: se dice, y se ofrece la página del producto %>
+        <div class="cuenta-descarga-falta" hidden>
+          <p>
+            Estamos terminando de preparar el instalador de
+            <strong class="cuenta-descarga-app2"></strong>. Te lo enviamos por correo
+            en cuanto esté publicado.
+          </p>
+          <div class="retorno-acciones">
+            <a class="btn btn-contorno cuenta-descarga-pagina" href="/proyectos">Ver el producto</a>
+          </div>
+        </div>
+
+        <p class="cuenta-descarga-nota">
+          También te mandamos este enlace por correo a
+          <strong class="cuenta-email-final2"></strong>.
+        </p>
+
         <div class="retorno-acciones">
-          <a class="btn" href="/">Volver al inicio <span class="btn-flecha" aria-hidden="true">→</span></a>
+          <a class="btn btn-contorno" href="/">Volver al inicio</a>
         </div>
       </div>
 
@@ -91,5 +122,5 @@
 <script>
   window.CONFIG_CUENTA = <%- JSON.stringify(configCuenta) %>;
 </script>
-<script src="/js/crear-cuenta.js?v=1" defer></script>
+<script src="/js/crear-cuenta.js?v=3" defer></script>
 <%- include('partials/footer') %>

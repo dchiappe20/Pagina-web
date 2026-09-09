@@ -1,0 +1,46 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/css/planes.css?v=3">
+
+<%#
+  Lo que se ve cuando /descargar/<app> no puede entregar el archivo.
+
+  Tiene pantalla propia y no un 404 genérico porque quien llega aquí viene de
+  pulsar un botón en su correo de bienvenida: merece saber si se equivocó de
+  enlace, si todavía no hay instalador o si el problema es nuestro.
+%>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="retorno">
+      <div class="retorno-icono <%= motivo === 'sin-version' ? 'pendiente' : 'error' %>">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7.5" x2="12" y2="13"/><line x1="12" y1="16.5" x2="12" y2="16.6"/></svg>
+      </div>
+
+      <% if (motivo === 'desconocida') { %>
+        <h1>No conocemos esa aplicación</h1>
+        <p>El enlace apunta a un producto que no existe. Comprueba que lo abriste tal cual te llegó, sin recortarlo.</p>
+
+      <% } else if (motivo === 'sin-version') { %>
+        <h1>Todavía no hay instalador de <%= appNombre %></h1>
+        <p>Estamos terminando de prepararlo. Te lo enviamos por correo en cuanto esté publicado.</p>
+        <p>Si lo necesitas ya, escríbenos y te lo pasamos.</p>
+
+      <% } else { %>
+        <h1>No pudimos entregarte la descarga</h1>
+        <p>El instalador de <%= appNombre %> existe, pero ahora mismo no lo conseguimos servir. Suele resolverse en unos minutos.</p>
+        <p>Vuelve a pulsar el enlace en un rato. Si sigue igual, escríbenos y te lo mandamos directo.</p>
+      <% } %>
+
+      <div class="retorno-acciones">
+        <a class="btn" href="/contacto">Escribirnos <span class="btn-flecha" aria-hidden="true">→</span></a>
+        <% if (paginaProducto) { %>
+          <a class="btn btn-contorno" href="<%= paginaProducto %>">Ver <%= appNombre %></a>
+        <% } else { %>
+          <a class="btn btn-contorno" href="/">Volver al inicio</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

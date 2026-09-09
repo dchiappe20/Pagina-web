@@ -1,5 +1,33 @@
 <%- include('partials/header') %>
-<link rel="stylesheet" href="/css/planes.css?v=2">
+<link rel="stylesheet" href="/css/planes.css?v=3">
+
+<%#
+  Estado del registro de tarjeta.
+
+  QUÉ CAMBIÓ Y POR QUÉ
+
+  Esta página decía «en unos minutos te llega un correo con los accesos» en dos
+  de sus tres estados, y ese correo no existía: el único que salía del alta era
+  el aviso interno al proveedor. Quien recargaba la página —que es lo primero
+  que hace cualquiera cuando no está seguro de si el pago pasó— caía en ese
+  mismo texto y se quedaba esperando.
+
+  Ahora hay cinco estados y ninguno promete nada que no haya pasado ya. Los dos
+  nuevos son los que antes se disfrazaban de éxito:
+
+    duplicado  — el cliente recargó. Su contratación ya estaba hecha y no se
+                 duplicó nada; lo que sí perdió, si cerró la pestaña, es el
+                 enlace de un solo uso para elegir la contraseña.
+    incompleto — el registro de la tarjeta salió bien pero el alta automática
+                 no. Hay una fila en `provisiones_pendientes` y un aviso a
+                 nuestro correo; se termina a mano.
+
+  El parámetro `estado` lo puede escribir cualquiera en la barra de direcciones,
+  así que no decide nada: sólo elige qué texto se pinta. Quien determina lo que
+  de verdad pasó es la Edge Function `flow-retorno`, contra Flow. Cualquier
+  valor que no reconozcamos cae en el estado de error, que es el que no promete
+  nada.
+%>
 
 <section class="seccion">
   <div class="contenedor">
@@ -10,16 +38,35 @@
         </div>
         <h1>¡Listo! Tu prueba ya empezó</h1>
         <p>Registramos tu tarjeta y activamos los <strong>14 días de prueba</strong>. No se te ha cobrado nada.</p>
-        <p>En unos minutos te llega un correo con los accesos. Si no lo ves, revisa la carpeta de spam.</p>
-        <p>El primer cobro se hará al terminar la prueba, y puedes cancelar antes desde tu cuenta o escribiéndonos.</p>
+        <p>Si todavía no elegiste tu contraseña, puedes crearla desde la propia aplicación: pulsa <strong>«Activar cuenta»</strong>, escribe tu correo y te llegará un código.</p>
+        <p>El primer cobro se hace al terminar la prueba, y puedes cancelar antes escribiéndonos.</p>
+
+      <% } else if (estado === 'duplicado') { %>
+        <div class="retorno-icono ok">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>Esta contratación ya estaba hecha</h1>
+        <p>No pasó nada raro: llegaste otra vez a la página de retorno. <strong>No se creó una segunda suscripción ni se te cobró de nuevo.</strong></p>
+        <p>Te dejamos en tu correo el enlace para descargar la aplicación. Si no lo ves, revisa la carpeta de spam.</p>
+        <p>El enlace para elegir tu contraseña era de un solo uso y no se puede volver a abrir desde aquí. Si lo cerraste sin usarlo, créala desde la propia aplicación: pulsa <strong>«Activar cuenta»</strong>, escribe tu correo y te llegará un código.</p>
+
+      <% } else if (estado === 'incompleto') { %>
+        <div class="retorno-icono pendiente">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7.5" x2="12" y2="13"/><line x1="12" y1="16.5" x2="12" y2="16.6"/></svg>
+        </div>
+        <h1>Tu prueba empezó, pero nos falta un paso</h1>
+        <p>Tu tarjeta quedó registrada y los <strong>14 días de prueba</strong> ya corren. <strong>No se te ha cobrado nada.</strong></p>
+        <p>Lo que no pudimos terminar de forma automática es la preparación de tu cuenta. Ya nos llegó el aviso y lo dejamos listo a mano; te escribimos en cuanto esté.</p>
+        <p>No vuelvas a contratar: eso sí crearía un segundo cobro. Si prefieres no esperar, escríbenos a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a> y lo resolvemos contigo.</p>
 
       <% } else if (estado === 'pendiente') { %>
         <div class="retorno-icono pendiente">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
         </div>
-        <h1>Estamos confirmando el registro</h1>
-        <p>Flow todavía no nos confirma el resultado. Esto suele resolverse en menos de un minuto.</p>
-        <p>No vuelvas a registrar la tarjeta: si el registro se completó, te llegará el correo con los accesos. Si en una hora no tienes noticias, escríbenos a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a>.</p>
+        <h1>No pudimos confirmar el registro</h1>
+        <p>Flow no nos devolvió un resultado que podamos dar por bueno, así que no sabemos si tu tarjeta quedó registrada o no.</p>
+        <p><strong>No vuelvas a registrarla:</strong> si el registro sí se completó, intentarlo otra vez crearía una segunda suscripción y un segundo cobro.</p>
+        <p>Escríbenos a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a> y te lo confirmamos en el momento.</p>
 
       <% } else { %>
         <div class="retorno-icono error">
@@ -31,8 +78,14 @@
       <% } %>
 
       <div class="retorno-acciones">
-        <% if (estado === 'ok') { %>
+        <% if (estado === 'ok' || estado === 'duplicado') { %>
           <a class="btn" href="/">Volver al inicio <span class="btn-flecha" aria-hidden="true">→</span></a>
+          <a class="btn btn-contorno" href="/contacto">Escribirnos</a>
+        <% } else if (estado === 'incompleto' || estado === 'pendiente') { %>
+          <%# Sin «volver a intentar»: en estos dos estados reintentar es
+              justamente lo que no hay que hacer. %>
+          <a class="btn" href="/contacto">Escribirnos <span class="btn-flecha" aria-hidden="true">→</span></a>
+          <a class="btn btn-contorno" href="/">Volver al inicio</a>
         <% } else { %>
           <a class="btn" href="/planes">Volver a intentar <span class="btn-flecha" aria-hidden="true">→</span></a>
           <a class="btn btn-contorno" href="/contacto">Escribirnos</a>

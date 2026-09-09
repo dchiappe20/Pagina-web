@@ -12,6 +12,12 @@
 
   var $ = function (sel) { return raiz.querySelector(sel); };
 
+  // La llave de sessionStorage. Se declara aquí arriba y no junto a las
+  // funciones que la usan porque `recordado()` se llama en la comprobación del
+  // token, que ocurre antes: con `var` la declaración se iza pero el valor no,
+  // y abajo quedaba en undefined justo cuando hacía falta.
+  var LLAVE = 'rendapps-cuenta-lista';
+
   function mostrarPaso(nombre) {
     Array.prototype.forEach.call(raiz.querySelectorAll('.cuenta-paso'), function (p) {
       p.hidden = p.getAttribute('data-paso') !== nombre;
@@ -32,8 +38,116 @@
     return;
   }
   if (!token) {
-    invalido('El enlace está incompleto. Ábrelo tal cual te lo enviamos, sin recortarlo.');
+    // Lo más probable no es un enlace roto: es una recarga después de haber
+    // creado la cuenta, porque el token se quita de la URL al validarlo. Si
+    // esta pestaña ya lo hizo, se vuelve a pintar el final en vez de acusar
+    // a un enlace que estaba bien.
+    var antes = recordado();
+    if (antes) {
+      pintarListo(antes);
+    } else {
+      invalido(
+        'Este enlace ya no lleva el código de activación. Si ya elegiste tu contraseña, ' +
+        'entra a la aplicación con tu correo. Si todavía no la elegiste, ábrela desde la ' +
+        'propia aplicación: pulsa «Activar cuenta», escribe tu correo y te llegará un código.'
+      );
+    }
     return;
+  }
+
+  // =========================================================================
+  // La pantalla final
+  //
+  // Se pinta desde la respuesta de `activar-cuenta`, que trae de dónde bajar la
+  // app: la última versión publicada de la que contrató. Antes esta pantalla
+  // decía «ya puedes entrar a la aplicación» sin decir cuál ni dónde.
+  // =========================================================================
+
+  /**
+   * Guarda el resultado para que una recarga no deje al cliente en blanco.
+   *
+   * El token se borra de la barra de direcciones en cuanto se valida, así que
+   * al recargar no queda nada en la URL: sin esto, quien pulsa F5 justo después
+   * de crear su cuenta veía «el enlace está incompleto», que es lo contrario de
+   * lo que acababa de pasar.
+   *
+   * Va en sessionStorage y no en localStorage a propósito: es para esta pestaña
+   * y este rato, no para siempre. Y no guarda nada secreto — el correo y una
+   * URL de descarga pública.
+   */
+  function recordar(datos) {
+    try {
+      sessionStorage.setItem(LLAVE, JSON.stringify({
+        email: datos.email || '',
+        descarga: datos.descarga || null
+      }));
+    } catch (e) {
+      // Navegador en privado o con el almacenamiento bloqueado. No pasa nada:
+      // sólo se pierde la reconstrucción tras recargar.
+    }
+  }
+
+  function recordado() {
+    try {
+      return JSON.parse(sessionStorage.getItem(LLAVE) || 'null');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function pintarListo(datos) {
+    var d = datos.descarga || null;
+
+    $('.cuenta-email-final').textContent = datos.email || '';
+    $('.cuenta-email-final2').textContent = datos.email || '';
+
+    var caja = $('.cuenta-descarga');
+    var falta = $('.cuenta-descarga-falta');
+    var nota = $('.cuenta-descarga-nota');
+
+    // El href se asigna, nunca se interpola en HTML, y sólo si es http(s): lo
+    // que llega viene de la base, y un `javascript:` ahí sería un enlace que
+    // ejecuta código con un solo clic. Una dirección que no pase el filtro cae
+    // en la rama de «todavía no hay instalador», que es la verdad desde el
+    // punto de vista de quien mira: no hay nada que pueda ofrecerle.
+    //
+    // `url` dice SI hay algo que ofrecer (una versión publicada); `enlace` es
+    // adónde se manda a la persona: /descargar/<app> en nuestro propio dominio,
+    // que resuelve la última versión y sirve el archivo. La dirección de GitHub
+    // no llega nunca al navegador del cliente.
+    var destino = (d && d.enlace) || '';
+    var enlaceUsable = Boolean(d && d.url && /^https?:\/\//i.test(destino));
+
+    if (enlaceUsable) {
+      $('.cuenta-descarga-enlace').href = destino;
+      $('.cuenta-descarga-app').textContent = d.appNombre || 'la aplicación';
+      $('.cuenta-descarga-meta').textContent = [
+        d.version ? 'Versión ' + d.version : '',
+        pesoLegible(d.tamanoBytes)
+      ].filter(Boolean).join(' · ');
+      caja.hidden = false;
+      falta.hidden = true;
+    } else {
+      $('.cuenta-descarga-app2').textContent = (d && d.appNombre) || 'tu aplicación';
+      if (d && d.pagina && /^https?:\/\//i.test(d.pagina)) {
+        $('.cuenta-descarga-pagina').href = d.pagina;
+      }
+      caja.hidden = true;
+      falta.hidden = false;
+    }
+
+    // La nota del correo sólo se sostiene si hay algo que enviar.
+    nota.hidden = !enlaceUsable;
+
+    mostrarPaso('listo');
+  }
+
+  function pesoLegible(bytes) {
+    if (!bytes || bytes <= 0) return '';
+    var mb = bytes / (1024 * 1024);
+    return mb >= 1
+      ? mb.toFixed(1).replace('.', ',') + ' MB'
+      : Math.max(1, Math.round(bytes / 1024)) + ' KB';
   }
 
   function llamar(cuerpo) {
@@ -158,8 +272,8 @@
 
     llamar({ token: token, accion: 'activar', password: clave })
       .then(function (datos) {
-        $('.cuenta-email-final').textContent = datos.email || '';
-        mostrarPaso('listo');
+        recordar(datos);
+        pintarListo(datos);
       })
       .catch(function (error) {
         aviso.textContent = error.message || 'No pudimos crear tu cuenta. Inténtalo otra vez.';
