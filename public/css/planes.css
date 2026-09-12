@@ -83,15 +83,6 @@
   color: var(--texto);
 }
 
-/* Referencia en CLP: es informativa, nunca el monto que se cobra. */
-.plan-clp {
-  font-size: 0.95rem;
-  color: var(--texto-suave);
-  margin-top: 0.5rem;
-  min-height: 1.45rem;
-}
-.plan-clp[data-estado="cargando"] { opacity: 0.55; }
-
 /* ---------- Lista de características ---------- */
 
 .plan-lista {

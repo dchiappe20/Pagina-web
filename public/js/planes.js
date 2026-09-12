@@ -1,77 +1,16 @@
 // ===========================================================================
 // Página de Planes
 //
-// IMPORTANTE — sobre el dinero:
-// Nada de lo que se calcula en este archivo cobra ni determina un cobro. Los
-// planes están creados en UF dentro de Flow y es Flow quien convierte a pesos
-// con el valor de la UF del día de cada cargo. El "≈ $X CLP" que se muestra
-// aquí es SÓLO una referencia informativa para el visitante.
+// Aquí no se calcula ningún precio. El plan se anuncia en UF y el cobro lo
+// hace Flow con la UF del día del cargo; la conversión a pesos que este
+// archivo pintaba se quitó porque mostraba una cifra que cambiaba a diario y
+// que casi nunca coincidía con la cobrada.
 // ===========================================================================
 (function () {
   var CONFIG = window.CONFIG_PLANES || {};
 
   // =========================================================================
-  // 1. Valor de la UF (referencial)
-  // =========================================================================
-
-  var API_UF = 'https://mindicador.cl/api/uf';
-
-  function formatearCLP(monto) {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
-      maximumFractionDigits: 0
-    }).format(monto);
-  }
-
-  function pintarPrecios(valorUf, esRespaldo) {
-    var etiquetas = document.querySelectorAll('.plan-clp');
-
-    Array.prototype.forEach.call(etiquetas, function (el) {
-      var uf = parseFloat(el.getAttribute('data-uf'));
-      if (!isFinite(uf)) return;
-
-      el.textContent = '≈ ' + formatearCLP(Math.round(uf * valorUf)) + ' /mes neto';
-      el.setAttribute('data-estado', 'listo');
-      el.title = esRespaldo
-        ? 'Valor referencial calculado con una UF de respaldo. El cobro lo hace Flow con la UF del día.'
-        : 'Valor referencial con la UF de hoy (' + formatearCLP(valorUf) + '). El cobro lo hace Flow con la UF del día del cargo.';
-    });
-  }
-
-  function cargarUf() {
-    // El respaldo evita que la tarjeta quede sin precio si mindicador.cl no
-    // responde. Nunca se usa para cobrar: sólo para mostrar.
-    var respaldo = Number(CONFIG.ufRespaldo) || 0;
-
-    if (!('fetch' in window)) {
-      if (respaldo) pintarPrecios(respaldo, true);
-      return;
-    }
-
-    var aborto = new AbortController();
-    var reloj = setTimeout(function () { aborto.abort(); }, 6000);
-
-    fetch(API_UF, { signal: aborto.signal })
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(function (datos) {
-        var valor = datos && datos.serie && datos.serie[0] && datos.serie[0].valor;
-        if (!valor || !isFinite(valor)) throw new Error('Respuesta sin valor de UF');
-        pintarPrecios(valor, false);
-      })
-      .catch(function () {
-        if (respaldo) pintarPrecios(respaldo, true);
-      })
-      .then(function () { clearTimeout(reloj); });
-  }
-
-  cargarUf();
-
-  // =========================================================================
-  // 2. RUT chileno
+  // 1. RUT chileno
   //
   // Misma lógica que Themein (src/lib/rut.js) y que core.rut_valido() en la
   // base de datos. Aquí sólo da feedback inmediato: la fuente de verdad es
@@ -125,7 +64,7 @@
   }
 
   // =========================================================================
-  // 3. Pestañas de producto
+  // 2. Pestañas de producto
   //
   // Cambiar de pestaña actualiza la URL con `?app=`, sin recargar: así el
   // enlace se puede copiar y compartir, y el botón «atrás» del navegador hace
@@ -176,7 +115,7 @@
   }
 
   // =========================================================================
-  // 4. Modal de alta
+  // 3. Modal de alta
   // =========================================================================
 
   var modal = document.getElementById('modal-alta');
@@ -233,7 +172,7 @@
   });
 
   // =========================================================================
-  // 5. Validación y envío
+  // 4. Validación y envío
   // =========================================================================
 
   function marcar(campo, ok) {

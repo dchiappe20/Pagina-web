@@ -105,8 +105,9 @@ const proyectos = [
 // Planes de suscripción
 //
 // El precio va en UF porque los planes están creados en UF dentro de Flow y
-// es Flow quien convierte a pesos en cada cobro. El valor en CLP que ve el
-// visitante es referencial y lo calcula el navegador con la UF del día.
+// es Flow quien convierte a pesos en cada cobro. La web NO muestra el
+// equivalente en pesos: cambiaba con la UF de cada día y con el de la fecha
+// del cargo, así que anunciaba una cifra que casi nunca era la cobrada.
 //
 // El catálogo vive en el registro central (`core.planes`) y se lee al arrancar
 // con `core.planes_publicos()`. Antes estaba escrito aquí a mano y había que
@@ -157,24 +158,28 @@ const ESCAPARATE = {
 };
 
 const PLANES_RESPALDO = [
+  // La descripción es una etiqueta, no un retrato del cliente: describir a
+  // quién le sirve cada nivel hacía que quien se reconocía en la frase
+  // equivocada eligiera el plan equivocado. La de Productora se conserva
+  // porque dice qué PERMITE el plan, no a quién se parece quien lo compra.
   { app: 'filt', plan: 'terreno', nombre: 'Terreno', precio_uf: 3,
-    descripcion: 'La pyme que licita de vez en cuando.' },
+    descripcion: 'Plan básico' },
   { app: 'filt', plan: 'oficina', nombre: 'Oficina', precio_uf: 5,
-    descripcion: 'La que tiene a alguien dedicado a licitar.' },
+    descripcion: 'Plan moderado' },
   { app: 'filt', plan: 'holding', nombre: 'Holding', precio_uf: 9,
-    descripcion: 'Grupo con varias razones sociales.' },
+    descripcion: 'Plan premium' },
   { app: 'gatheryx', plan: 'por_evento', nombre: 'Por evento', precio_uf: 2,
-    descripcion: 'Un evento, prepago.', periodo: 'evento', contratable: false },
+    descripcion: 'Plan prepago', periodo: 'evento', contratable: false },
   { app: 'gatheryx', plan: 'anual', nombre: 'Anual', precio_uf: 1,
-    descripcion: 'Empresa con calendario propio de eventos.' },
+    descripcion: 'Plan mensual' },
   { app: 'gatheryx', plan: 'productora', nombre: 'Productora', precio_uf: 3,
     descripcion: 'Quien organiza eventos para terceros.' },
   { app: 'leads', plan: 'feria', nombre: 'Feria', precio_uf: 1,
-    descripcion: 'Stand chico, dos o tres personas.' },
+    descripcion: 'Plan básico' },
   { app: 'leads', plan: 'comercial', nombre: 'Comercial', precio_uf: 2,
-    descripcion: 'Equipo comercial que vive de ferias.' },
+    descripcion: 'Plan moderado' },
   { app: 'leads', plan: 'equipo', nombre: 'Equipo', precio_uf: 4,
-    descripcion: 'Fuerza de venta grande o varias sucursales.' }
+    descripcion: 'Plan premium' }
 ];
 
 // Qué incluye cada nivel, en palabras del cliente. Los topes numéricos vienen
@@ -185,12 +190,12 @@ const DESTACADOS = {
   // que nombrarlas no distingue nada y sólo invita a comparar lo que es igual.
   // Lo que separa a Oficina de Terreno es, entre otras, el módulo de clientes.
   'filt:terreno': ['2 computadores', '15 reglas de filtro',
-                   'Una razón social', 'Exportación a Excel'],
+                   'Actualización nocturna de licitaciones', 'Exportaciones a Excel'],
   'filt:oficina': ['6 computadores', 'Módulo de clientes favoritos',
                    'Vigilancia de foros de aclaración', 'Reglas de filtro ilimitadas',
-                   'Conexión propia a Mercado Público'],
+                   'Nuevas cotizaciones en tiempo real'],
   'filt:holding': ['Computadores ilimitados', 'Varias razones sociales en un panel',
-                   'Te dejamos las conexiones configuradas', 'Respuesta en 24 h hábiles',
+                   'Te dejamos las conexiones configuradas', 'Soporte las 24 horas hábiles',
                    'Todo lo del plan Oficina'],
   'gatheryx:por_evento': ['1 evento', 'Hasta 300 registrados', '60 días de acceso',
                           'Acreditación por QR completa', 'Exportación a Excel'],
@@ -290,9 +295,9 @@ async function cargarPlanes() {
 cargarPlanes();
 
 const configPlanes = {
-  urlCrearSuscripcion: process.env.URL_CREAR_SUSCRIPCION || '',
-  // Sólo se usa si mindicador.cl no responde, y sólo para mostrar.
-  ufRespaldo: Number(process.env.UF_RESPALDO) || 39500
+  urlCrearSuscripcion: process.env.URL_CREAR_SUSCRIPCION || ''
+  // `ufRespaldo` se fue con el precio en pesos: ya no se convierte nada en
+  // el navegador, así que tampoco hace falta una UF de respaldo.
 };
 
 const proceso = [

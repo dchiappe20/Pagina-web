@@ -74,9 +74,6 @@
                   </span>
                 <% } %>
               </div>
-              <%# El CLP lo rellena planes.js con el valor de la UF del día. %>
-              <p class="plan-clp" data-uf="<%= n.uf %>" data-estado="cargando">Calculando valor referencial…</p>
-
               <ul class="plan-lista">
                 <% n.destacados.forEach(function (f) { %>
                   <li>
@@ -120,8 +117,7 @@
 
     <p class="planes-aclaracion">
       <strong>Sobre el precio:</strong> los planes están fijados en <strong>UF</strong> y el cobro lo
-      realiza Flow convirtiendo a pesos con el valor de la UF del día de cada cargo. El monto en pesos
-      que ves aquí es <strong>sólo referencial</strong>, calculado con la UF de hoy. Los valores son
+      realiza Flow convirtiendo a pesos con el valor de la UF del día de cada cargo. Los valores son
       netos: se les agrega IVA en la boleta o factura.
     </p>
   </div>
