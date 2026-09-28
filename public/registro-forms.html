@@ -98,6 +98,75 @@
     display:inline-block;vertical-align:-4px;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
   .foot{margin-top:20px;text-align:center;font-size:10px;letter-spacing:1.5px;color:var(--txd);opacity:.55;text-transform:uppercase}
+
+  /* ── Eventos de pago ── */
+  .precio{display:none; margin:12px auto 0; width:max-content; max-width:100%; padding:6px 14px; border-radius:999px;
+    font-size:13px; font-weight:700; color:var(--acc); background:rgba(163,230,53,.10); border:1px solid rgba(163,230,53,.35)}
+  .precio.show{display:block}
+
+  .pay{display:none; flex-direction:column; animation:rise .5s both}
+  .pay.show{display:flex}
+  .pay h2{margin:4px 0 6px; font-size:20px; font-weight:800; text-align:center}
+  .pay .lead{margin:0; font-size:13px; color:var(--txd); line-height:1.5; text-align:center}
+  .pay .monto{margin:14px 0 4px; text-align:center; font-size:30px; font-weight:800; letter-spacing:-.5px}
+  .pay .nota{margin:14px 0 0; font-size:12.5px; color:var(--txd); line-height:1.55; text-align:center}
+  .pay .nota b{color:var(--tx)}
+
+  .banco{margin-top:14px; border:1px solid var(--bd); border-radius:14px; background:var(--field); overflow:hidden}
+  .banco .fila{display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid var(--bd)}
+  .banco .fila:first-child{border-top:0}
+  .banco .k{flex:0 0 96px; font-size:11.5px; color:var(--txd)}
+  .banco .v{flex:1; min-width:0; font-size:13.5px; font-weight:600; word-break:break-word}
+  .copiar{margin:0; flex:0 0 auto; padding:6px 10px; font-size:11px; font-weight:700; border-radius:9px;
+    color:var(--tx); background:transparent; border:1px solid var(--bd); box-shadow:none}
+  .copiar:hover{transform:none; box-shadow:none; border-color:var(--acc)}
+  .copiar.ok{color:var(--acc2); border-color:var(--acc2)}
+  .instr{margin-top:10px; padding:10px 12px; border-radius:12px; font-size:12.5px; line-height:1.5;
+    color:var(--txd); background:rgba(255,255,255,.03); border:1px dashed var(--bd); white-space:pre-line}
+
+  .opciones{display:flex; flex-direction:column; gap:10px; margin-top:18px}
+  .opcion{margin:0; display:flex; align-items:center; gap:12px; text-align:left; padding:14px 15px}
+  .opcion small{display:block; margin-top:2px; font-size:11.5px; font-weight:600; opacity:.75}
+  .opcion.sec{color:var(--tx); background:var(--field); border:1px solid var(--bd); box-shadow:none}
+  .opcion.sec:hover{border-color:var(--acc); box-shadow:none}
+
+  /* ── La compra: entradas, asistentes, código y total ── */
+  .compra{display:flex; flex-direction:column; gap:10px; margin-top:4px}
+  .compra .titulo{font-size:10.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--txd); margin:6px 2px 0}
+  .tipos{border:1px solid var(--bd); border-radius:13px; overflow:hidden; background:var(--field)}
+  .tipo{display:flex; align-items:center; gap:10px; padding:11px 12px; border-top:1px solid var(--bd)}
+  .tipo:first-child{border-top:0}
+  .tipo .n{flex:1; min-width:0}
+  .tipo .n b{display:block; font-size:14px}
+  .tipo .n small{display:block; font-size:12px; color:var(--txd); margin-top:1px}
+  .tipo.agotado{opacity:.45}
+  .paso{display:flex; align-items:center; gap:8px}
+  .paso button{margin:0; width:32px; height:32px; padding:0; border-radius:10px; font-size:18px; line-height:1;
+    color:var(--tx); background:transparent; border:1px solid var(--bd); box-shadow:none}
+  .paso button:hover{transform:none; box-shadow:none; border-color:var(--acc)}
+  .paso span{min-width:20px; text-align:center; font-weight:800; font-size:15px}
+  .asist{display:flex; flex-direction:column; gap:8px; padding:11px 12px; border:1px dashed var(--bd); border-radius:13px}
+  .asist .cab{font-size:11.5px; color:var(--txd)}
+  .codigo{display:flex; gap:8px}
+  .codigo input{flex:1; text-transform:uppercase}
+  .codigo button{margin:0; padding:0 16px; font-size:13px; color:var(--tx); background:var(--field);
+    border:1px solid var(--bd); box-shadow:none}
+  .codigo button:hover{transform:none; box-shadow:none; border-color:var(--acc)}
+  .codigo-ok{font-size:12.5px; color:var(--acc2)}
+  .codigo-ok a{color:var(--txd); text-decoration:underline}
+  .compra .ayuda{font-size:11.5px; color:var(--txd); margin:-4px 2px 0}
+  .totales{display:flex; flex-direction:column; gap:3px; padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.03)}
+  .totales .f{display:flex; justify-content:space-between; font-size:12.5px; color:var(--txd)}
+  .totales .f.total{font-size:15px; color:var(--tx); font-weight:800; margin-top:2px}
+
+  /* Varias entradas: una rejilla de QR con el nombre de cada una. */
+  .qrs{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:14px}
+  .qrs .q{display:flex; flex-direction:column; align-items:center; gap:6px}
+  .qrs .q img{width:130px; height:130px; background:#fff; border-radius:12px; padding:8px}
+  .qrs .q span{font-size:11.5px; color:var(--txd); text-align:center}
+
+  .espera{display:flex; flex-direction:column; align-items:center; gap:14px; margin:18px 0 4px}
+  .espera .spin{width:30px; height:30px; border-width:3px; border-color:rgba(163,230,53,.25); border-top-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -121,6 +190,7 @@
         </div>
         <h1 id="titulo">Cargando evento…</h1>
         <p class="sub" id="cuando">Reserva tu lugar</p>
+        <div class="precio" id="precio"></div>
 
         <form id="form" autocomplete="on">
           <input id="nombre" name="name" placeholder="Nombre y Apellido" required>
@@ -132,20 +202,26 @@
             <input id="rut" placeholder="RUT" style="display:none">
             <input id="patente" placeholder="Patente" style="display:none">
           </div>
+          <!-- Evento de pago: entradas, asistentes, código y total (lo arma el script). -->
+          <div id="compra" class="compra" style="display:none"></div>
           <button id="submit" type="submit">Registrarme y obtener QR</button>
         </form>
 
-        <p class="hint">Al registrarte recibirás tu código QR de acceso en tu correo electrónico.</p>
+        <p class="hint" id="hint">Al registrarte recibirás tu código QR de acceso en tu correo electrónico.</p>
         <div id="msg" class="msg"></div>
       </div>
 
       <!-- Vista éxito -->
       <div id="view-done" class="done">
         <div class="qrbox"><img id="qr" alt="Tu código QR"></div>
-        <h2>¡Registro exitoso!</h2>
+        <h2 id="done-titulo">¡Registro exitoso!</h2>
         <p id="done-sub">Guarda este QR y preséntalo en el acceso.<br>También lo enviamos a tu correo.</p>
-        <button class="again" type="button" onclick="location.reload()">Registrar a otra persona</button>
+        <button class="again" type="button" onclick="otraPersona()">Registrar a otra persona</button>
       </div>
+
+      <!-- Vista de pago: transferencia, elección de medio, espera o resultado.
+           Se arma desde el script según el evento y lo que pase con el pago. -->
+      <div id="view-pay" class="pay"></div>
 
       <div class="foot">Registro Pro Eventos</div>
     </div>
@@ -168,6 +244,83 @@ const $ = (id) => document.getElementById(id);
 // Campos opcionales que pide este evento (configurables desde la app).
 let campos = { rut: false, patente: false };
 let eventoOk = false;
+let evento = null;          // el evento tal como lo devolvió la base
+let correoInscrito = '';    // para decirle adónde le llegará el QR
+let inscribiendo = false;   // se envió el formulario: ninguna carga tardía pisa la pantalla
+
+// Al volver de Flow la dirección trae ?pago=ok|pendiente|rechazado&compra=<id>.
+// Es sólo una pista: lo que vale es lo que responda la base (ver mostrarRetorno).
+const retornoPago = new URLSearchParams(location.search).get('pago');
+const retornoCompra = new URLSearchParams(location.search).get('compra');
+
+// La compra que se está armando: cuántas de cada tipo, los datos de los demás
+// asistentes y el código aplicado. El precio real lo calcula la base; esto es
+// sólo para que la persona vea el total antes de pagar.
+const SIN_TIPO = '_';
+let carrito = {};           // tipoId (o SIN_TIPO) → cantidad
+let asistentes = [];        // [{ nombre, email }] de la 2ª entrada en adelante
+let codigoAplicado = null;  // { codigo, tipo, valor }
+
+// ─────────────────────────────────────────────────────────────
+// Utilidades de las vistas de pago
+// ─────────────────────────────────────────────────────────────
+const fmtCLP = (n) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
+
+// Crea un nodo con texto SIEMPRE como texto: los datos bancarios los escribe el
+// organizador, y pintarlos como HTML abriría la puerta a inyectar código aquí.
+function el(tag, props, hijos){
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})){
+    if (k === 'text') n.textContent = v;
+    else if (k === 'class') n.className = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const h of [].concat(hijos || [])) if (h) n.appendChild(typeof h === 'string' ? document.createTextNode(h) : h);
+  return n;
+}
+
+// Reemplaza el contenido de la tarjeta por una vista de pago.
+function vistaPago(nodos){
+  $('view-form').style.display = 'none';
+  $('view-done').classList.remove('show');
+  const v = $('view-pay');
+  v.replaceChildren(...[].concat(nodos).filter(Boolean));
+  v.classList.add('show');
+}
+
+async function copiar(texto, boton){
+  try { await navigator.clipboard.writeText(texto); }
+  catch(_){
+    // Navegadores sin portapapeles moderno (o sin https): el truco de siempre.
+    const t = el('textarea', {}); t.value = texto; document.body.appendChild(t); t.select();
+    try { document.execCommand('copy'); } catch(__){}
+    t.remove();
+  }
+  const antes = boton.textContent;
+  boton.textContent = 'Copiado ✓'; boton.classList.add('ok');
+  setTimeout(() => { boton.textContent = antes; boton.classList.remove('ok'); }, 1600);
+}
+
+// Qué medios puede usar de verdad quien se inscribe: los que el evento acepta
+// Y que el organizador dejó listos. Ofrecer tarjeta sin Flow conectado, o
+// transferencia sin datos bancarios, sería inscribir a alguien que después no
+// tiene cómo pagar.
+function mediosDisponibles(ev){
+  if (!ev || !ev.es_pago) return [];
+  const m = [];
+  if ((ev.medio_pago === 'plataforma' || ev.medio_pago === 'ambos') && ev.pago_en_linea) m.push('plataforma');
+  if ((ev.medio_pago === 'transferencia' || ev.medio_pago === 'ambos') && ev.transferencia) m.push('transferencia');
+  return m;
+}
+
+function otraPersona(){
+  // La inscripción pendiente de este equipo deja de ofrecerse: la persona que
+  // sigue es otra.
+  olvidarPendiente();
+  // Sin los parámetros del pago: recargar tal cual volvería a mostrar el resultado.
+  location.href = location.pathname + (eventoId ? '?id=' + encodeURIComponent(eventoId) : '');
+}
 
 // UUID v4 (usa el nativo si está; si no, fallback). Generamos el id en el
 // cliente para NO tener que leer la fila de vuelta (anon no tiene SELECT).
@@ -179,6 +332,13 @@ function uuidv4(){
 }
 
 function showMsg(text, type){ const m = $('msg'); m.textContent = text; m.className = 'msg ' + type; }
+
+// Los motivos de cierre que devuelve la base (sql/53), tal cual.
+const AVISOS_DE_CIERRE = [
+  'El registro para este evento ya cerró.',
+  'Este evento ya terminó.',
+  'Se agotaron los cupos para este evento.'
+];
 
 // Fondo personalizable por evento: imagen del evento o color HSV (#RRGGBBAA).
 // Se lee en vivo desde la BD en cada carga → los cambios hechos en la app
@@ -256,6 +416,7 @@ function cuandoTexto(ev){
 
 // 1) Cargar el evento por id
 async function cargarEvento(){
+  if(!eventoId && retornoPago){ $('titulo').textContent = 'Registro al evento'; mostrarRetorno(); return; }
   if(!eventoId){ $('titulo').textContent = 'Enlace inválido'; showMsg('El enlace no incluye un evento. Solicita uno nuevo al organizador.', 'err'); $('submit').disabled = true; return; }
   try{
     // Se pide el evento por una función acotada en vez de leer la tabla.
@@ -284,10 +445,40 @@ async function cargarEvento(){
     if(campos.rut) $('rut').style.display = 'block';
     if(campos.patente) $('patente').style.display = 'block';
     if(campos.rut || campos.patente) $('campos-opcionales').style.display = 'flex';
+    evento = ev;
+
+    // Vuelve de Flow: se enseña en qué quedó su pago antes que nada. Va antes
+    // de mirar si el registro sigue abierto: quien pagó el último cupo tiene
+    // que ver su entrada aunque el formulario ya esté cerrado para los demás.
+    if(retornoPago){ await mostrarRetorno(); return; }
+
     if(ev.activo === false){ showMsg('Este evento ya no está activo.', 'err'); $('submit').disabled = true; return; }
+    // Cupo lleno, hora límite pasada o evento terminado (sql/53). Se avisa al
+    // abrir el enlace, antes de que la persona llene el formulario.
+    if(ev.registro_abierto === false){
+      showMsg(ev.motivo_cierre || 'El registro para este evento está cerrado.', 'err');
+      $('submit').disabled = true;
+      return;
+    }
+    if(!prepararPago(ev)) return;
     eventoOk = true;
+
+    // ¿Quedó una compra sin pagar desde este mismo equipo? Se ofrece
+    // terminarla antes que comprar de nuevo (y quedar duplicado).
+    if(ev.es_pago){
+      const previa = pendienteGuardada();
+      if(previa){
+        const st = await estadoCompra(previa);
+        // Si mientras se preguntaba la persona ya envió el formulario, manda lo
+        // que está haciendo ahora: no se le cambia la pantalla por debajo.
+        if(inscribiendo) return;
+        if(st && st.evento_id === eventoId && st.estado === 'pendiente') return mostrarPendienteAnterior(previa, st);
+        olvidarPendiente();
+      }
+    }
   }catch(e){
     console.error(e);
+    if(retornoPago){ mostrarRetorno(); return; }
     $('titulo').textContent = 'Evento no encontrado';
     showMsg('No se pudo cargar la información del evento. Verifique el enlace.', 'err');
     $('submit').disabled = true;
@@ -301,6 +492,7 @@ $('form').addEventListener('submit', async (e) => {
   const nombre = $('nombre').value.trim();
   const email = $('email').value.trim().toLowerCase();
   if(!nombre || !email){ showMsg('Ingresa tu nombre y tu correo.', 'err'); return; }
+  inscribiendo = true;
 
   const btn = $('submit');
   btn.disabled = true; const prev = btn.textContent; btn.innerHTML = '<span class="spin"></span>';
@@ -320,18 +512,45 @@ $('form').addEventListener('submit', async (e) => {
   let nuevoId;
 
   try{
+    // ── Evento de pago: se compran entradas ──────────────────────────────
+    // Precio, cupo, descuento y total los calcula la base; aquí sólo se dice
+    // qué se quiere. El QR NO se pide aquí: lo manda el servidor cuando el
+    // pago se confirma (Flow) o cuando el organizador marca la transferencia.
+    if(evento && evento.es_pago){
+      const problema = revisarCompra();
+      if(problema){ const e = new Error('compra'); e.aviso = problema; throw e; }
+      const t = totales();
+      const compra = await llamarRpc('comprar_entradas', {
+        ...datos,
+        p_items: Object.entries(carrito).filter(([, n]) => n > 0)
+          .map(([tipo, n]) => ({ tipo: tipo === SIN_TIPO ? null : tipo, cantidad: n })),
+        p_asistentes: asistentes.slice(0, t.cantidad - 1)
+          .map((a) => ({ nombre: a.nombre.trim(), email: a.email.trim().toLowerCase() || null })),
+        p_codigo: codigoAplicado ? codigoAplicado.codigo : null
+      });
+      correoInscrito = email;
+
+      // Todo de cortesía (un tipo gratis o un código del 100 %): las entradas
+      // ya quedaron pagadas y sus QR pueden salir ahora.
+      if(compra.gratis){
+        await pedirQrs(compra.registrados.map((r) => r.id));
+        return mostrarEntradas(compra.registrados, '¡Listo!', 'Tus entradas están confirmadas. Guarda los QR y preséntalos en el acceso. También los enviamos por correo.');
+      }
+
+      recordarPendiente(compra.compra_id);
+      const medios = mediosDisponibles(evento);
+      if(medios.length === 1 && medios[0] === 'plataforma') return irAPagar(compra.compra_id);
+      if(medios.length === 1) return mostrarTransferencia(compra.compra_id, compra.total);
+      return mostrarEleccion(compra.compra_id, compra.total);
+    }
+
+    // ── Evento gratis: como siempre ──────────────────────────────────────
     // El alta va por una función acotada. La empresa NO se manda desde aquí:
     // la toma del evento, así que nadie puede inscribir gente en otra empresa
     // manipulando la petición. El id lo genera la base y se devuelve.
-    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/inscribir_publico', {
-      method: 'POST',
-      headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA },
-      body: JSON.stringify(datos)
-    });
-    if(!res.ok){ const t = await res.text(); throw new Error(t || ('http ' + res.status)); }
-
-    nuevoId = await res.json();
+    nuevoId = await llamarRpc('inscribir_publico', datos);
     if(!nuevoId) throw new Error('sin-id');
+    correoInscrito = email;
 
     // La Edge Function del QR espera la forma de la fila, no los parámetros.
     const payload = {
@@ -363,10 +582,426 @@ $('form').addEventListener('submit', async (e) => {
     $('view-done').classList.add('show');
   }catch(err){
     console.error(err);
-    showMsg('No pudimos completar tu registro. Intenta nuevamente en unos segundos.', 'err');
-    btn.disabled = false; btn.textContent = prev;
+    inscribiendo = false;
+    showMsg(err.aviso || 'No pudimos completar tu registro. Intenta nuevamente en unos segundos.', 'err');
+    btn.textContent = prev;
+    // Si el registro cerró (se llenó el cupo o pasó la hora límite mientras
+    // la persona escribía), reintentar no sirve: el botón queda apagado.
+    btn.disabled = !!err.cerrado;
   }
 });
+
+// ─────────────────────────────────────────────────────────────
+// Eventos de pago
+// ─────────────────────────────────────────────────────────────
+
+// Llama a una función de la base y traduce sus avisos para el público: cupo
+// lleno, registro cerrado, demasiados intentos, datos inválidos. Cualquier
+// otro error se queda en la consola y la persona ve el mensaje genérico.
+async function llamarRpc(nombre, datos){
+  const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + nombre, {
+    method: 'POST',
+    headers: { ...headersBase, 'Content-Type': 'application/json', 'Content-Profile': SCHEMA },
+    body: JSON.stringify(datos)
+  });
+  if(res.ok) return res.status === 204 ? null : res.json();
+  const t = await res.text();
+  const error = new Error(t || ('http ' + res.status));
+  try{
+    const j = JSON.parse(t);
+    if(j && typeof j.message === 'string'){
+      if(j.code === 'P0001'){
+        // P0001 también es el tope de registrados del plan, cuyo texto es
+        // para el organizador: al visitante no se le muestra ese.
+        error.cerrado = true;
+        error.aviso = AVISOS_DE_CIERRE.includes(j.message)
+          ? j.message
+          : 'Este evento no está recibiendo registros por ahora. Avisa al organizador.';
+      }else if(j.code === '54000' || j.code === '22023'){
+        error.aviso = j.message;
+      }
+    }
+  }catch(_){}
+  throw error;
+}
+
+// Precio a la vista y el bloque de compra. Devuelve false si el evento cobra
+// pero el organizador no dejó ningún medio listo: inscribir a alguien que
+// después no puede pagar es peor que no dejarlo inscribirse.
+function prepararPago(ev){
+  if(!ev.es_pago) return true;
+  const tipos = (ev.tipos_entrada || []);
+  const precios = tipos.length ? tipos.map((t) => t.precio) : [ev.precio];
+  const minimo = Math.min(...precios);
+  $('precio').textContent = tipos.length > 1 && Math.max(...precios) !== minimo
+    ? 'Entradas desde ' + (minimo === 0 ? 'gratis' : fmtCLP(minimo))
+    : 'Entrada ' + (precios[0] === 0 ? 'gratis' : fmtCLP(precios[0]));
+  $('precio').classList.add('show');
+
+  const medios = mediosDisponibles(ev);
+  if(medios.length === 0){
+    showMsg('Este evento todavía no tiene habilitada la forma de pago. Avisa al organizador.', 'err');
+    $('submit').disabled = true;
+    return false;
+  }
+  armarCompra(ev);
+  $('hint').textContent = 'Tus códigos QR de acceso te llegarán al correo cuando se confirme el pago.';
+  return true;
+}
+
+// ── El carrito ────────────────────────────────────────────────
+
+// Cada entrada de la compra, en orden: la 1ª es de quien compra.
+function entradasDelCarrito(){
+  const tipos = evento.tipos_entrada || [];
+  const lista = [];
+  if(tipos.length){
+    for(const t of tipos){
+      for(let i = 0; i < (carrito[t.id] || 0); i++) lista.push({ nombre: t.nombre, precio: t.precio });
+    }
+  }else{
+    for(let i = 0; i < (carrito[SIN_TIPO] || 0); i++) lista.push({ nombre: 'Entrada', precio: evento.precio });
+  }
+  return lista;
+}
+
+// El mismo cálculo que hace la base, sólo para mostrarlo. Si no coincidiera,
+// manda la base: el total que se cobra sale de ella.
+function totales(){
+  const entradas = entradasDelCarrito();
+  const subtotal = entradas.reduce((s, e) => s + e.precio, 0);
+  let descuento = 0;
+  if(codigoAplicado && subtotal > 0){
+    descuento = codigoAplicado.tipo === 'porcentaje'
+      ? Math.round(subtotal * codigoAplicado.valor / 100)
+      : Math.min(codigoAplicado.valor, subtotal);
+  }
+  return { entradas, cantidad: entradas.length, subtotal, descuento, total: subtotal - descuento };
+}
+
+function revisarCompra(){
+  const t = totales();
+  if(t.cantidad < 1) return 'Elige al menos una entrada.';
+  const max = evento.max_por_compra || 10;
+  if(t.cantidad > max) return 'Se pueden comprar hasta ' + max + ' entradas de una vez.';
+  for(let i = 1; i < t.cantidad; i++){
+    const a = asistentes[i - 1] || { nombre: '', email: '' };
+    if(!a.nombre.trim()) return 'Falta el nombre de la entrada ' + (i + 1) + '.';
+    if(a.email.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a.email.trim())) return 'El correo de la entrada ' + (i + 1) + ' no es válido.';
+  }
+  return null;
+}
+
+function armarCompra(ev){
+  const tipos = ev.tipos_entrada || [];
+  carrito = {};
+  // Una entrada del primer tipo disponible, ya puesta: es lo que casi todos
+  // vienen a comprar.
+  const primero = tipos.find((t) => !t.agotado);
+  if(tipos.length){ if(primero) carrito[primero.id] = 1; }
+  else carrito[SIN_TIPO] = 1;
+  $('compra').style.display = 'flex';
+  repintarCompra();
+}
+
+function repintarCompra(){
+  const ev = evento;
+  const tipos = ev.tipos_entrada || [];
+  const t = totales();
+  const max = ev.max_por_compra || 10;
+  const cont = $('compra');
+
+  const paso = (clave, cantidad, agotado) => el('div', { class: 'paso' }, [
+    el('button', { type: 'button', text: '−', 'aria-label': 'Quitar una',
+      onclick: () => { carrito[clave] = Math.max(0, (carrito[clave] || 0) - 1); repintarCompra(); } }),
+    el('span', { text: String(cantidad) }),
+    el('button', { type: 'button', text: '+', 'aria-label': 'Agregar una',
+      onclick: () => {
+        if(agotado || totales().cantidad >= max) return;
+        carrito[clave] = (carrito[clave] || 0) + 1; repintarCompra();
+      } })
+  ]);
+
+  const filas = tipos.length
+    ? tipos.map((tp) => el('div', { class: 'tipo' + (tp.agotado ? ' agotado' : '') }, [
+        el('div', { class: 'n' }, [el('b', { text: tp.nombre }),
+          el('small', { text: tp.agotado ? 'Agotadas' : (tp.precio === 0 ? 'Gratis' : fmtCLP(tp.precio)) })]),
+        tp.agotado ? null : paso(tp.id, carrito[tp.id] || 0, tp.agotado)
+      ]))
+    : [el('div', { class: 'tipo' }, [
+        el('div', { class: 'n' }, [el('b', { text: 'Entradas' }), el('small', { text: fmtCLP(ev.precio) + ' c/u' })]),
+        paso(SIN_TIPO, carrito[SIN_TIPO] || 0, false)
+      ])];
+
+  // Los datos de los demás asistentes: uno por entrada, desde la 2ª.
+  while(asistentes.length < t.cantidad - 1) asistentes.push({ nombre: '', email: '' });
+  const bloquesAsist = [];
+  for(let i = 1; i < t.cantidad; i++){
+    const a = asistentes[i - 1];
+    const nombre = el('input', { placeholder: 'Nombre y apellido *' }); nombre.value = a.nombre;
+    nombre.addEventListener('input', () => { a.nombre = nombre.value; });
+    const correo = el('input', { type: 'email', placeholder: 'Correo (opcional)' }); correo.value = a.email;
+    correo.addEventListener('input', () => { a.email = correo.value; });
+    bloquesAsist.push(el('div', { class: 'asist' }, [
+      el('div', { class: 'cab', text: 'Entrada ' + (i + 1) + ' · ' + t.entradas[i].nombre }), nombre, correo
+    ]));
+  }
+
+  // El código de descuento, si el evento tiene alguno vigente.
+  let bloqueCodigo = null;
+  if(ev.acepta_codigos){
+    if(codigoAplicado){
+      bloqueCodigo = el('div', { class: 'codigo-ok' }, [
+        '✓ ' + codigoAplicado.codigo + ': ' + (codigoAplicado.tipo === 'porcentaje' ? codigoAplicado.valor + '% de descuento' : fmtCLP(codigoAplicado.valor) + ' de descuento') + ' ',
+        el('a', { href: '#', text: 'quitar', onclick: (e) => { e.preventDefault(); codigoAplicado = null; repintarCompra(); } })
+      ]);
+    }else{
+      const inp = el('input', { id: 'codigo', placeholder: '¿Tienes un código de descuento?', autocomplete: 'off' });
+      bloqueCodigo = el('div', { class: 'codigo' }, [
+        inp,
+        el('button', { type: 'button', text: 'Aplicar', onclick: () => aplicarCodigo(inp.value) })
+      ]);
+    }
+  }
+
+  const tot = el('div', { class: 'totales' }, [
+    t.descuento > 0 ? el('div', { class: 'f' }, [el('span', { text: 'Subtotal' }), el('span', { text: fmtCLP(t.subtotal) })]) : null,
+    t.descuento > 0 ? el('div', { class: 'f' }, [el('span', { text: 'Descuento' }), el('span', { text: '−' + fmtCLP(t.descuento) })]) : null,
+    el('div', { class: 'f total' }, [el('span', { text: t.cantidad === 1 ? 'Total' : 'Total (' + t.cantidad + ' entradas)' }),
+      el('span', { text: t.total === 0 ? 'Gratis' : fmtCLP(t.total) })])
+  ]);
+
+  cont.replaceChildren(
+    el('div', { class: 'titulo', text: tipos.length ? 'Entradas' : 'Cantidad' }),
+    el('div', { class: 'tipos' }, filas),
+    ...(bloquesAsist.length ? [
+      el('div', { class: 'titulo', text: 'Los demás asistentes' }),
+      el('div', { class: 'ayuda', text: 'Cada entrada tiene su propio QR. Sin correo, el suyo te llega a ti.' }),
+      ...bloquesAsist
+    ] : []),
+    ...(bloqueCodigo ? [bloqueCodigo] : []),
+    tot
+  );
+
+  const medios = mediosDisponibles(ev);
+  $('submit').textContent = t.total === 0
+    ? 'Inscribirme'
+    : (medios.length === 1 && medios[0] === 'plataforma' ? 'Inscribirme y pagar ' + fmtCLP(t.total) : 'Inscribirme');
+}
+
+async function aplicarCodigo(texto){
+  const codigo = String(texto || '').trim().toUpperCase();
+  if(!codigo) return;
+  try{
+    const r = await llamarRpc('validar_codigo', { p_evento_id: eventoId, p_codigo: codigo });
+    if(!r || !r.valido){ showMsg('Ese código no es válido o ya se agotó.', 'err'); return; }
+    codigoAplicado = { codigo: r.codigo, tipo: r.tipo, valor: r.valor };
+    $('msg').className = 'msg';
+    repintarCompra();
+  }catch(err){
+    console.error(err);
+    showMsg(err.aviso || 'No pudimos revisar el código. Intenta de nuevo.', 'err');
+  }
+}
+
+// ── Lo que pasa después de comprar ────────────────────────────
+
+// Lo que la base sabe de una compra. Nunca se decide nada por la dirección
+// con la que se volvió de Flow: «?pago=ok» lo escribe cualquiera.
+async function estadoCompra(id){
+  try{ return await llamarRpc('estado_de_compra', { p_compra: id }); }
+  catch(_){ return null; }
+}
+
+// La compra sin pagar se recuerda en este navegador: si la persona cierra la
+// pestaña a medio pagar y vuelve al enlace, la retoma en vez de comprar de
+// nuevo y quedar duplicada.
+const clavePendiente = () => 'gatheryx_compra_' + eventoId;
+function recordarPendiente(id){ try{ localStorage.setItem(clavePendiente(), id); }catch(_){} }
+function olvidarPendiente(){ try{ localStorage.removeItem(clavePendiente()); }catch(_){} }
+function pendienteGuardada(){ try{ return localStorage.getItem(clavePendiente()); }catch(_){ return null; } }
+
+const pausa = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Los QR de una compra de cortesía (o de un evento gratis): se piden aquí
+// porque ya están pagados. Si alguno falla, el organizador puede reenviarlo.
+async function pedirQrs(ids){
+  await Promise.all(ids.map((id) => fetch(SUPABASE_URL + '/functions/v1/enviar-qr', {
+    method: 'POST',
+    headers: { ...headersBase, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ record: { id } })
+  }).catch((e) => console.warn('QR mail:', e))));
+}
+
+function boton(texto, detalle, accion, secundario){
+  return el('button', { type: 'button', class: 'opcion' + (secundario ? ' sec' : ''), onclick: accion },
+    [el('span', {}, [texto, detalle ? el('small', { text: detalle }) : null])]);
+}
+
+async function irAPagar(compraId){
+  vistaPago([
+    el('h2', { text: 'Te llevamos a pagar…' }),
+    el('div', { class: 'espera' }, [el('span', { class: 'spin' }),
+      el('p', { class: 'lead', text: 'Abriendo la página de pago segura de Flow.' })])
+  ]);
+  try{
+    const res = await fetch(SUPABASE_URL + '/functions/v1/cobros-pagar', {
+      method: 'POST',
+      headers: { ...headersBase, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ compra_id: compraId })
+    });
+    const j = await res.json().catch(() => ({}));
+    if(j.ya_pagado || j.gratis){
+      const st = await estadoCompra(compraId);
+      return mostrarEntradas(st ? st.registrados : [], '¡Pago confirmado!');
+    }
+    if(!res.ok || !j.url){
+      const e = new Error('http ' + res.status); e.aviso = j.error; throw e;
+    }
+    location.href = j.url;
+  }catch(err){
+    console.error(err);
+    mostrarFalloPago(compraId, err.aviso || 'No pudimos abrir el pago. Intenta de nuevo en unos segundos.', 'No se pudo abrir el pago');
+  }
+}
+
+async function mostrarTransferencia(compraId, total){
+  const t = evento && evento.transferencia;
+  if(!t) return mostrarFalloPago(compraId, 'El organizador todavía no cargó los datos para transferir.', 'Falta un dato');
+  if(total == null){ const st = await estadoCompra(compraId); total = st ? st.total : null; }
+
+  // En un evento que acepta los dos medios, queda anotado que eligió transferir.
+  llamarRpc('elegir_medio_compra', { p_compra: compraId, p_medio: 'transferencia' }).catch(() => {});
+
+  const filas = [
+    ['Banco', t.banco], ['Tipo de cuenta', t.tipo_cuenta], ['N° de cuenta', t.numero_cuenta],
+    ['Titular', t.titular], ['RUT', t.rut], ['Correo', t.email]
+  ].filter(([, v]) => v);
+  const todo = filas.map(([k, v]) => k + ': ' + v).concat(total != null ? ['Monto: ' + fmtCLP(total)] : []).join('\n');
+
+  vistaPago([
+    el('h2', { text: '¡Inscripción recibida!' }),
+    el('p', { class: 'lead', text: 'Para confirmar tu lugar, transfiere' }),
+    total != null ? el('div', { class: 'monto', text: fmtCLP(total) }) : null,
+    el('div', { class: 'banco' }, filas.map(([k, v]) => el('div', { class: 'fila' }, [
+      el('span', { class: 'k', text: k }),
+      el('span', { class: 'v', text: v }),
+      el('button', { type: 'button', class: 'copiar', text: 'Copiar', onclick: (e) => copiar(v, e.currentTarget) })
+    ]))),
+    el('button', { type: 'button', class: 'again', text: 'Copiar todos los datos', onclick: (e) => copiar(todo, e.currentTarget) }),
+    t.instrucciones ? el('div', { class: 'instr', text: t.instrucciones }) : null,
+    el('p', { class: 'nota' }, [
+      'Gracias por tu inscripción. Una vez validada tu transferencia, te enviaremos a ',
+      el('b', { text: correoInscrito || 'tu correo' }),
+      ' tu código QR de acceso.'
+    ]),
+    t.email ? el('p', { class: 'nota' }, ['Envía el comprobante a ', el('b', { text: t.email }), '.']) : null,
+    mediosDisponibles(evento).includes('plataforma')
+      ? el('div', { class: 'opciones' }, [boton('Prefiero pagar en línea', 'Con los medios de pago de Flow', () => irAPagar(compraId), true)])
+      : null,
+    el('button', { type: 'button', class: 'again', text: 'Registrar a otra persona', onclick: otraPersona })
+  ]);
+}
+
+function mostrarEleccion(compraId, total){
+  vistaPago([
+    el('h2', { text: '¡Inscripción recibida!' }),
+    el('p', { class: 'lead', text: 'Elige cómo pagar' }),
+    el('div', { class: 'monto', text: fmtCLP(total) }),
+    el('div', { class: 'opciones' }, [
+      boton('Pagar en línea', 'Con los medios de pago de Flow', () => irAPagar(compraId)),
+      boton('Transferencia bancaria', 'Te damos los datos para transferir', () => mostrarTransferencia(compraId, total), true)
+    ]),
+    el('p', { class: 'nota', text: 'Tus códigos QR de acceso te llegarán al correo cuando se confirme el pago.' })
+  ]);
+}
+
+// Las entradas listas: una sola, como siempre; varias, en una rejilla con el
+// nombre de cada una.
+function mostrarEntradas(registrados, titulo, texto){
+  olvidarPendiente();
+  const lista = registrados || [];
+  if(lista.length <= 1){
+    $('view-pay').classList.remove('show');
+    $('view-form').style.display = 'none';
+    if(lista[0]) $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(lista[0].id);
+    $('done-titulo').textContent = titulo || '¡Pago confirmado!';
+    $('done-sub').textContent = texto || 'Tu entrada está lista. Guarda este QR y preséntalo en el acceso. También lo enviamos a tu correo.';
+    $('view-done').classList.add('show');
+    return;
+  }
+  vistaPago([
+    el('h2', { text: titulo || '¡Pago confirmado!' }),
+    el('p', { class: 'lead', text: texto || 'Tus ' + lista.length + ' entradas están listas. Cada QR es de una persona; también los enviamos por correo.' }),
+    el('div', { class: 'qrs' }, lista.map((r) => el('div', { class: 'q' }, [
+      el('img', { alt: 'QR de ' + r.nombre, src: 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=0&data=' + encodeURIComponent(r.id) }),
+      el('span', { text: r.nombre })
+    ]))),
+    el('button', { type: 'button', class: 'again', text: 'Registrar a otra persona', onclick: otraPersona })
+  ]);
+}
+
+function mostrarFalloPago(compraId, mensaje, titulo){
+  const medios = mediosDisponibles(evento);
+  vistaPago([
+    el('h2', { text: titulo || 'El pago no se completó' }),
+    el('p', { class: 'lead', text: mensaje }),
+    el('p', { class: 'nota', text: 'Tu inscripción quedó guardada: puedes pagar ahora o volver a este enlace más tarde desde este mismo equipo.' }),
+    el('div', { class: 'opciones' }, [
+      medios.includes('plataforma') ? boton('Intentar el pago de nuevo', null, () => irAPagar(compraId)) : null,
+      medios.includes('transferencia') ? boton('Pagar por transferencia', 'Te damos los datos para transferir', () => mostrarTransferencia(compraId), true) : null
+    ])
+  ]);
+}
+
+// Volvió de Flow. Flow confirma por su cuenta, a veces unos segundos después
+// de devolver a la persona, así que se pregunta unas cuantas veces antes de
+// darlo por «en proceso».
+async function mostrarRetorno(){
+  if(!retornoCompra){
+    return vistaPago([
+      el('h2', { text: 'Gracias' }),
+      el('p', { class: 'lead', text: 'No pudimos mostrar aquí el resultado de tu pago. Si se completó, te llegará tu código QR de acceso al correo.' })
+    ]);
+  }
+  vistaPago([
+    el('h2', { text: 'Confirmando tu pago…' }),
+    el('div', { class: 'espera' }, [el('span', { class: 'spin' })])
+  ]);
+
+  const intentos = retornoPago === 'rechazado' ? 1 : 6;
+  let st = null;
+  for(let i = 0; i < intentos; i++){
+    if(i > 0) await pausa(2500);
+    st = await estadoCompra(retornoCompra);
+    if(st && st.estado === 'pagado') return mostrarEntradas(st.registrados, '¡Pago confirmado!');
+  }
+
+  if(retornoPago === 'rechazado'){
+    return mostrarFalloPago(retornoCompra, 'El pago fue rechazado o se canceló en la página de Flow.');
+  }
+  vistaPago([
+    el('h2', { text: 'Tu pago está en proceso' }),
+    el('p', { class: 'lead', text: 'Apenas se confirme te enviaremos tus códigos QR de acceso al correo. Puedes cerrar esta página.' }),
+    mediosDisponibles(evento).includes('plataforma')
+      ? el('div', { class: 'opciones' }, [boton('Volver a la página de pago', null, () => irAPagar(retornoCompra), true)])
+      : null
+  ]);
+}
+
+function mostrarPendienteAnterior(compraId, st){
+  const medios = mediosDisponibles(evento);
+  vistaPago([
+    el('h2', { text: 'Tienes una inscripción sin pagar' }),
+    el('p', { class: 'lead', text: 'Desde este equipo se compraron ' + (st.cantidad === 1 ? 'una entrada' : st.cantidad + ' entradas') + ' para este evento y el pago todavía no se confirma.' }),
+    el('div', { class: 'monto', text: fmtCLP(st.total) }),
+    el('div', { class: 'opciones' }, [
+      medios.includes('plataforma') ? boton('Pagar en línea', 'Con los medios de pago de Flow', () => irAPagar(compraId)) : null,
+      medios.includes('transferencia') ? boton('Ver los datos para transferir', null, () => mostrarTransferencia(compraId, st.total), true) : null,
+      boton('Inscribir a otra persona', null, otraPersona, true)
+    ])
+  ]);
+}
 
 cargarEvento();
 

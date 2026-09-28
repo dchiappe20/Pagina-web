@@ -609,6 +609,16 @@ app.get('/registro-forms', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'registro-forms.html'));
 });
 
+// Donde el cliente de una productora carga su cuenta de Flow o sus datos de
+// transferencia (Gatheryx). La productora le manda
+// https://www.rendapps.cl/datos-cobro?t=<token>; el enlace vence en 7 días.
+app.get('/datos-cobro', (req, res) => {
+  res.set('Cache-Control', 'no-store, must-revalidate');
+  // El token va en la dirección: que no viaje a ningún otro sitio.
+  res.set('Referrer-Policy', 'no-referrer');
+  res.sendFile(path.join(__dirname, 'public', 'datos-cobro.html'));
+});
+
 app.use((req, res) => {
   res.status(404).render('404', { titulo: 'Página no encontrada', pagina: '' });
 });

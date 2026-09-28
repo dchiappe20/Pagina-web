@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<!-- El enlace lleva un token: que no se filtre por el Referer a ningún sitio. -->
+<meta name="referrer" content="no-referrer">
+<title>Datos de cobro · RendApps</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2300E5A0'/%3E%3Cstop offset='1' stop-color='%237C5CFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M14 38 A18 18 0 0 1 50 38' stroke='%230A0E1C' stroke-width='5.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M23 38 A9 9 0 0 1 41 38' stroke='%230A0E1C' stroke-width='5.5' stroke-linecap='round' fill='none'/%3E%3Crect x='13' y='42' width='38' height='4.5' rx='2.2' fill='%230A0E1C'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#070c18; --card:rgba(12,20,38,.78); --bd:rgba(255,255,255,.10);
+    --tx:#eef3ff; --txd:#93a1c4; --field:rgba(255,255,255,.045);
+    --acc:#a3e635; --acc2:#4ade80; --err:#ff5c6c;
+  }
+  *{box-sizing:border-box}
+  html,body{min-height:100%}
+  body{
+    margin:0; font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif; color:var(--tx);
+    background:
+      radial-gradient(1200px 600px at 70% -10%, rgba(56,189,248,.16), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(163,230,53,.10), transparent 60%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px}
+  .card{
+    width:100%; max-width:460px; background:var(--card); border:1px solid var(--bd); border-radius:22px;
+    padding:28px 24px 24px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 30px 80px rgba(0,0,0,.55); animation:rise .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes rise{from{opacity:0; transform:translateY(16px)}to{opacity:1; transform:none}}
+  .brand{display:flex; align-items:center; justify-content:center; gap:9px; margin-bottom:16px}
+  .logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--acc),var(--acc2));
+    display:flex; align-items:center; justify-content:center; color:#07130a}
+  .brand b{font-size:13px; letter-spacing:.5px; color:var(--txd); font-weight:600}
+  h1{margin:0; text-align:center; font-size:20px; line-height:1.3; font-weight:800}
+  .sub{margin:8px 0 0; text-align:center; font-size:13px; color:var(--txd); line-height:1.55}
+  .estado{margin-top:18px; border:1px solid var(--bd); border-radius:14px; overflow:hidden; background:var(--field)}
+  .estado .f{display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-top:1px solid var(--bd); font-size:13px}
+  .estado .f:first-child{border-top:0}
+  .estado .f span:first-child{color:var(--txd)}
+  .ok{color:var(--acc2); font-weight:700}
+  .no{color:var(--txd)}
+  section{margin-top:20px; padding-top:18px; border-top:1px solid var(--bd)}
+  section h2{margin:0 0 4px; font-size:16px}
+  section p{margin:0 0 12px; font-size:12.5px; color:var(--txd); line-height:1.5}
+  label{display:block; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--txd); margin:10px 2px 5px}
+  input, select, textarea{
+    width:100%; background:var(--field); border:1px solid var(--bd); border-radius:12px; padding:12px 13px;
+    font-size:14.5px; color:var(--tx); outline:none; font-family:inherit;
+  }
+  select option{color:#111}
+  textarea{min-height:70px; resize:vertical}
+  input:focus, select:focus, textarea:focus{border-color:var(--acc)}
+  .fila{display:flex; gap:8px}
+  .fila > *{flex:1; min-width:0}
+  .ver{flex:0 0 auto; width:auto; margin:0; padding:0 13px; font-size:12px; font-weight:700; border-radius:12px;
+    color:var(--tx); background:transparent; border:1px solid var(--bd); box-shadow:none; cursor:pointer}
+  .check{display:flex; align-items:flex-start; gap:10px; margin-top:12px; font-size:12.5px; color:var(--txd); line-height:1.45;
+    text-transform:none; letter-spacing:0}
+  .check input{width:auto; margin-top:2px}
+  button.principal{
+    margin-top:14px; width:100%; border:0; border-radius:13px; padding:14px; font-size:15px; font-weight:800; cursor:pointer;
+    color:#07130a; background:linear-gradient(135deg,var(--acc),var(--acc2)); font-family:inherit;
+  }
+  button.principal:disabled{opacity:.55; cursor:not-allowed}
+  .msg{margin-top:12px; border-radius:12px; padding:10px 12px; font-size:12.5px; line-height:1.45; display:none}
+  .msg.err{display:block; background:rgba(255,92,108,.12); border:1px solid rgba(255,92,108,.45); color:#ffb3ba}
+  .msg.ok{display:block; background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.45); color:#bff5d0}
+  .pie{margin-top:18px; text-align:center; font-size:11px; color:var(--txd); line-height:1.5}
+  .oculto{display:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="brand">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M14 38 A18 18 0 0 1 50 38" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+            <path d="M23 38 A9 9 0 0 1 41 38" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+            <rect x="13" y="42" width="38" height="4.5" rx="2.2" fill="currentColor"/>
+          </svg>
+        </div>
+        <b>RENDAPPS · DATOS DE COBRO</b>
+      </div>
+
+      <h1 id="titulo">Cargando…</h1>
+      <p class="sub" id="sub"></p>
+
+      <div id="contenido" class="oculto">
+        <div class="estado" id="estado"></div>
+
+        <section id="sec-flow" class="oculto">
+          <h2>Tu cuenta de Flow</h2>
+          <p>Para cobrar en línea. El dinero de cada entrada llega directo a tu cuenta de Flow, con tu boleta. Tus llaves se
+             guardan cifradas: <b id="prod1"></b> no puede verlas.</p>
+          <label for="apiKey">API Key</label>
+          <input id="apiKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Pégala desde tu panel de Flow">
+          <label for="secretKey">Secret Key</label>
+          <div class="fila">
+            <input id="secretKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Pégala desde tu panel de Flow">
+            <button type="button" class="ver" id="ver">Ver</button>
+          </div>
+          <label class="check"><input type="checkbox" id="sandbox"> Son llaves de prueba (sandbox.flow.cl). Déjalo sin marcar si son las de tu cuenta real.</label>
+          <button type="button" class="principal" id="btn-flow">Conectar mi cuenta de Flow</button>
+          <div class="msg" id="msg-flow"></div>
+        </section>
+
+        <section id="sec-transf" class="oculto">
+          <h2>Tus datos de transferencia</h2>
+          <p>Se muestran a quienes se inscriban a tus eventos para que te transfieran el valor de la entrada.</p>
+          <label for="banco">Banco</label>
+          <input id="banco" placeholder="Ej: Banco de Chile">
+          <label for="tipo">Tipo de cuenta</label>
+          <select id="tipo">
+            <option value="Cuenta Corriente">Cuenta Corriente</option>
+            <option value="Cuenta Vista">Cuenta Vista</option>
+            <option value="Cuenta RUT">Cuenta RUT</option>
+            <option value="Cuenta de Ahorro">Cuenta de Ahorro</option>
+          </select>
+          <label for="numero">N° de cuenta</label>
+          <input id="numero" inputmode="numeric">
+          <label for="titular">Titular</label>
+          <input id="titular" placeholder="Nombre o razón social">
+          <label for="rut">RUT del titular</label>
+          <input id="rut" placeholder="76.123.456-7">
+          <label for="correo">Correo para comprobantes (opcional)</label>
+          <input id="correo" type="email" autocapitalize="off">
+          <label for="instr">Instrucciones (opcional)</label>
+          <textarea id="instr" maxlength="400" placeholder="Ej: indica tu nombre en el comentario de la transferencia"></textarea>
+          <button type="button" class="principal" id="btn-transf">Guardar mis datos de transferencia</button>
+          <div class="msg" id="msg-transf"></div>
+        </section>
+
+        <p class="pie" id="pie"></p>
+      </div>
+      <div class="msg" id="msg"></div>
+    </div>
+  </div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// La página donde el cliente de una productora carga sus datos de cobro.
+//
+// Todo pasa por la Edge Function `cobros-solicitud`, con el token del enlace.
+// Las llaves de Flow viajan UNA vez, a la función, que las prueba contra Flow
+// y las guarda cifradas: ni esta página ni la productora las vuelven a ver.
+// ─────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://tbvqpsearfgazjnqvrng.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_l5D1VcgQjUCk7hfhgxm3eA_Asu5pRNx';
+const token = new URLSearchParams(location.search).get('t') || '';
+const $ = (id) => document.getElementById(id);
+
+function aviso(id, texto, tipo){ const m = $(id); m.textContent = texto; m.className = 'msg ' + tipo; }
+
+async function llamar(cuerpo){
+  const res = await fetch(SUPABASE_URL + '/functions/v1/cobros-solicitud', {
+    method: 'POST',
+    headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, ...cuerpo })
+  });
+  const j = await res.json().catch(() => ({}));
+  if(!res.ok){ const e = new Error(j.error || 'http ' + res.status); e.aviso = j.error; throw e; }
+  return j;
+}
+
+// El estado de sus datos, con texto y nunca como HTML: vienen de la base.
+function pintarEstado(d){
+  const filas = [];
+  if(d.pide === 'flow' || d.pide === 'ambos'){
+    filas.push(['Flow', d.flow && d.flow.conectada ? 'Conectada · ····' + (d.flow.pista || '') : 'Sin conectar', d.flow && d.flow.conectada]);
+  }
+  if(d.pide === 'transferencia' || d.pide === 'ambos'){
+    filas.push(['Transferencia', d.transferencia ? d.transferencia.banco + ' · ' + d.transferencia.cuenta : 'Sin datos', !!d.transferencia]);
+  }
+  $('estado').replaceChildren(...filas.map(([k, v, listo]) => {
+    const f = document.createElement('div'); f.className = 'f';
+    const a = document.createElement('span'); a.textContent = k;
+    const b = document.createElement('span'); b.textContent = v; b.className = listo ? 'ok' : 'no';
+    f.append(a, b); return f;
+  }));
+}
+
+async function cargar(){
+  if(!token){ $('titulo').textContent = 'Enlace incompleto'; aviso('msg', 'El enlace no está completo. Pide uno nuevo a quien te lo envió.', 'err'); return; }
+  try{
+    const d = await llamar({ accion: 'ver' });
+    const que = d.pide === 'flow' ? 'tu cuenta de Flow' : d.pide === 'transferencia' ? 'tus datos de transferencia' : 'tu cuenta de Flow y tus datos de transferencia';
+    $('titulo').textContent = d.productora + ' te pide ' + que;
+    $('sub').textContent = 'Hola ' + d.cliente + ': con estos datos, el dinero de las entradas de tus eventos llega directo a ti.';
+    $('prod1').textContent = d.productora;
+    $('sec-flow').classList.toggle('oculto', !(d.pide === 'flow' || d.pide === 'ambos'));
+    $('sec-transf').classList.toggle('oculto', !(d.pide === 'transferencia' || d.pide === 'ambos'));
+    $('pie').textContent = 'Puedes volver a este enlace y corregir tus datos hasta el ' +
+      new Date(d.expira_en).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' }) + '.';
+    pintarEstado(d);
+    window.__pide = d.pide;
+    $('contenido').classList.remove('oculto');
+  }catch(e){
+    $('titulo').textContent = 'Enlace no válido';
+    aviso('msg', e.aviso || 'No pudimos abrir este enlace. Intenta de nuevo en unos minutos.', 'err');
+  }
+}
+
+$('ver').addEventListener('click', () => {
+  const i = $('secretKey'); i.type = i.type === 'password' ? 'text' : 'password';
+  $('ver').textContent = i.type === 'password' ? 'Ver' : 'Ocultar';
+});
+
+$('btn-flow').addEventListener('click', async () => {
+  const apiKey = $('apiKey').value.trim(), secretKey = $('secretKey').value.trim();
+  if(!apiKey || !secretKey){ aviso('msg-flow', 'Pega el API Key y el Secret Key de tu cuenta de Flow.', 'err'); return; }
+  const btn = $('btn-flow'); btn.disabled = true; btn.textContent = 'Comprobando con Flow…';
+  try{
+    const d = await llamar({ accion: 'guardar', flow: { apiKey, secretKey, sandbox: $('sandbox').checked } });
+    // Las llaves se borran de la pantalla en cuanto quedan guardadas.
+    $('apiKey').value = ''; $('secretKey').value = '';
+    pintarEstado({ ...d, pide: window.__pide });
+    aviso('msg-flow', 'Listo: tu cuenta de Flow quedó conectada. Ya puedes cerrar esta página.', 'ok');
+  }catch(e){
+    aviso('msg-flow', e.aviso || 'No se pudo conectar. Intenta de nuevo en unos minutos.', 'err');
+  }finally{
+    btn.disabled = false; btn.textContent = 'Conectar mi cuenta de Flow';
+  }
+});
+
+$('btn-transf').addEventListener('click', async () => {
+  const datos = {
+    banco: $('banco').value.trim(), tipo_cuenta: $('tipo').value, numero_cuenta: $('numero').value.trim(),
+    titular: $('titular').value.trim(), rut_titular: $('rut').value.trim(),
+    email: $('correo').value.trim() || null, instrucciones: $('instr').value.trim() || null
+  };
+  const btn = $('btn-transf'); btn.disabled = true; btn.textContent = 'Guardando…';
+  try{
+    const d = await llamar({ accion: 'guardar', transferencia: datos });
+    pintarEstado({ ...d, pide: window.__pide });
+    aviso('msg-transf', 'Listo: tus datos de transferencia quedaron guardados.', 'ok');
+  }catch(e){
+    aviso('msg-transf', e.aviso || 'No se pudieron guardar. Intenta de nuevo en unos minutos.', 'err');
+  }finally{
+    btn.disabled = false; btn.textContent = 'Guardar mis datos de transferencia';
+  }
+});
+
+cargar();
+</script>
+</body>
+</html>
