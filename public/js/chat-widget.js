@@ -30,7 +30,7 @@
   var TOPE = 800;
   var ESPERA_MS = 60000;
 
-  var SALUDO = '¡Hola! Soy el asistente de RendApps. Te cuento de la Filtradora de licitaciones, de Gatheryx para eventos, ' +
+  var SALUDO = '¡Hola! Soy Jester, el asistente de RendApps. Te cuento de la Filtradora de licitaciones, de Gatheryx para eventos, ' +
     'de Leadyx para ferias, de los planes y de los desarrollos a medida. ¿En qué te ayudo?';
   var SUGERENCIAS = ['Ver planes y precios', 'Quiero una demo', 'Necesito un desarrollo a medida', 'Ya soy cliente y necesito ayuda'];
   var SIN_CONEXION = 'No pude conectarme. Revisa tu conexión e inténtalo de nuevo.';
@@ -87,27 +87,14 @@
     });
     return svg;
   }
-  var I_CHAT = 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.9A8 8 0 1 1 21 12z|M8.5 12h.01|M12 12h.01|M15.5 12h.01';
   var I_CERRAR = 'M18 6 6 18|M6 6l12 12';
   var I_ENVIAR = 'M5 12h14|M13 6l6 6-6 6';
   var I_NUEVO = 'M3 12a9 9 0 1 0 3-6.7|M3 4v5h5';
   var I_OK = 'M20 6 9 17l-5-5';
 
-  function logo() {
-    var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 64 64');
-    svg.setAttribute('aria-hidden', 'true');
-    [['M20 42 L32 30 L44 42', '#fff'], ['M25 29 L32 22 L39 29', '#FDBA74']].forEach(function (t) {
-      var p = document.createElementNS(NS, 'path');
-      p.setAttribute('d', t[0]);
-      p.setAttribute('fill', 'none');
-      p.setAttribute('stroke', t[1]);
-      p.setAttribute('stroke-width', '7');
-      p.setAttribute('stroke-linecap', 'round');
-      p.setAttribute('stroke-linejoin', 'round');
-      svg.appendChild(p);
-    });
-    return svg;
+  // El emblema de Jester.
+  function logo(clase) {
+    return el('img', { src: '/img/jester.png', alt: '', width: '160', height: '160', draggable: 'false', clase: clase || '' });
   }
 
   function el(tag, attrs, hijos) {
@@ -125,9 +112,9 @@
   var raiz = el('div', { clase: 'rchat' });
 
   var lanzador = el('button', {
-    type: 'button', clase: 'rchat-lanzador', 'aria-label': 'Abrir el chat de RendApps',
+    type: 'button', clase: 'rchat-lanzador', 'aria-label': 'Abrir el chat con Jester',
     'aria-expanded': 'false', 'aria-controls': 'rchat-panel'
-  }, [icono(I_CHAT, 'rchat-ico-chat', '1.9'), icono(I_CERRAR, 'rchat-ico-cerrar', '2.2'), el('span', { clase: 'rchat-punto' })]);
+  }, [logo('rchat-ico-chat'), icono(I_CERRAR, 'rchat-ico-cerrar', '2.2'), el('span', { clase: 'rchat-punto' })]);
 
   var cerrarInvitacion = el('button', { type: 'button', 'aria-label': 'Cerrar la invitación', texto: '×' });
   var invitacion = el('div', { clase: 'rchat-burbuja', hidden: '' }, [
@@ -145,12 +132,12 @@
   var nuevaBtn = el('button', { type: 'button', clase: 'rchat-chip', texto: 'Empezar una conversación nueva' });
   var fin = el('div', { clase: 'rchat-fin', hidden: '' }, [nuevaBtn]);
 
-  var panel = el('section', { clase: 'rchat-panel', id: 'rchat-panel', role: 'dialog', 'aria-label': 'Chat con el asistente de RendApps', hidden: '' }, [
+  var panel = el('section', { clase: 'rchat-panel', id: 'rchat-panel', role: 'dialog', 'aria-label': 'Chat con Jester, el asistente de RendApps', hidden: '' }, [
     el('header', { clase: 'rchat-cabecera' }, [
       el('div', { clase: 'rchat-avatar' }, [logo()]),
       el('div', { clase: 'rchat-titulo' }, [
-        el('strong', { texto: 'Asistente RendApps' }),
-        el('span', { texto: 'En línea · responde al instante' })
+        el('strong', { texto: 'Jester' }),
+        el('span', { texto: 'Asistente de RendApps · en línea' })
       ]),
       botonNuevo,
       botonCerrar
@@ -243,7 +230,7 @@
 
   function mostrarEscribiendo(si) {
     if (si && !escribiendo) {
-      escribiendo = el('div', { clase: 'rchat-escribiendo', 'aria-label': 'El asistente está escribiendo' },
+      escribiendo = el('div', { clase: 'rchat-escribiendo', 'aria-label': 'Jester está escribiendo' },
         [el('i'), el('i'), el('i')]);
       lista.appendChild(escribiendo);
       bajar();
@@ -273,7 +260,7 @@
     invitacion.hidden = true;
     escribir(CLAVE_INVITACION, true);
     lanzador.setAttribute('aria-expanded', 'true');
-    lanzador.setAttribute('aria-label', 'Cerrar el chat de RendApps');
+    lanzador.setAttribute('aria-label', 'Cerrar el chat con Jester');
     if (estrecho.matches) document.documentElement.classList.add('rchat-bloqueo');
     guardar();
     bajar();
@@ -285,7 +272,7 @@
     raiz.classList.remove('rchat-abierto');
     panel.hidden = true;
     lanzador.setAttribute('aria-expanded', 'false');
-    lanzador.setAttribute('aria-label', 'Abrir el chat de RendApps');
+    lanzador.setAttribute('aria-label', 'Abrir el chat con Jester');
     document.documentElement.classList.remove('rchat-bloqueo');
     guardar();
   }
