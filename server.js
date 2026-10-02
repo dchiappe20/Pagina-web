@@ -310,6 +310,13 @@ const proceso = [
 
 app.locals.servicios = servicios;
 app.locals.proceso = proceso;
+
+// El chatbot del sitio: la Edge Function `chat-ventas` del proyecto Supabase
+// (vive en el repo de Themein). Sin URL_CHAT el widget no se carga: así el
+// sitio se puede publicar antes de desplegar la función sin mostrar un chat
+// que no contesta. Se llama directo desde el navegador; la función sólo
+// acepta este sitio como origen.
+app.locals.chatUrl = (process.env.URL_CHAT || '').trim();
 app.locals.empresa = {
   marca: 'RendApps',
   sub: 'Solutions',

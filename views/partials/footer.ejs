@@ -74,5 +74,12 @@
 </footer>
 
 <script src="/js/main.js?v=5"></script>
+<% if (typeof chatUrl !== 'undefined' && chatUrl) { %>
+<%# El chat de ventas. Va en el pie, que comparten todas las páginas del sitio;
+    los formularios públicos de eventos (registro-forms, datos-cobro) no lo
+    usan, y ahí no corresponde un chat de RendApps. %>
+<link rel="stylesheet" href="/css/chat-widget.css?v=1">
+<script src="/js/chat-widget.js?v=1" data-url="<%= chatUrl %>" defer></script>
+<% } %>
 </body>
 </html>

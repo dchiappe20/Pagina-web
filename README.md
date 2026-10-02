@@ -57,6 +57,22 @@ Marcados en el sitio con un borde punteado naranja (clase `placeholder-tag`):
 
 - Nombre y descripción reales de **Aplicación 1** y **Aplicación 2** (arreglo `proyectos` en `server.js`).
 
+## Chat del sitio
+
+Un asistente (abajo a la derecha) que responde dudas y deja los interesados en
+Themein → Leads. Lo atiende la Edge Function `chat-ventas`, que vive en el repo
+de Themein (ver `Themein/docs/chatbot-leads.md`). Aquí sólo están el widget
+(`public/js/chat-widget.js`, `public/css/chat-widget.css`) y su carga en
+`views/partials/footer.ejs`.
+
+Se activa con una variable de entorno en Render:
+
+```
+URL_CHAT=https://tbvqpsearfgazjnqvrng.supabase.co/functions/v1/chat-ventas
+```
+
+Sin ella el chat no aparece.
+
 El correo (`contacto@rendapps.cl`) requiere tener su regla de reenvío creada en
 Cloudflare → Email → Routing para recibir mensajes.
 

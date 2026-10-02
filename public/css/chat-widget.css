@@ -1,0 +1,394 @@
+/* ============================================================
+   Chat de RendApps — el asistente del sitio.
+   Todo va con el prefijo `rchat-` para no chocar con la hoja
+   principal. Usa los colores y tipografías de :root (styles.css)
+   y trae respaldo por si alguna vez se carga en otra página.
+   ============================================================ */
+
+.rchat {
+  --rchat-azul: var(--azul, #2563EB);
+  --rchat-azul-oscuro: var(--azul-oscuro, #1E3A8A);
+  --rchat-azul-claro: var(--azul-claro, #EFF6FF);
+  --rchat-azul-borde: var(--azul-borde, #BFDBFE);
+  --rchat-tinta: var(--tinta, #111827);
+  --rchat-texto: var(--texto, #4B5563);
+  --rchat-suave: var(--texto-suave, #6B7280);
+  --rchat-borde: var(--borde, #E5E7EB);
+  --rchat-fondo: var(--fondo-alt, #F8FAFC);
+  --rchat-naranja: var(--naranja, #F97316);
+
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9990;
+  font-family: var(--fuente-texto, "Inter", "Segoe UI", sans-serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--rchat-tinta);
+}
+
+.rchat *, .rchat *::before, .rchat *::after { box-sizing: border-box; }
+
+/* ── El botón redondo ─────────────────────────────────────── */
+.rchat-lanzador {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #3B82F6, var(--rchat-azul-oscuro));
+  box-shadow: 0 14px 30px -10px rgba(30, 58, 138, 0.55), 0 2px 6px rgba(17, 24, 39, 0.12);
+  display: grid;
+  place-items: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.rchat-lanzador:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -10px rgba(30, 58, 138, 0.6), 0 2px 6px rgba(17, 24, 39, 0.12); }
+.rchat-lanzador:focus-visible { outline: 3px solid var(--rchat-naranja); outline-offset: 3px; }
+.rchat-lanzador svg { width: 27px; height: 27px; transition: transform 0.2s ease, opacity 0.2s ease; }
+.rchat-lanzador .rchat-ico-cerrar { position: absolute; opacity: 0; transform: rotate(-90deg) scale(0.6); }
+.rchat.rchat-abierto .rchat-lanzador .rchat-ico-chat { opacity: 0; transform: rotate(90deg) scale(0.6); }
+.rchat.rchat-abierto .rchat-lanzador .rchat-ico-cerrar { opacity: 1; transform: none; }
+
+/* Un punto naranja cuando el bot contestó con el chat cerrado. */
+.rchat-punto {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--rchat-naranja);
+  border: 2px solid #fff;
+  display: none;
+}
+.rchat.rchat-sin-leer .rchat-punto { display: block; }
+
+/* ── La invitación que aparece una vez ────────────────────── */
+.rchat-burbuja {
+  position: absolute;
+  right: 0;
+  bottom: 74px;
+  width: max-content;
+  max-width: 250px;
+  padding: 12px 34px 12px 14px;
+  background: #fff;
+  border: 1px solid var(--rchat-borde);
+  border-radius: 14px 14px 4px 14px;
+  box-shadow: 0 14px 34px -16px rgba(17, 24, 39, 0.28);
+  font-size: 14px;
+  color: var(--rchat-tinta);
+  cursor: pointer;
+  animation: rchat-entra 0.3s ease both;
+}
+.rchat-burbuja[hidden] { display: none; }
+.rchat-burbuja button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: none;
+  color: var(--rchat-suave);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.rchat-burbuja button:hover { background: var(--rchat-fondo); color: var(--rchat-tinta); }
+
+/* ── El panel ─────────────────────────────────────────────── */
+.rchat-panel {
+  position: absolute;
+  right: 0;
+  bottom: 76px;
+  width: 384px;
+  height: min(620px, calc(100vh - 116px));
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--rchat-borde);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -24px rgba(17, 24, 39, 0.35), 0 2px 8px rgba(17, 24, 39, 0.08);
+  animation: rchat-entra 0.22s ease both;
+}
+.rchat-panel[hidden] { display: none; }
+
+@keyframes rchat-entra {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.rchat-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 12px 14px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--rchat-azul), var(--rchat-azul-oscuro));
+}
+.rchat-avatar {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  display: grid;
+  place-items: center;
+}
+.rchat-avatar svg { width: 26px; height: 26px; }
+.rchat-titulo { flex: 1; min-width: 0; }
+.rchat-titulo strong {
+  display: block;
+  font-family: var(--fuente-display, "Space Grotesk", "Segoe UI", sans-serif);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.rchat-titulo span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  opacity: 0.85;
+}
+.rchat-titulo span::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ADE80;
+}
+.rchat-icono {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  opacity: 0.85;
+}
+.rchat-icono:hover { background: rgba(255, 255, 255, 0.14); opacity: 1; }
+.rchat-icono:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+.rchat-icono svg { width: 18px; height: 18px; }
+
+/* ── Los mensajes ─────────────────────────────────────────── */
+.rchat-mensajes {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 14px 8px;
+  background: var(--rchat-fondo);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overscroll-behavior: contain;
+}
+
+.rchat-msj {
+  max-width: 86%;
+  padding: 10px 13px;
+  border-radius: 16px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  animation: rchat-msj 0.2s ease both;
+}
+@keyframes rchat-msj {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.rchat-msj-bot {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--rchat-borde);
+  border-bottom-left-radius: 5px;
+  color: var(--rchat-tinta);
+}
+.rchat-msj-yo {
+  align-self: flex-end;
+  background: var(--rchat-azul);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+}
+.rchat-msj a { color: var(--rchat-azul); text-decoration: underline; text-underline-offset: 2px; }
+.rchat-msj-yo a { color: #fff; }
+
+/* El aviso de que sus datos quedaron registrados. */
+.rchat-registro {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #047857;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.rchat-registro svg { width: 15px; height: 15px; }
+
+/* Los tres puntos mientras responde. */
+.rchat-escribiendo {
+  align-self: flex-start;
+  display: flex;
+  gap: 5px;
+  padding: 14px 15px;
+  background: #fff;
+  border: 1px solid var(--rchat-borde);
+  border-radius: 16px;
+  border-bottom-left-radius: 5px;
+}
+.rchat-escribiendo i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #94A3B8;
+  animation: rchat-punto 1.1s infinite ease-in-out;
+}
+.rchat-escribiendo i:nth-child(2) { animation-delay: 0.15s; }
+.rchat-escribiendo i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes rchat-punto {
+  0%, 70%, 100% { transform: translateY(0); opacity: 0.45; }
+  35% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ── Las sugerencias y el botón de reintentar ─────────────── */
+.rchat-sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 4px 0 2px;
+}
+.rchat-chip {
+  border: 1px solid var(--rchat-azul-borde);
+  background: #fff;
+  color: var(--rchat-azul);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.rchat-chip:hover { background: var(--rchat-azul-claro); border-color: var(--rchat-azul); }
+.rchat-chip:focus-visible { outline: 2px solid var(--rchat-azul); outline-offset: 2px; }
+.rchat-chip:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Escribir ─────────────────────────────────────────────── */
+.rchat-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px 6px;
+  border-top: 1px solid var(--rchat-borde);
+  background: #fff;
+}
+.rchat-form textarea {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  max-height: 120px;
+  padding: 10px 12px;
+  border: 1px solid var(--rchat-borde);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--rchat-tinta);
+  background: #fff;
+  outline: none;
+  overflow-y: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.rchat-form textarea:focus { border-color: var(--rchat-azul); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.rchat-form textarea::placeholder { color: #9CA3AF; }
+.rchat-enviar {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--rchat-azul);
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.rchat-enviar:hover { background: var(--rchat-azul-oscuro); }
+.rchat-enviar:disabled { opacity: 0.45; cursor: default; }
+.rchat-enviar:focus-visible { outline: 2px solid var(--rchat-naranja); outline-offset: 2px; }
+.rchat-enviar svg { width: 19px; height: 19px; }
+
+.rchat-contador {
+  padding: 0 14px;
+  font-size: 11.5px;
+  color: var(--rchat-suave);
+  text-align: right;
+}
+.rchat-contador[hidden] { display: none; }
+
+.rchat-legal {
+  margin: 0;
+  padding: 2px 14px 10px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--rchat-suave);
+  background: #fff;
+}
+
+/* La conversación llegó a su largo máximo. */
+.rchat-fin {
+  padding: 12px;
+  border-top: 1px solid var(--rchat-borde);
+  background: #fff;
+  text-align: center;
+}
+.rchat-fin[hidden] { display: none; }
+.rchat-fin .rchat-chip { background: var(--rchat-azul); color: #fff; border-color: var(--rchat-azul); }
+
+.rchat-oculto {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Teléfono: el panel ocupa la pantalla ─────────────────── */
+@media (max-width: 520px) {
+  .rchat { right: 14px; bottom: 14px; }
+  .rchat-panel {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    border: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .rchat.rchat-abierto .rchat-lanzador { display: none; }
+  .rchat-burbuja { display: none; }
+  .rchat-form textarea { font-size: 16px; } /* iOS no hace zoom con 16px */
+}
+html.rchat-bloqueo, html.rchat-bloqueo body { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rchat-panel, .rchat-burbuja, .rchat-msj { animation: none; }
+  .rchat-escribiendo i { animation-duration: 2.4s; }
+  .rchat-lanzador, .rchat-lanzador svg { transition: none; }
+}
+
+@media print { .rchat { display: none; } }
