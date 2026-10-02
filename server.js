@@ -71,7 +71,7 @@ const servicios = [
 const proyectos = [
   {
     id: 'filtro-licitaciones',
-    nombre: 'Filtro de Licitaciones',
+    nombre: 'MP Reader',
     tipo: 'Software de escritorio',
     mockup: 'proyecto-ventana',
     desc: 'Aplicación de escritorio que filtra y clasifica licitaciones de Mercado Público en tiempo real, integrada con su API oficial.',
@@ -121,7 +121,7 @@ const proyectos = [
 // Identidad visual de cada producto. Son los mismos colores de las apps.
 const APPS = {
   filt: {
-    nombre: 'Filtradora de licitaciones',
+    nombre: 'MP Reader',
     sub: 'Mercado Público y Compra Ágil, revisados todos los días',
     color: '#D81B60',
     icono: 'documento',
@@ -348,7 +348,7 @@ app.get('/proyectos', (req, res) => {
 });
 
 app.get('/proyectos/filtro-licitaciones', (req, res) => {
-  res.render('proyecto-filtro', { titulo: 'Filtro de Licitaciones', pagina: 'proyectos' });
+  res.render('proyecto-filtro', { titulo: 'MP Reader', pagina: 'proyectos' });
 });
 
 app.get('/proyectos/gatheryx', (req, res) => {
@@ -460,7 +460,7 @@ app.post('/contacto', (req, res) => {
 // la puerta de entrada, y una tabla que se edita desde el panel no debería
 // poder ampliar lo que este servidor acepta servir.
 const APPS_DESCARGABLES = {
-  filt: { nombre: 'la Filtradora de licitaciones', pagina: '/proyectos/filtro-licitaciones' },
+  filt: { nombre: 'MP Reader', pagina: '/proyectos/filtro-licitaciones' },
   gatheryx: { nombre: 'Gatheryx', pagina: '/proyectos/gatheryx' },
   leads: { nombre: 'Leadyx', pagina: '/proyectos/leadyx' }
 };

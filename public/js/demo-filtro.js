@@ -1,4 +1,4 @@
-// Demo interactiva de la Filtradora de Licitaciones v2.1 (datos de ejemplo).
+// Demo interactiva de MP Reader v2.1 (datos de ejemplo).
 // Reproduce el shell real de la app: barra lateral, barra superior con el
 // título de la vista, tema claro/oscuro y escala de texto.
 (function () {

@@ -30,7 +30,7 @@
   var TOPE = 800;
   var ESPERA_MS = 60000;
 
-  var SALUDO = '¡Hola! Soy Jester, el asistente de RendApps. Te cuento de la Filtradora de licitaciones, de Gatheryx para eventos, ' +
+  var SALUDO = '¡Hola! Soy Jester, el asistente de RendApps. Te cuento de MP Reader para licitaciones, de Gatheryx para eventos, ' +
     'de Leadyx para ferias, de los planes y de los desarrollos a medida. ¿En qué te ayudo?';
   var SUGERENCIAS = ['Ver planes y precios', 'Quiero una demo', 'Necesito un desarrollo a medida', 'Ya soy cliente y necesito ayuda'];
   var SIN_CONEXION = 'No pude conectarme. Revisa tu conexión e inténtalo de nuevo.';

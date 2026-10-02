@@ -28,7 +28,7 @@ Luego abre <http://localhost:3000> en el navegador.
 | ------------ | ---------------------------------------------------------------- |
 | `/`          | Inicio: héroe con mockup, servicios, proyectos, proceso y CTA     |
 | `/servicios` | Detalle de los 6 servicios con puntos incluidos                   |
-| `/proyectos` | Portafolio: la Filtradora de Licitaciones y productos en desarrollo |
+| `/proyectos` | Portafolio: MP Reader y productos en desarrollo |
 | `/proyectos/filtro-licitaciones` | Detalle del proyecto con demo interactiva de la app |
 | `/nosotros`  | Historia, compromisos de confianza y seguridad, proceso           |
 | `/soporte`   | Soporte, documentación y preguntas frecuentes                     |
