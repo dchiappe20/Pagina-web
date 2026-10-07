@@ -1,0 +1,204 @@
+<%- include('partials/header') %>
+
+<%# Política de privacidad de RendApps y de sus apps (Leadyx, Gatheryx, MP Reader).
+    Es la URL que se declara en Google Play: rendapps.cl/privacidad.
+    #eliminar-cuenta es la que se declara como «URL para borrar la cuenta». %>
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Legal</p>
+    <h1>Política de privacidad</h1>
+    <p class="cabecera-sub">Qué datos tratamos en nuestro sitio y en nuestras apps, para qué, con quién los compartimos y cómo puedes ejercer tus derechos.</p>
+    <p class="legal-fecha">Última actualización: 7 de octubre de 2026</p>
+  </div>
+</section>
+
+<section class="seccion legal">
+  <div class="contenedor legal-int">
+
+    <nav class="legal-indice" aria-label="Contenido de la política">
+      <p class="legal-indice-titulo">Contenido</p>
+      <ol>
+        <li><a href="#responsable">Quiénes somos</a></li>
+        <li><a href="#alcance">A qué se aplica</a></li>
+        <li><a href="#roles">Responsable y encargado</a></li>
+        <li><a href="#datos">Qué datos tratamos</a></li>
+        <li><a href="#leadyx">Leadyx</a></li>
+        <li><a href="#gatheryx">Gatheryx</a></li>
+        <li><a href="#mp-reader">MP Reader</a></li>
+        <li><a href="#sitio">Sitio web y Jester</a></li>
+        <li><a href="#finalidades">Para qué los usamos</a></li>
+        <li><a href="#proveedores">Con quién los compartimos</a></li>
+        <li><a href="#conservacion">Cuánto tiempo los guardamos</a></li>
+        <li><a href="#seguridad">Seguridad</a></li>
+        <li><a href="#derechos">Tus derechos</a></li>
+        <li><a href="#eliminar-cuenta">Eliminar tu cuenta</a></li>
+        <li><a href="#menores">Menores de edad</a></li>
+        <li><a href="#cambios">Cambios a esta política</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ol>
+    </nav>
+
+    <article class="legal-texto">
+
+      <div class="legal-resumen">
+        <h2>En pocas palabras</h2>
+        <ul>
+          <li>Sólo tratamos los datos necesarios para que nuestras apps funcionen.</li>
+          <li><strong>No vendemos datos</strong>, no mostramos publicidad y no te rastreamos entre otros sitios o apps.</li>
+          <li>Los datos que una empresa carga en nuestras apps (sus leads, sus asistentes) son <strong>de esa empresa</strong>; nosotros sólo los guardamos y procesamos por encargo suyo.</li>
+          <li>Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a>.</li>
+        </ul>
+      </div>
+
+      <h2 id="responsable">1. Quiénes somos</h2>
+      <p>RendApps es el nombre comercial de <strong><%= empresa.razon %></strong>, RUT <%= empresa.rut %>, con domicilio en <%= empresa.ubicacion %>, Chile (en adelante, «RendApps», «nosotros»). Desarrollamos y operamos las apps Leadyx, Gatheryx y MP Reader, el sitio <a href="https://www.rendapps.cl">rendapps.cl</a> y su asistente de chat, Jester.</p>
+      <p>Para cualquier consulta sobre privacidad, escríbenos a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a>.</p>
+
+      <h2 id="alcance">2. A qué se aplica</h2>
+      <p>Esta política se aplica a:</p>
+      <ul>
+        <li><strong>Leadyx</strong>: app para Android y Windows para capturar contactos comerciales (leads) en ferias y eventos.</li>
+        <li><strong>Gatheryx</strong>: app para Android y Windows para registrar asistentes, vender entradas y controlar el acceso a eventos.</li>
+        <li><strong>MP Reader</strong>: app para Windows que filtra licitaciones públicas de Mercado Público.</li>
+        <li>El sitio <strong>rendapps.cl</strong>, sus formularios y el chat <strong>Jester</strong>.</li>
+      </ul>
+      <p>Tratamos los datos personales de acuerdo con la legislación chilena, en particular la Ley N° 19.628 sobre protección de la vida privada y la Ley N° 21.719, que la reforma.</p>
+
+      <h2 id="roles">3. Responsable y encargado</h2>
+      <p>Nuestras apps las contratan empresas para su propio trabajo. Por eso hay dos situaciones distintas:</p>
+      <ul>
+        <li><strong>Datos que la empresa cliente carga en la app</strong> (por ejemplo, los leads que captura en Leadyx o los asistentes que se registran a sus eventos en Gatheryx): la empresa cliente es la <strong>responsable</strong> de esos datos y decide para qué los usa. RendApps actúa como <strong>encargado</strong>: los guarda y procesa sólo para prestarle el servicio y siguiendo sus instrucciones. Si eres uno de esos contactos y quieres ejercer tus derechos, puedes dirigirte a la empresa que tomó tus datos, o a nosotros y le haremos llegar tu solicitud.</li>
+        <li><strong>Datos de las cuentas de usuario, del sitio web y del chat Jester</strong>: RendApps es el <strong>responsable</strong>.</li>
+      </ul>
+
+      <h2 id="datos">4. Qué datos tratamos</h2>
+      <p>En todas nuestras apps:</p>
+      <ul>
+        <li><strong>Datos de la cuenta</strong>: nombre, apellido, correo electrónico, empresa a la que perteneces y tu rol en ella. La contraseña no la conocemos: se guarda cifrada (con hash) por nuestro proveedor de autenticación.</li>
+        <li><strong>Datos técnicos mínimos</strong>: un identificador del dispositivo o computador donde inicias sesión (para respetar el número de equipos que incluye el plan de tu empresa), la versión de la app y registros de errores para corregir fallas.</li>
+        <li><strong>Conversaciones con Jester dentro de las apps</strong>, si usas el asistente: tus mensajes y sus respuestas.</li>
+      </ul>
+      <p>No accedemos a tu ubicación, a tu libreta de contactos, a tus mensajes ni a otras apps de tu teléfono.</p>
+
+      <h3 id="leadyx">Leadyx</h3>
+      <ul>
+        <li><strong>Datos de los leads</strong> que ingresa el usuario: nombre, empresa, cargo, correo, teléfono, interés, notas y el evento donde se captó.</li>
+        <li><strong>Micrófono</strong>: sólo cuando el usuario toca el botón de dictado, para llenar los campos con la voz. Si hay conexión, el audio se envía a nuestro proveedor de transcripción (Groq) para convertirlo en texto y ordenar los campos; si no la hay, se transcribe en el mismo teléfono. El audio no se guarda después de transcribirlo.</li>
+        <li><strong>Cámara y galería</strong>: sólo cuando el usuario elige adjuntar una foto al lead (por ejemplo, de una tarjeta de presentación). La foto se guarda en un almacenamiento privado al que sólo accede la empresa del usuario.</li>
+        <li><strong>Correos a los leads</strong>: si la empresa lo activa, Leadyx envía al lead un correo de agradecimiento en nombre de esa empresa. El correo incluye un enlace para que el lead autorice expresamente el uso de sus datos, autorización que puede retirar cuando quiera.</li>
+        <li><strong>Modo sin conexión</strong>: los leads capturados sin internet se guardan en el teléfono hasta que se sincronizan, y luego se borran de la cola local.</li>
+      </ul>
+
+      <h3 id="gatheryx">Gatheryx</h3>
+      <ul>
+        <li><strong>Datos de los asistentes</strong> que se registran a un evento: nombre, correo, teléfono y los demás campos que pida el organizador en su formulario, además de la entrada asignada y su código QR.</li>
+        <li><strong>Pagos</strong>: los pagos con tarjeta los procesa Flow. Nosotros <strong>no recibimos ni guardamos los datos de tu tarjeta</strong>; sólo el resultado del pago. Si el organizador cobra por transferencia, guardamos los datos de la cuenta bancaria que él mismo informa para mostrarlos a sus asistentes.</li>
+      </ul>
+
+      <h3 id="mp-reader">MP Reader</h3>
+      <ul>
+        <li>Los datos de la cuenta y del computador descritos arriba, y las preferencias de búsqueda que configure el usuario.</li>
+        <li>Las licitaciones que muestra son información pública de Mercado Público.</li>
+      </ul>
+
+      <h3 id="sitio">Sitio web y Jester</h3>
+      <ul>
+        <li><strong>Formulario de contacto</strong>: nombre, correo, asunto y mensaje.</li>
+        <li><strong>Chat Jester</strong>: los mensajes que escribes y, si decides dejarlos, tu nombre, empresa, correo, teléfono y cargo, para que un ejecutivo te contacte. También guardamos la página desde la que escribiste y, si llegaste por una campaña, su origen.</li>
+        <li><strong>Contratación de planes</strong>: los datos de la empresa y de quien la contrata. El pago lo procesa Flow.</li>
+        <li><strong>Cookies</strong>: no usamos cookies de publicidad ni de seguimiento. El chat guarda la conversación en tu navegador sólo mientras dura tu visita. Las tipografías del sitio se cargan desde Google Fonts, que recibe tu dirección IP al descargarlas.</li>
+      </ul>
+
+      <h2 id="finalidades">5. Para qué los usamos</h2>
+      <ul>
+        <li>Prestar el servicio contratado: crear tu cuenta, guardar y sincronizar lo que registras, y mostrarlo a las personas de tu empresa que tienen acceso.</li>
+        <li>Respetar los límites del plan de tu empresa (usuarios, equipos, eventos).</li>
+        <li>Enviar los correos que el servicio requiere: invitaciones, recuperación de contraseña, entradas, agradecimientos y avisos de actualización.</li>
+        <li>Darte soporte y responder tus consultas.</li>
+        <li>Atender a quienes nos escriben por el sitio o por Jester con interés en nuestros productos.</li>
+        <li>Mantener la seguridad, prevenir abusos y corregir errores.</li>
+        <li>Cumplir obligaciones legales, como la facturación.</li>
+      </ul>
+      <p>La base para tratar los datos es el contrato con tu empresa (o contigo), tu consentimiento cuando nos escribes o dejas tus datos, y el cumplimiento de obligaciones legales. <strong>No usamos tus datos para publicidad ni los vendemos o arrendamos a terceros.</strong></p>
+
+      <h2 id="proveedores">6. Con quién los compartimos</h2>
+      <p>Sólo con los proveedores que necesitamos para operar, y sólo con lo que cada uno necesita:</p>
+      <div class="legal-tabla-envoltura">
+        <table class="legal-tabla">
+          <thead>
+            <tr><th>Proveedor</th><th>Para qué</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Supabase</td><td>Base de datos, autenticación y almacenamiento de archivos de todas las apps.</td></tr>
+            <tr><td>Render</td><td>Alojamiento del sitio rendapps.cl.</td></tr>
+            <tr><td>Cloudflare</td><td>Nombres de dominio y recepción de correos de @rendapps.cl.</td></tr>
+            <tr><td>Resend</td><td>Envío de los correos de las apps y del sitio.</td></tr>
+            <tr><td>Anthropic</td><td>Modelo de lenguaje del asistente Jester (sitio y apps).</td></tr>
+            <tr><td>Groq</td><td>Transcripción del dictado por voz en Leadyx.</td></tr>
+            <tr><td>Flow</td><td>Procesamiento de pagos con tarjeta.</td></tr>
+            <tr><td>Expo</td><td>Compilación y distribución de las apps móviles.</td></tr>
+            <tr><td>GitHub</td><td>Descarga de los instaladores para Windows.</td></tr>
+            <tr><td>Google</td><td>Tipografías del sitio (Google Fonts) y distribución en Google Play.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Algunos de estos proveedores procesan los datos en servidores fuera de Chile, principalmente en Estados Unidos. Elegimos proveedores con medidas de seguridad reconocidas y que sólo usan los datos para prestarnos su servicio.</p>
+      <p>También podemos entregar datos cuando lo exija la ley o una autoridad competente.</p>
+
+      <h2 id="conservacion">7. Cuánto tiempo los guardamos</h2>
+      <ul>
+        <li><strong>Cuentas y datos de las apps</strong>: mientras la empresa mantenga el servicio. Al terminarlo, los eliminamos dentro de los 90 días siguientes, salvo que la empresa nos pida antes una copia o su eliminación inmediata.</li>
+        <li><strong>Leads y conversaciones del sitio y de Jester</strong>: hasta 24 meses desde el último contacto, o antes si pides que los borremos.</li>
+        <li><strong>Datos de facturación</strong>: el plazo que exige la ley tributaria (6 años).</li>
+        <li><strong>Copias de seguridad</strong>: se sobrescriben de forma periódica; un dato eliminado puede permanecer en ellas por un tiempo limitado hasta que se reemplazan.</li>
+      </ul>
+
+      <h2 id="seguridad">8. Seguridad</h2>
+      <ul>
+        <li>Toda la comunicación viaja cifrada (HTTPS).</li>
+        <li>Cada empresa sólo puede ver sus propios datos: el aislamiento se aplica en la base de datos misma, no sólo en la app.</li>
+        <li>Las fotos y archivos se guardan en almacenamiento privado y se abren con enlaces temporales.</li>
+        <li>Las contraseñas se guardan cifradas y nunca las vemos.</li>
+        <li>Los instaladores para Windows van firmados y se verifican antes de instalar una actualización.</li>
+      </ul>
+      <p>Ningún sistema es infalible. Si detectamos un incidente que afecte tus datos, te avisaremos a ti o a tu empresa, y a la autoridad cuando corresponda.</p>
+
+      <h2 id="derechos">9. Tus derechos</h2>
+      <p>Puedes pedirnos en cualquier momento:</p>
+      <ul>
+        <li><strong>Acceso</strong>: saber qué datos tuyos tenemos y para qué.</li>
+        <li><strong>Rectificación</strong>: corregir datos inexactos o incompletos.</li>
+        <li><strong>Supresión</strong>: que eliminemos tus datos.</li>
+        <li><strong>Oposición</strong>: que dejemos de usarlos para una finalidad, por ejemplo, para contactarte comercialmente.</li>
+        <li><strong>Portabilidad</strong>: recibir tus datos en un formato que puedas llevar a otro servicio.</li>
+        <li><strong>Bloqueo</strong>: que suspendamos temporalmente su uso mientras se resuelve una solicitud.</li>
+      </ul>
+      <p>Escríbenos a <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a> desde el correo asociado a tus datos, indicando qué necesitas. Responderemos dentro de 30 días corridos. Si los datos los cargó una empresa cliente (ver <a href="#roles">sección 3</a>), coordinaremos la respuesta con ella. Si no quedas conforme, puedes recurrir a la autoridad de protección de datos personales.</p>
+
+      <h2 id="eliminar-cuenta">10. Eliminar tu cuenta</h2>
+      <p>Puedes pedir que eliminemos tu cuenta de Leadyx, Gatheryx o MP Reader y los datos asociados a ella:</p>
+      <ol>
+        <li>Escribe a <a href="mailto:<%= empresa.email %>?subject=Eliminar%20mi%20cuenta"><%= empresa.email %></a> desde el correo con el que inicias sesión, con el asunto <strong>«Eliminar mi cuenta»</strong> e indicando la app.</li>
+        <li>Te confirmaremos la recepción y, para proteger tu cuenta, podremos pedirte verificar que eres el titular.</li>
+        <li>Eliminaremos tu cuenta y tus datos personales dentro de 30 días.</li>
+      </ol>
+      <p>El administrador de tu empresa también puede desactivar tu acceso desde la app en cualquier momento. Al eliminar tu cuenta se borran tu nombre, tu correo, tu perfil y tus dispositivos registrados. Los registros que hiciste en nombre de tu empresa (por ejemplo, los leads que capturaste) pertenecen a ella y se conservan, salvo que la empresa pida eliminarlos. Sólo guardamos lo que la ley nos obliga a conservar, como los datos de facturación.</p>
+
+      <h2 id="menores">11. Menores de edad</h2>
+      <p>Nuestras apps y nuestro sitio están dirigidos a empresas y no están pensados para menores de 18 años. No recopilamos a sabiendas datos de menores. Si un organizador registra a menores en un evento de Gatheryx, es responsabilidad de ese organizador contar con la autorización de sus padres o tutores.</p>
+
+      <h2 id="cambios">12. Cambios a esta política</h2>
+      <p>Podemos actualizar esta política cuando cambien nuestras apps o la ley. Publicaremos la nueva versión en esta página con su fecha y, si el cambio es importante, lo avisaremos a las empresas clientes por correo o dentro de las apps.</p>
+
+      <h2 id="contacto">13. Contacto</h2>
+      <p><strong><%= empresa.razon %></strong> (RendApps)<br>
+         RUT <%= empresa.rut %><br>
+         <%= empresa.ubicacion %>, Chile<br>
+         <a href="mailto:<%= empresa.email %>"><%= empresa.email %></a></p>
+
+    </article>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

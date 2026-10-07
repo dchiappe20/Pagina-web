@@ -775,6 +775,86 @@ a:hover { color: var(--azul-oscuro); }
   flex-wrap: wrap;
 }
 .pie-legal p { font-size: 0.82rem; color: var(--texto-suave); }
+.pie-legal a { color: var(--texto-suave); text-decoration: underline; text-underline-offset: 2px; }
+.pie-legal a:hover { color: var(--azul); }
+
+/* ---------- Páginas legales (privacidad) ---------- */
+
+.legal-fecha { margin-top: 1rem; font-size: 0.88rem; color: var(--texto-suave); }
+
+.legal { padding-top: 3.5rem; }
+.legal-int {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 3.5rem;
+  align-items: start;
+}
+
+/* El índice acompaña al leer: en un texto largo, saber dónde se está. */
+.legal-indice {
+  position: sticky;
+  top: 6rem;
+  border-left: 2px solid var(--borde-suave);
+  padding-left: 1.1rem;
+}
+.legal-indice-titulo {
+  font-family: var(--fuente-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinta);
+  margin-bottom: 0.7rem;
+}
+.legal-indice ol { list-style: none; display: grid; gap: 0.35rem; }
+.legal-indice a { font-size: 0.88rem; color: var(--texto-suave); }
+.legal-indice a:hover { color: var(--azul); }
+
+.legal-texto { max-width: 760px; }
+.legal-texto h2 {
+  font-size: 1.35rem;
+  margin: 2.6rem 0 0.9rem;
+  scroll-margin-top: 6rem;
+}
+.legal-texto h3 {
+  font-size: 1.08rem;
+  margin: 1.8rem 0 0.6rem;
+  scroll-margin-top: 6rem;
+}
+.legal-texto p { margin-bottom: 0.9rem; }
+.legal-texto ul,
+.legal-texto ol { margin: 0 0 1rem 1.3rem; display: grid; gap: 0.45rem; }
+.legal-texto strong { color: var(--tinta); font-weight: 600; }
+
+.legal-resumen {
+  background: var(--azul-claro);
+  border: 1px solid var(--azul-borde);
+  border-radius: var(--radio-g);
+  padding: 1.4rem 1.6rem;
+}
+.legal-resumen h2 { margin-top: 0; font-size: 1.1rem; }
+.legal-resumen ul { margin-bottom: 0; }
+
+.legal-tabla-envoltura { overflow-x: auto; margin-bottom: 1rem; }
+.legal-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.93rem;
+}
+.legal-tabla th,
+.legal-tabla td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--borde);
+  vertical-align: top;
+}
+.legal-tabla th { color: var(--tinta); font-weight: 600; background: var(--fondo-alt); }
+.legal-tabla td:first-child { color: var(--tinta); font-weight: 500; white-space: nowrap; }
+
+@media (max-width: 860px) {
+  .legal-int { grid-template-columns: 1fr; gap: 2rem; }
+  .legal-indice { position: static; }
+}
 
 /* ---------- Animaciones discretas ---------- */
 

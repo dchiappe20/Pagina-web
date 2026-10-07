@@ -415,6 +415,12 @@ app.get('/soporte', (req, res) => {
   res.render('soporte', { titulo: 'Soporte', pagina: 'soporte' });
 });
 
+// La URL que se declara en Google Play como política de privacidad, y
+// /privacidad#eliminar-cuenta como la de eliminación de cuenta.
+app.get('/privacidad', (req, res) => {
+  res.render('privacidad', { titulo: 'Política de privacidad', pagina: 'privacidad' });
+});
+
 app.get('/contacto', (req, res) => {
   res.render('contacto', { titulo: 'Contacto', pagina: 'contacto', enviado: false, error: null, datos: {} });
 });
