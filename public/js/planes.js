@@ -129,11 +129,58 @@
   var nivelActual = null;  // código del nivel dentro de esa app
   var ultimoFoco = null;
 
+  // Mensual o año completo (sql/72). El grupo sólo se muestra si el plan
+  // ofrece las dos formas; el texto legal dice qué se cobra al terminar la
+  // prueba según lo que se elija.
+  var grupoModalidad = formulario.querySelector('.modalidad');
+  var textoLegal = modal.querySelector('.modal-legal');
+  var datosPlan = { mensual: '', activacion: '', anual: '' };
+
+  function modalidadElegida() {
+    var marcada = formulario.querySelector('input[name="modalidad"]:checked');
+    return marcada && !grupoModalidad.hidden ? marcada.value : 'mensual';
+  }
+
+  function pintarLegal() {
+    var base = 'Te llevaremos al sitio seguro de Flow para registrar la tarjeta. No se cobra nada hoy: ';
+    if (modalidadElegida() === 'anual') {
+      textoLegal.textContent = base + 'al terminar los 14 días de prueba se cobra el año completo (UF ' +
+        datosPlan.anual + ' + IVA), sin activación.';
+    } else if (datosPlan.activacion) {
+      textoLegal.textContent = base + 'al terminar los 14 días de prueba se cobra el primer mes (UF ' +
+        datosPlan.mensual + ' + IVA) junto con la activación (UF ' + datosPlan.activacion + ' + IVA, una sola vez).';
+    } else {
+      textoLegal.textContent = base + 'el primer cargo es al terminar los 14 días de prueba.';
+    }
+  }
+
+  if (grupoModalidad) {
+    Array.prototype.forEach.call(grupoModalidad.querySelectorAll('input'), function (r) {
+      r.addEventListener('change', pintarLegal);
+    });
+  }
+
   function abrirModal(boton) {
     planActual = boton.getAttribute('data-plan');
     nivelActual = boton.getAttribute('data-nivel');
     etiquetaPlan.textContent = boton.getAttribute('data-plan-nombre');
     ultimoFoco = boton;
+
+    datosPlan = {
+      mensual: boton.getAttribute('data-mensual') || '',
+      activacion: boton.getAttribute('data-activacion') || '',
+      anual: boton.getAttribute('data-anual') || ''
+    };
+    if (grupoModalidad) {
+      grupoModalidad.hidden = !datosPlan.anual;
+      formulario.querySelector('input[name="modalidad"][value="mensual"]').checked = true;
+      grupoModalidad.querySelector('.mod-mensual').textContent =
+        'Mes a mes: UF ' + datosPlan.mensual + ' + IVA al mes' +
+        (datosPlan.activacion ? ', más activación UF ' + datosPlan.activacion + ' + IVA (una vez)' : '');
+      grupoModalidad.querySelector('.mod-anual').textContent =
+        'Año completo: UF ' + datosPlan.anual + ' + IVA, sin activación';
+    }
+    pintarLegal();
 
     aviso.classList.remove('visible');
     modal.hidden = false;
@@ -209,7 +256,8 @@
       empresa: formulario.empresa.value.trim(),
       rut: normalizarRut(formulario.rut.value),
       app: planActual,
-      plan: nivelActual
+      plan: nivelActual,
+      modalidad: modalidadElegida()
     };
 
     if (!validar(datos)) {

@@ -145,8 +145,11 @@
     color:var(--tx); background:transparent; border:1px solid var(--bd); box-shadow:none}
   .paso button:hover{transform:none; box-shadow:none; border-color:var(--acc)}
   .paso span{min-width:20px; text-align:center; font-weight:800; font-size:15px}
-  .asist{display:flex; flex-direction:column; gap:8px; padding:11px 12px; border:1px dashed var(--bd); border-radius:13px}
-  .asist .cab{font-size:11.5px; color:var(--txd)}
+  /* Una sola entrada por correo: los tipos se eligen tocándolos. */
+  .tipo.elegible{cursor:pointer}
+  .tipo.elegible .marca{width:18px; height:18px; border-radius:50%; border:2px solid var(--bd); flex:none}
+  .tipo.elegible.elegido .marca{border-color:var(--acc); box-shadow:inset 0 0 0 3px var(--field); background:var(--acc)}
+  .tipo.elegible.elegido{background:rgba(255,255,255,.04)}
   .codigo{display:flex; gap:8px}
   .codigo input{flex:1; text-transform:uppercase}
   .codigo button{margin:0; padding:0 16px; font-size:13px; color:var(--tx); background:var(--field);
@@ -253,13 +256,23 @@ let inscribiendo = false;   // se envió el formulario: ninguna carga tardía pi
 const retornoPago = new URLSearchParams(location.search).get('pago');
 const retornoCompra = new URLSearchParams(location.search).get('compra');
 
-// La compra que se está armando: cuántas de cada tipo, los datos de los demás
-// asistentes y el código aplicado. El precio real lo calcula la base; esto es
-// sólo para que la persona vea el total antes de pagar.
+// La compra que se está armando: cuántas de cada tipo y el código aplicado. El
+// precio real lo calcula la base; esto es sólo para que la persona vea el total
+// antes de pagar.
+//
+// Todas las entradas quedan a nombre de quien compra y le llegan a su correo,
+// cada una con su QR (sql/71). Un correo compra una sola, salvo que el
+// organizador haya activado «varias entradas por correo»: entonces hasta
+// `max_entradas_por_correo`. La base lo vuelve a contar, sumando lo que ese
+// correo ya compró antes.
 const SIN_TIPO = '_';
 let carrito = {};           // tipoId (o SIN_TIPO) → cantidad
-let asistentes = [];        // [{ nombre, email }] de la 2ª entrada en adelante
 let codigoAplicado = null;  // { codigo, tipo, valor }
+
+/** Cuántas entradas puede comprar un correo en este evento. */
+function maxPorCorreo(){
+  return Math.max(1, Math.min(50, Number(evento && evento.max_entradas_por_correo) || 1));
+}
 
 // ─────────────────────────────────────────────────────────────
 // Utilidades de las vistas de pago
@@ -524,8 +537,8 @@ $('form').addEventListener('submit', async (e) => {
         ...datos,
         p_items: Object.entries(carrito).filter(([, n]) => n > 0)
           .map(([tipo, n]) => ({ tipo: tipo === SIN_TIPO ? null : tipo, cantidad: n })),
-        p_asistentes: asistentes.slice(0, t.cantidad - 1)
-          .map((a) => ({ nombre: a.nombre.trim(), email: a.email.trim().toLowerCase() || null })),
+        // Todas a nombre de quien compra: la base ya no pide los demás.
+        p_asistentes: [],
         p_codigo: codigoAplicado ? codigoAplicado.codigo : null
       });
       correoInscrito = email;
@@ -682,13 +695,10 @@ function totales(){
 function revisarCompra(){
   const t = totales();
   if(t.cantidad < 1) return 'Elige al menos una entrada.';
-  const max = evento.max_por_compra || 10;
-  if(t.cantidad > max) return 'Se pueden comprar hasta ' + max + ' entradas de una vez.';
-  for(let i = 1; i < t.cantidad; i++){
-    const a = asistentes[i - 1] || { nombre: '', email: '' };
-    if(!a.nombre.trim()) return 'Falta el nombre de la entrada ' + (i + 1) + '.';
-    if(a.email.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a.email.trim())) return 'El correo de la entrada ' + (i + 1) + ' no es válido.';
-  }
+  const max = maxPorCorreo();
+  if(t.cantidad > max) return max === 1
+    ? 'Cada correo puede comprar una sola entrada.'
+    : 'Cada correo puede comprar hasta ' + max + ' entradas.';
   return null;
 }
 
@@ -708,7 +718,7 @@ function repintarCompra(){
   const ev = evento;
   const tipos = ev.tipos_entrada || [];
   const t = totales();
-  const max = ev.max_por_compra || 10;
+  const max = maxPorCorreo();
   const cont = $('compra');
 
   const paso = (clave, cantidad, agotado) => el('div', { class: 'paso' }, [
@@ -722,30 +732,31 @@ function repintarCompra(){
       } })
   ]);
 
-  const filas = tipos.length
-    ? tipos.map((tp) => el('div', { class: 'tipo' + (tp.agotado ? ' agotado' : '') }, [
-        el('div', { class: 'n' }, [el('b', { text: tp.nombre }),
-          el('small', { text: tp.agotado ? 'Agotadas' : (tp.precio === 0 ? 'Gratis' : fmtCLP(tp.precio)) })]),
-        tp.agotado ? null : paso(tp.id, carrito[tp.id] || 0, tp.agotado)
-      ]))
-    : [el('div', { class: 'tipo' }, [
-        el('div', { class: 'n' }, [el('b', { text: 'Entradas' }), el('small', { text: fmtCLP(ev.precio) + ' c/u' })]),
-        paso(SIN_TIPO, carrito[SIN_TIPO] || 0, false)
-      ])];
-
-  // Los datos de los demás asistentes: uno por entrada, desde la 2ª.
-  while(asistentes.length < t.cantidad - 1) asistentes.push({ nombre: '', email: '' });
-  const bloquesAsist = [];
-  for(let i = 1; i < t.cantidad; i++){
-    const a = asistentes[i - 1];
-    const nombre = el('input', { placeholder: 'Nombre y apellido *' }); nombre.value = a.nombre;
-    nombre.addEventListener('input', () => { a.nombre = nombre.value; });
-    const correo = el('input', { type: 'email', placeholder: 'Correo (opcional)' }); correo.value = a.email;
-    correo.addEventListener('input', () => { a.email = correo.value; });
-    bloquesAsist.push(el('div', { class: 'asist' }, [
-      el('div', { class: 'cab', text: 'Entrada ' + (i + 1) + ' · ' + t.entradas[i].nombre }), nombre, correo
-    ]));
-  }
+  // Una sola entrada por correo: no hay cantidades que elegir. Con tipos, el
+  // tipo se elige tocándolo; sin tipos, la fila sólo dice el precio.
+  const filas = max === 1
+    ? (tipos.length
+        ? tipos.map((tp) => el('div', {
+            class: 'tipo elegible' + (tp.agotado ? ' agotado' : '') + ((carrito[tp.id] || 0) > 0 ? ' elegido' : ''),
+            onclick: () => { if(tp.agotado) return; carrito = { [tp.id]: 1 }; repintarCompra(); }
+          }, [
+            el('div', { class: 'n' }, [el('b', { text: tp.nombre }),
+              el('small', { text: tp.agotado ? 'Agotadas' : (tp.precio === 0 ? 'Gratis' : fmtCLP(tp.precio)) })]),
+            tp.agotado ? null : el('span', { class: 'marca' })
+          ]))
+        : [el('div', { class: 'tipo' }, [
+            el('div', { class: 'n' }, [el('b', { text: 'Entrada' }), el('small', { text: fmtCLP(ev.precio) })])
+          ])])
+    : tipos.length
+      ? tipos.map((tp) => el('div', { class: 'tipo' + (tp.agotado ? ' agotado' : '') }, [
+          el('div', { class: 'n' }, [el('b', { text: tp.nombre }),
+            el('small', { text: tp.agotado ? 'Agotadas' : (tp.precio === 0 ? 'Gratis' : fmtCLP(tp.precio)) })]),
+          tp.agotado ? null : paso(tp.id, carrito[tp.id] || 0, tp.agotado)
+        ]))
+      : [el('div', { class: 'tipo' }, [
+          el('div', { class: 'n' }, [el('b', { text: 'Entradas' }), el('small', { text: fmtCLP(ev.precio) + ' c/u' })]),
+          paso(SIN_TIPO, carrito[SIN_TIPO] || 0, false)
+        ])];
 
   // El código de descuento, si el evento tiene alguno vigente.
   let bloqueCodigo = null;
@@ -772,13 +783,9 @@ function repintarCompra(){
   ]);
 
   cont.replaceChildren(
-    el('div', { class: 'titulo', text: tipos.length ? 'Entradas' : 'Cantidad' }),
+    el('div', { class: 'titulo', text: tipos.length ? (max === 1 ? 'Tu entrada' : 'Entradas') : (max === 1 ? 'Tu entrada' : 'Cantidad') }),
     el('div', { class: 'tipos' }, filas),
-    ...(bloquesAsist.length ? [
-      el('div', { class: 'titulo', text: 'Los demás asistentes' }),
-      el('div', { class: 'ayuda', text: 'Cada entrada tiene su propio QR. Sin correo, el suyo te llega a ti.' }),
-      ...bloquesAsist
-    ] : []),
+    ...(max > 1 ? [el('div', { class: 'ayuda', text: 'Puedes comprar hasta ' + max + ' entradas con tu correo. Todas quedan a tu nombre y te llegan por correo, cada una con su QR.' })] : []),
     ...(bloqueCodigo ? [bloqueCodigo] : []),
     tot
   );
@@ -932,10 +939,10 @@ function mostrarEntradas(registrados, titulo, texto){
   }
   vistaPago([
     el('h2', { text: titulo || '¡Pago confirmado!' }),
-    el('p', { class: 'lead', text: texto || 'Tus ' + lista.length + ' entradas están listas. Cada QR es de una persona; también los enviamos por correo.' }),
-    el('div', { class: 'qrs' }, lista.map((r) => el('div', { class: 'q' }, [
-      el('img', { alt: 'QR de ' + r.nombre, src: 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=0&data=' + encodeURIComponent(r.id) }),
-      el('span', { text: r.nombre })
+    el('p', { class: 'lead', text: texto || 'Tus ' + lista.length + ' entradas están listas. Cada QR deja entrar a una persona; también los enviamos a tu correo.' }),
+    el('div', { class: 'qrs' }, lista.map((r, i) => el('div', { class: 'q' }, [
+      el('img', { alt: 'QR de la entrada ' + (i + 1), src: 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=0&data=' + encodeURIComponent(r.id) }),
+      el('span', { text: 'Entrada ' + (i + 1) })
     ]))),
     el('button', { type: 'button', class: 'again', text: 'Registrar a otra persona', onclick: otraPersona })
   ]);

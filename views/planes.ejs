@@ -47,7 +47,7 @@
           <a class="panel-enlace" href="<%= a.url %>">Prueba aquí la demo online <span aria-hidden="true">→</span></a>
         </div>
 
-        <div class="planes-grid">
+        <div class="planes-grid<%= a.niveles.length >= 4 ? ' cuatro' : '' %>">
           <% a.niveles.forEach(function (n, i) { %>
             <article class="plan reveal<%= n.recomendado ? ' plan-destacado' : '' %>" id="plan-<%= a.id %>-<%= n.plan %>">
               <%# Cuál se destaca lo decide server.js (ESCAPARATE), no la posición. %>
@@ -65,7 +65,7 @@
               <%# El periodo lo dice el plan, no esta plantilla: «Por evento»
                   es un pago único y anunciarlo como mensual sería mentir. %>
               <div class="plan-precio">
-                <span class="plan-precio-uf"><%= n.uf %> UF</span>
+                <span class="plan-precio-uf"><%= n.ufTexto %> UF</span>
                 <% if (n.periodo === 'mes') { %>
                   <span class="plan-precio-periodo">/mes + IVA</span>
                 <% } else { %>
@@ -74,6 +74,20 @@
                   </span>
                 <% } %>
               </div>
+              <%# Activación, año completo y evento adicional (sql/72). %>
+              <% if (n.activacion || n.anual || n.eventoExtraTexto) { %>
+                <div class="plan-precio-extra">
+                  <% if (n.activacion) { %>
+                    <span>+ activación UF <%= n.activacionTexto %> + IVA, una vez<% if (n.totalAnioTexto) { %> (total año: UF <%= n.totalAnioTexto %>)<% } %></span>
+                  <% } %>
+                  <% if (n.anual) { %>
+                    <span class="anual">o <strong>UF <%= n.anualTexto %> + IVA</strong> pagando el año completo<%= n.activacion ? ', sin activación' : '' %></span>
+                  <% } %>
+                  <% if (n.eventoExtraTexto) { %>
+                    <span>Evento adicional: UF <%= n.eventoExtraTexto %> + IVA</span>
+                  <% } %>
+                </div>
+              <% } %>
               <ul class="plan-lista">
                 <% n.destacados.forEach(function (f) { %>
                   <li>
@@ -95,6 +109,9 @@
                   data-plan="<%= a.id %>"
                   data-nivel="<%= n.plan %>"
                   data-plan-nombre="<%= a.nombre %> · <%= n.nombre %>"
+                  data-mensual="<%= n.ufTexto %>"
+                  data-activacion="<%= n.activacionTexto %>"
+                  data-anual="<%= n.contratableAnual ? n.anualTexto : '' %>"
                 >
                   Empezar 14 días gratis <span class="btn-flecha" aria-hidden="true">→</span>
                 </button>
@@ -194,6 +211,20 @@
         <p class="campo-error">El RUT no es válido. Revisa el dígito verificador.</p>
       </div>
 
+      <!-- Mensual o año completo (sql/72). Sólo se ve si el plan ofrece las
+           dos formas; si no, se contrata mensual como siempre. -->
+      <fieldset class="modalidad" hidden>
+        <legend>¿Cómo quieres pagar?</legend>
+        <label class="modalidad-opcion">
+          <input type="radio" name="modalidad" value="mensual" checked>
+          <span class="modalidad-texto mod-mensual"></span>
+        </label>
+        <label class="modalidad-opcion">
+          <input type="radio" name="modalidad" value="anual">
+          <span class="modalidad-texto mod-anual"></span>
+        </label>
+      </fieldset>
+
       <button type="submit" class="btn modal-enviar">
         Continuar al registro de tarjeta <span class="btn-flecha" aria-hidden="true">→</span>
       </button>
@@ -220,5 +251,5 @@
   // de respaldo de la UF salen del servidor para no hardcodearlos en el JS.
   window.CONFIG_PLANES = <%- JSON.stringify(configPlanes) %>;
 </script>
-<script src="/js/planes.js?v=2" defer></script>
+<script src="/js/planes.js?v=3" defer></script>
 <%- include('partials/footer') %>

@@ -153,7 +153,7 @@ const ORDEN_APPS = ['filt', 'gatheryx', 'leads'];
 // Un plan que no esté nombrado aquí se pone al final, en el orden de la base.
 const ESCAPARATE = {
   filt:     { orden: ['terreno', 'oficina', 'holding'],       recomendado: 'oficina' },
-  gatheryx: { orden: ['por_evento', 'anual', 'productora'],   recomendado: 'anual' },
+  gatheryx: { orden: ['por_evento', 'anual', 'productora_1', 'productora'], recomendado: 'anual' },
   leads:    { orden: ['feria', 'comercial', 'equipo'],        recomendado: 'comercial' }
 };
 
@@ -170,10 +170,17 @@ const PLANES_RESPALDO = [
     descripcion: 'Plan premium' },
   { app: 'gatheryx', plan: 'por_evento', nombre: 'Por evento', precio_uf: 2,
     descripcion: 'Plan prepago', periodo: 'evento', contratable: false },
-  { app: 'gatheryx', plan: 'anual', nombre: 'Anual', precio_uf: 1,
-    descripcion: 'Plan mensual' },
-  { app: 'gatheryx', plan: 'productora', nombre: 'Productora', precio_uf: 3,
-    descripcion: 'Quien organiza eventos para terceros.' },
+  // Mensual y las dos Productora (sql/72): activación, año completo y, en
+  // Productora 1, el evento adicional. Sin plan de Flow en el respaldo: si la
+  // base no responde, se ofrece «Escríbenos».
+  { app: 'gatheryx', plan: 'anual', nombre: 'Mensual', precio_uf: 1.2,
+    precio_activacion_uf: 1, precio_anual_uf: 12, descripcion: 'Plan mensual', contratable: false },
+  { app: 'gatheryx', plan: 'productora_1', nombre: 'Productora 1', precio_uf: 2.2,
+    precio_activacion_uf: 2, precio_anual_uf: 24, precio_evento_extra_uf: 0.5,
+    descripcion: 'Quien organiza eventos para terceros.', contratable: false },
+  { app: 'gatheryx', plan: 'productora', nombre: 'Productora 2', precio_uf: 3.2,
+    precio_activacion_uf: 3, precio_anual_uf: 36,
+    descripcion: 'Quien organiza eventos para terceros.', contratable: false },
   { app: 'leads', plan: 'feria', nombre: 'Feria', precio_uf: 1,
     descripcion: 'Plan básico' },
   { app: 'leads', plan: 'comercial', nombre: 'Comercial', precio_uf: 2,
@@ -199,10 +206,13 @@ const DESTACADOS = {
                    'Todo lo del plan Oficina'],
   'gatheryx:por_evento': ['1 evento', 'Hasta 300 registrados', '60 días de acceso',
                           'Acreditación por QR completa', 'Exportación a Excel'],
-  'gatheryx:anual': ['Eventos ilimitados', '3.000 registrados al año',
-                     'Un evento activo a la vez', 'Formulario público de inscripción',
+  'gatheryx:anual': ['Hasta 13 eventos al año', '3.000 registrados al año',
+                     'Varios eventos a la vez', 'Formulario público de inscripción',
                      'Métricas en vivo'],
-  'gatheryx:productora': ['Eventos simultáneos ilimitados', '15.000 registrados al año',
+  'gatheryx:productora_1': ['Hasta 24 eventos al año', '5.000 registrados al año',
+                            'Formulario con la marca de tu cliente', 'Sub-cuentas por cliente',
+                            'Informe por evento listo para entregar'],
+  'gatheryx:productora': ['Eventos ilimitados', '15.000 registrados al año',
                           'Formulario con la marca de tu cliente', 'Sub-cuentas por cliente',
                           'Informe por evento listo para entregar'],
   'leads:feria': ['3 vendedores', '1.000 contactos al mes', 'Captura sin conexión',
@@ -221,6 +231,17 @@ function posicionEnEscaparate(app, plan) {
   return i === -1 ? orden.length : i;
 }
 
+/** «1,2» y no «1.2»: los precios se leen en Chile. */
+function textoUf(n) {
+  const v = Math.round(Number(n) * 100) / 100;
+  return String(v).replace('.', ',');
+}
+
+/** Un precio de la base, o null si no tiene. */
+function precio(n) {
+  return n === null || n === undefined || n === '' || !(Number(n) > 0) ? null : Number(n);
+}
+
 /** Agrupa el catálogo por app, en el orden en que se muestran las pestañas. */
 function agruparPlanes(filas) {
   return ORDEN_APPS
@@ -237,9 +258,22 @@ function agruparPlanes(filas) {
           nombre: f.nombre,
           descripcion: f.descripcion || '',
           uf: Number(f.precio_uf),
+          ufTexto: textoUf(f.precio_uf),
           // Por defecto mensual: es lo que era todo antes de que existiera la
           // columna, y lo que sigue siendo la mayoría.
           periodo: f.periodo || 'mes',
+          // sql/72: lo que se paga una vez al empezar el mensual, el año
+          // completo (sin activación) y el evento sobre el tope.
+          activacion: precio(f.precio_activacion_uf),
+          activacionTexto: precio(f.precio_activacion_uf) ? textoUf(f.precio_activacion_uf) : '',
+          anual: precio(f.precio_anual_uf),
+          anualTexto: precio(f.precio_anual_uf) ? textoUf(f.precio_anual_uf) : '',
+          eventoExtraTexto: precio(f.precio_evento_extra_uf) ? textoUf(f.precio_evento_extra_uf) : '',
+          // Lo que suma el primer año pagando mes a mes, para compararlo con
+          // el año completo: activación + 12 meses.
+          totalAnioTexto: precio(f.precio_activacion_uf) && (f.periodo || 'mes') === 'mes'
+            ? textoUf(Number(f.precio_activacion_uf) + 12 * Number(f.precio_uf)) : '',
+          contratableAnual: f.contratable_anual === true,
           // Sólo lo que se puede contratar en línea de verdad. Un plan sin
           // plan de Flow, o de pago único, muestra «Escríbenos» en vez de un
           // botón que iba a fallar después de pedirle los datos al visitante.
@@ -293,6 +327,9 @@ async function cargarPlanes() {
 }
 
 cargarPlanes();
+// Y cada diez minutos: un precio o un plan de Flow cambiado en Themein llega a
+// la web sin tener que reiniciarla.
+setInterval(cargarPlanes, 10 * 60 * 1000);
 
 const configPlanes = {
   urlCrearSuscripcion: process.env.URL_CREAR_SUSCRIPCION || ''

@@ -550,3 +550,54 @@ body.modal-abierto .banda-cta::before {
 }
 
 .plan-nota.es-unico { color: var(--texto-suave); }
+
+
+/* ---------- Cuatro niveles (Gatheryx, sql/72) ----------
+   Por evento, Mensual y las dos Productora en una fila en pantallas anchas;
+   de a dos en las medianas y de a uno en el teléfono, como el resto. */
+.planes-grid.cuatro {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 88rem;
+}
+@media (max-width: 1200px) {
+  .planes-grid.cuatro { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 48rem; }
+}
+@media (max-width: 700px) {
+  .planes-grid.cuatro { grid-template-columns: 1fr; max-width: 27rem; }
+}
+
+/* ---------- Activación, año completo y evento adicional ---------- */
+.plan-precio-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+  font-size: 0.86rem;
+  color: var(--texto-suave);
+  line-height: 1.45;
+}
+.plan-precio-extra .anual { color: var(--texto); }
+.plan-precio-extra strong { color: var(--tinta); }
+
+/* ---------- Mensual o año completo, en el modal de alta ---------- */
+.modalidad {
+  border: 1px solid var(--borde-suave);
+  border-radius: 12px;
+  padding: 0.8rem 0.95rem 0.9rem;
+  margin: 0.4rem 0 1rem;
+}
+.modalidad legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0 0.35rem;
+}
+.modalidad-opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  padding: 0.35rem 0;
+  cursor: pointer;
+}
+.modalidad-opcion input { margin-top: 0.22rem; }
