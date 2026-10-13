@@ -669,6 +669,33 @@ app.get('/datos-cobro', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'datos-cobro.html'));
 });
 
+// El enlace del correo de una invitación de Networking (Leadyx):
+// https://www.rendapps.cl/leadyx/i/<código>. Abre la app en sus invitaciones
+// (en Android y en el PC) y, si no está instalada, ofrece descargarla. El
+// código no dice nada de nadie: la invitación sólo se ve dentro de la app.
+app.get(['/leadyx/i', '/leadyx/i/:codigo'], (req, res) => {
+  res.set('Cache-Control', 'no-store, must-revalidate');
+  res.sendFile(path.join(__dirname, 'public', 'leadyx-invitacion.html'));
+});
+
+// Android App Links: con este archivo publicado, el enlace de arriba abre
+// Leadyx directamente, sin pasar por el navegador. Necesita la huella SHA-256
+// con que Google firma la app (Play Console → Integridad de la app → Firma de
+// apps). Va en la variable LEADYX_HUELLAS_SHA256 de Render, separadas por coma
+// si hay más de una. Sin la variable no se publica nada y el enlace sigue
+// funcionando con el botón de la página.
+app.get('/.well-known/assetlinks.json', (req, res) => {
+  const huellas = String(process.env.LEADYX_HUELLAS_SHA256 || '')
+    .split(',')
+    .map((h) => h.trim().toUpperCase())
+    .filter((h) => /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(h));
+  if (huellas.length === 0) return res.status(404).json({ error: 'sin configurar' });
+  res.json([{
+    relation: ['delegate_permission/common.handle_all_urls'],
+    target: { namespace: 'android_app', package_name: 'com.rendapps.leadyx', sha256_cert_fingerprints: huellas },
+  }]);
+});
+
 app.use((req, res) => {
   res.status(404).render('404', { titulo: 'Página no encontrada', pagina: '' });
 });
