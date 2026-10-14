@@ -64,6 +64,15 @@
   </main>
 
 <script>
+  // Si la web de Leadyx ya está publicada, el enlace vive allá: se prueba
+  // cargando uno de sus iconos y, si responde, se pasa con el mismo código.
+  (function () {
+    var codigo = (location.pathname.match(/\/leadyx\/i\/([^\/?#]+)/) || [])[1] || '';
+    var sonda = new Image();
+    sonda.onload = function () { location.replace('https://leadyx.rendapps.cl/i/' + encodeURIComponent(codigo)); };
+    sonda.src = 'https://leadyx.rendapps.cl/icono-192.png?t=' + Date.now();
+  })();
+
   (function () {
     var ua = navigator.userAgent || '';
     var esAndroid = /Android/i.test(ua);
