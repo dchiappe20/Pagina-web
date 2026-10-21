@@ -88,6 +88,7 @@
   .done.show{display:flex}
   .qrbox{background:#fff; border-radius:18px; padding:16px; box-shadow:0 16px 50px rgba(74,222,128,.3); margin-top:6px}
   .qrbox img{display:block; width:190px; height:190px}
+  .codigo-qr{font-family:ui-monospace,Consolas,monospace; font-size:24px; font-weight:800; letter-spacing:6px; margin:12px 0 0}
   .done h2{margin:20px 0 4px; font-size:20px; font-weight:800}
   .done p{margin:0; font-size:13px; color:var(--txd); line-height:1.5}
   .again{margin-top:20px; background:var(--field); color:var(--tx); border:1px solid var(--bd);
@@ -217,6 +218,7 @@
       <!-- Vista éxito -->
       <div id="view-done" class="done">
         <div class="qrbox"><img id="qr" alt="Tu código QR"></div>
+        <p id="codigo-qr" class="codigo-qr" hidden></p>
         <h2 id="done-titulo">¡Registro exitoso!</h2>
         <p id="done-sub">Guarda este QR y preséntalo en el acceso.<br>También lo enviamos a tu correo.</p>
         <button class="again" type="button" onclick="otraPersona()">Registrar a otra persona</button>
@@ -297,6 +299,7 @@ function el(tag, props, hijos){
 function vistaPago(nodos){
   $('view-form').style.display = 'none';
   $('view-done').classList.remove('show');
+  mostrarCodigo('');
   const v = $('view-pay');
   v.replaceChildren(...[].concat(nodos).filter(Boolean));
   v.classList.add('show');
@@ -589,8 +592,11 @@ $('form').addEventListener('submit', async (e) => {
       });
     }catch(mailErr){ console.warn('QR mail:', mailErr); }
 
-    // 4) Mostrar el QR (mismo id que escanea la app)
-    $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(nuevoId);
+    // 4) Mostrar el QR: lleva el código corto del inscrito (sql/80), el
+    //    mismo que va en el correo y que lee la app.
+    const valor = await valorDelQr(nuevoId);
+    $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(valor);
+    mostrarCodigo(valor);
     $('view-form').style.display = 'none';
     $('view-done').classList.add('show');
   }catch(err){
@@ -925,13 +931,36 @@ function mostrarEleccion(compraId, total){
 
 // Las entradas listas: una sola, como siempre; varias, en una rejilla con el
 // nombre de cada una.
-function mostrarEntradas(registrados, titulo, texto){
+// El QR de un inscrito lleva su código corto (sql/80). Si la base todavía no
+// lo tiene, o no responde, el id de siempre: también sirve.
+async function valorDelQr(id){
+  try{
+    const c = await llamarRpc('codigo_qr', { p_id: id });
+    return (typeof c === 'string' && c) ? c : String(id);
+  }catch(_){
+    return String(id);
+  }
+}
+
+// El código escrito bajo el QR, para dictarlo o escribirlo si la cámara falla.
+function mostrarCodigo(valor){
+  const el = $('codigo-qr');
+  if(!el) return;
+  const corto = /^[A-Z0-9]{6}$/.test(valor);
+  el.textContent = corto ? valor : '';
+  el.hidden = !corto;
+}
+
+async function mostrarEntradas(registrados, titulo, texto){
   olvidarPendiente();
-  const lista = registrados || [];
+  const lista = await Promise.all((registrados || []).map(async (r) => ({ ...r, qr: r.codigo || await valorDelQr(r.id) })));
   if(lista.length <= 1){
     $('view-pay').classList.remove('show');
     $('view-form').style.display = 'none';
-    if(lista[0]) $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(lista[0].id);
+    if(lista[0]){
+      $('qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(lista[0].qr);
+      mostrarCodigo(lista[0].qr);
+    }
     $('done-titulo').textContent = titulo || '¡Pago confirmado!';
     $('done-sub').textContent = texto || 'Tu entrada está lista. Guarda este QR y preséntalo en el acceso. También lo enviamos a tu correo.';
     $('view-done').classList.add('show');
@@ -941,8 +970,8 @@ function mostrarEntradas(registrados, titulo, texto){
     el('h2', { text: titulo || '¡Pago confirmado!' }),
     el('p', { class: 'lead', text: texto || 'Tus ' + lista.length + ' entradas están listas. Cada QR deja entrar a una persona; también los enviamos a tu correo.' }),
     el('div', { class: 'qrs' }, lista.map((r, i) => el('div', { class: 'q' }, [
-      el('img', { alt: 'QR de la entrada ' + (i + 1), src: 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=0&data=' + encodeURIComponent(r.id) }),
-      el('span', { text: 'Entrada ' + (i + 1) })
+      el('img', { alt: 'QR de la entrada ' + (i + 1), src: 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=0&data=' + encodeURIComponent(r.qr) }),
+      el('span', { text: 'Entrada ' + (i + 1) + (/^[A-Z0-9]{6}$/.test(r.qr) ? ' · ' + r.qr : '') })
     ]))),
     el('button', { type: 'button', class: 'again', text: 'Registrar a otra persona', onclick: otraPersona })
   ]);
