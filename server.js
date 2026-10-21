@@ -680,6 +680,16 @@ app.get(['/leadyx/i', '/leadyx/i/:codigo'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'leadyx-invitacion.html'));
 });
 
+// «Dejar de recibir estos correos», en los envíos de Leadyx a sus leads:
+// https://www.rendapps.cl/leadyx/baja?t=<token>. Pregunta antes de dar de baja
+// (los antivirus abren los enlaces solos) y llama a la función `baja-correo`.
+app.get('/leadyx/baja', (req, res) => {
+  res.set('Cache-Control', 'no-store, must-revalidate');
+  // El token va en la dirección: que no viaje a ningún otro sitio.
+  res.set('Referrer-Policy', 'no-referrer');
+  res.sendFile(path.join(__dirname, 'public', 'leadyx-baja.html'));
+});
+
 app.use((req, res) => {
   res.status(404).render('404', { titulo: 'Página no encontrada', pagina: '' });
 });
