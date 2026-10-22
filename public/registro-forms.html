@@ -89,6 +89,8 @@
   .qrbox{background:#fff; border-radius:18px; padding:16px; box-shadow:0 16px 50px rgba(74,222,128,.3); margin-top:6px}
   .qrbox img{display:block; width:190px; height:190px}
   .codigo-qr{font-family:ui-monospace,Consolas,monospace; font-size:24px; font-weight:800; letter-spacing:6px; margin:12px 0 0}
+  .bajar-qr{margin-top:12px; background:transparent; color:inherit; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:8px 18px; font:inherit; font-size:13px; font-weight:700; cursor:pointer}
+  .qrs .q button{background:transparent; color:inherit; border:0; font:inherit; font-size:11.5px; font-weight:700; text-decoration:underline; cursor:pointer}
   .done h2{margin:20px 0 4px; font-size:20px; font-weight:800}
   .done p{margin:0; font-size:13px; color:var(--txd); line-height:1.5}
   .again{margin-top:20px; background:var(--field); color:var(--tx); border:1px solid var(--bd);
@@ -219,6 +221,7 @@
       <div id="view-done" class="done">
         <div class="qrbox"><img id="qr" alt="Tu código QR"></div>
         <p id="codigo-qr" class="codigo-qr" hidden></p>
+        <button id="bajar-qr" class="bajar-qr" type="button" hidden onclick="bajarQr(qrActual)">Descargar QR</button>
         <h2 id="done-titulo">¡Registro exitoso!</h2>
         <p id="done-sub">Guarda este QR y preséntalo en el acceso.<br>También lo enviamos a tu correo.</p>
         <button class="again" type="button" onclick="otraPersona()">Registrar a otra persona</button>
@@ -943,12 +946,51 @@ async function valorDelQr(id){
 }
 
 // El código escrito bajo el QR, para dictarlo o escribirlo si la cámara falla.
+let qrActual = '';
 function mostrarCodigo(valor){
+  qrActual = valor || '';
+  const boton = $('bajar-qr');
+  if(boton) boton.hidden = !qrActual;
   const el = $('codigo-qr');
   if(!el) return;
   const corto = /^[A-Z0-9]{6}$/.test(valor);
   el.textContent = corto ? valor : '';
   el.hidden = !corto;
+}
+
+// «Descargar QR»: una imagen con el QR y, debajo, el código de acceso, para
+// guardarla en el teléfono. Si el navegador no deja armarla, se abre el QR solo.
+function bajarQr(valor){
+  if(!valor) return;
+  const url = 'https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&data=' + encodeURIComponent(valor);
+  const corto = /^[A-Z0-9]{6}$/.test(valor);
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    try{
+      const c = document.createElement('canvas');
+      c.width = 680; c.height = corto ? 820 : 680;
+      const g = c.getContext('2d');
+      g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      g.drawImage(img, 40, 40, 600, 600);
+      if(corto){
+        g.fillStyle = '#111827';
+        g.font = '800 72px ui-monospace, Consolas, monospace';
+        g.textAlign = 'center';
+        g.fillText(valor.split('').join(' '), c.width / 2, 750);
+      }
+      c.toBlob((b) => {
+        if(!b){ window.open(url, '_blank'); return; }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = corto ? 'QR-' + valor + '.png' : 'codigo-qr.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      }, 'image/png');
+    }catch(_){ window.open(url, '_blank'); }
+  };
+  img.onerror = () => window.open(url, '_blank');
+  img.src = url;
 }
 
 async function mostrarEntradas(registrados, titulo, texto){
@@ -971,7 +1013,8 @@ async function mostrarEntradas(registrados, titulo, texto){
     el('p', { class: 'lead', text: texto || 'Tus ' + lista.length + ' entradas están listas. Cada QR deja entrar a una persona; también los enviamos a tu correo.' }),
     el('div', { class: 'qrs' }, lista.map((r, i) => el('div', { class: 'q' }, [
       el('img', { alt: 'QR de la entrada ' + (i + 1), src: 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=0&data=' + encodeURIComponent(r.qr) }),
-      el('span', { text: 'Entrada ' + (i + 1) + (/^[A-Z0-9]{6}$/.test(r.qr) ? ' · ' + r.qr : '') })
+      el('span', { text: 'Entrada ' + (i + 1) + (/^[A-Z0-9]{6}$/.test(r.qr) ? ' · ' + r.qr : '') }),
+      el('button', { type: 'button', text: 'Descargar', onclick: () => bajarQr(r.qr) })
     ]))),
     el('button', { type: 'button', class: 'again', text: 'Registrar a otra persona', onclick: otraPersona })
   ]);
