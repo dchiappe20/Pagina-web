@@ -58,7 +58,7 @@
       var eventos = [
         Object.assign({}, base, { id: EV1, nombre: 'Expo Minería Andina 2026', lugar: 'Espacio Riesco', direccion: 'Av. El Salto 5000, Huechuraba',
           fecha: x.dia(0), fecha_fin: x.dia(1), hora_inicio: '09:00', hora_fin: '19:00', tematica: 'Minería, maquinaria y servicios',
-          cliente_id: CLI, created_at: x.iso(-1), acreditacion_diaria: true }),
+          cliente_id: CLI, created_at: x.iso(-1), acreditacion_diaria: true, meta_diaria: 12, informe_cierre_cliente: false }),
         Object.assign({}, base, { id: EV2, nombre: 'Seminario Logística 4.0', lugar: 'Hotel W', direccion: 'Isidora Goyenechea 3000, Las Condes',
           fecha: x.dia(9), fecha_fin: null, hora_inicio: '09:00', hora_fin: '14:00', tematica: 'Logística y última milla', cliente_id: null,
           created_at: x.iso(-12), es_pago: true, precio: 25000, cobra: 'productora', vip_activo: false }),
@@ -90,7 +90,10 @@
           acreditado_por: acreditado ? autores[i % 3] : null, email_confirmacion_enviado: true, agradecimiento_enviado_at: ev === EV3 ? x.iso(-19) : null,
           created_at: x.iso(ev === EV3 ? -40 : -(i % 10) - 1, '11:00'), codigo: 'G' + String(4821 + i * 37).slice(-5),
           expositora_id: deExpo ? X1 : null, es_vip: deExpo, estado_pago: ev === EV2 ? (i % 2 ? 'pagado' : 'pendiente') : null,
-          metodo_pago: ev === EV2 && i % 2 ? 'flow' : null, monto_pagado: ev === EV2 && i % 2 ? 25000 : null,
+          metodo_pago: ev === EV2 ? (i % 2 ? 'plataforma' : 'transferencia') : null, monto_pagado: ev === EV2 && i % 2 ? 25000 : null,
+          tipo_entrada: ev === EV2 ? (i % 3 ? 'General' : 'Estudiante') : null, precio_entrada: ev === EV2 ? (i % 3 ? 25000 : 12000) : null,
+          vip: deExpo || i % 7 === 0, acreditado_puerta: acreditado ? ['Puerta norte', 'Puerta sur', 'Mesón VIP'][i % 3] : null,
+          datos_extra: { 'Rubro': ['Minería', 'Construcción', 'Energía', 'Logística'][i % 4], '¿Cómo te enteraste?': ['LinkedIn', 'Correo', 'Un colega', 'Prensa'][(i * 3) % 4] },
         };
       });
       if (esExpo) registrados = registrados.filter(function (r) { return r.expositora_id === X1; });
@@ -146,6 +149,12 @@
             { id: 'te1', evento_id: EV2, nombre: 'General', precio: 25000, cupo: 200, activo: true, orden: 1 },
             { id: 'te2', evento_id: EV2, nombre: 'Estudiante', precio: 12000, cupo: 50, activo: true, orden: 2 },
           ],
+          intentos: esExpo ? [] : [0, 1, 2, 3, 4, 5, 6].map(function (i) {
+            return { id: x.uuid(), evento_id: EV1, empresa_id: EMP, usuario_id: autores[i % 3], motivo: ['ya_acreditado', 'ya_acreditado', 'duplicado', 'no_encontrado', 'ya_acreditado', 'no_pagado', 'duplicado'][i], detalle: null, creado_en: x.iso(0, (10 + i) + ':05') };
+          }),
+          correos_estado: esExpo ? [] : registrados.filter(function (r) { return r.evento_id === EV1; }).map(function (r, i) {
+            return { email_id: 'em' + i, registrado_id: r.id, evento_id: EV1, empresa_id: EMP, tipo: 'qr', estado: i % 9 === 4 ? 'rebotado' : i % 3 ? 'abierto' : 'entregado', actualizado_en: x.iso(-1) };
+          }),
           codigos_descuento: [], compras: [], reembolsos: [], solicitudes_cobro: [], cuentas_cobro: [], datos_transferencia: [], imagenes: [],
         },
         rpc: {
@@ -201,6 +210,29 @@
               empresa: r.empresa, email_confirmacion_enviado: true, acreditado_at: r.acreditado_at, acreditado_por: null }; });
           },
           expositor_buscar: function () { return []; },
+          resumen_eventos: function () {
+            if (esExpo) return [];
+            var previos = [
+              { evento_id: 'f0000000-0000-4000-8000-000000000011', nombre: 'Expo Minería Andina 2025', fecha: x.dia(-365), cliente_id: CLI, registrados: 410, acreditados: 287, por_formulario: 300, ingresos: 0 },
+              { evento_id: 'f0000000-0000-4000-8000-000000000012', nombre: 'Encuentro Proveedores Mineros', fecha: x.dia(-120), cliente_id: CLI, registrados: 180, acreditados: 133, por_formulario: 120, ingresos: 0 },
+            ];
+            return eventos.map(function (e) {
+              var rs = registrados.filter(function (r) { return r.evento_id === e.id; });
+              return { evento_id: e.id, nombre: e.nombre, fecha: e.fecha, cliente_id: e.cliente_id, registrados: rs.length,
+                acreditados: rs.filter(function (r) { return r.acreditado; }).length, por_formulario: rs.filter(function (r) { return !r.ingresado_por; }).length,
+                ingresos: rs.reduce(function (s, r) { return s + (r.estado_pago === 'pagado' ? (r.precio_entrada || 0) : 0); }, 0) };
+            }).concat(previos);
+          },
+          kpis_expositora: function () {
+            var mios = rol === 'encargado';
+            return { rol: mios ? 'encargado' : 'usuario', inscritos: registrados.length, inscritos_hoy: 1,
+              asistieron: registrados.filter(function (r) { return r.acreditado; }).length,
+              leads: { total: mios ? 47 : 19, hoy: mios ? 12 : 5,
+                por_persona: mios ? [{ id: U.encargado.id, nombre: nc(U.encargado), n: 28 }, { id: U.expositor.id, nombre: nc(U.expositor), n: 19 }] : [{ id: U.expositor.id, nombre: nc(U.expositor), n: 19 }],
+                cargos: [{ nombre: 'Jefe de Mantención', n: 11 }, { nombre: 'Gerente de Operaciones', n: 8 }, { nombre: 'Ingeniero de Procesos', n: 7 }, { nombre: 'Comprador', n: 5 }],
+                empresas: [{ nombre: 'Codelco', n: 9 }, { nombre: 'Minera Los Bronces', n: 6 }, { nombre: 'Antofagasta Minerals', n: 5 }, { nombre: 'Finning', n: 3 }] },
+              reuniones: { agendadas: mios ? 6 : 2, pendientes: mios ? 3 : 1 } };
+          },
           conexiones_de_mi_gatheryx: function () {
             return [{ id: 'cv1', empresa: 'Andes Industrial SpA', origen: 'misma_empresa', creado_en: x.iso(-20), eventos: 2 }];
           },
