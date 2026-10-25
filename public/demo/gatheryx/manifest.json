@@ -1,0 +1,16 @@
+{
+  "name": "Gatheryx",
+  "short_name": "Gatheryx",
+  "description": "Registro y acreditación de asistentes a eventos.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0A0E1C",
+  "theme_color": "#0A0E1C",
+  "icons": [
+    { "src": "/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

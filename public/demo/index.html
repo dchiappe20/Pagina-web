@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Demos · RendApps</title>
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root { --azul: #2563EB; --azul-osc: #1E3A8A; --naranja: #F97316; --tx: #0f172a; --txd: #475569; --bd: #e2e8f0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--tx); background: #F8FAFC; }
+    header { background: linear-gradient(135deg, var(--azul-osc), var(--azul)); color: #fff; padding: 44px 20px 70px; text-align: center; }
+    header .marca { font-weight: 800; letter-spacing: -.3px; font-size: 18px; opacity: .9; }
+    header .marca em { color: var(--naranja); font-style: normal; }
+    header h1 { font-size: clamp(26px, 5vw, 38px); margin: 14px 0 8px; letter-spacing: -.6px; }
+    header p { margin: 0 auto; max-width: 560px; opacity: .85; line-height: 1.55; }
+    main { max-width: 900px; margin: -44px auto 40px; padding: 0 16px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+    .app { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--bd); border-radius: 20px; padding: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .08); transition: transform .15s, box-shadow .15s; }
+    .app:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(15, 23, 42, .14); }
+    .logo { width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; color: #111; }
+    .app h2 { margin: 14px 0 4px; font-size: 22px; }
+    .app p { margin: 0 0 14px; color: var(--txd); line-height: 1.5; font-size: 14.5px; }
+    .app ul { margin: 0 0 18px; padding-left: 18px; color: var(--txd); font-size: 13.5px; line-height: 1.7; }
+    .ir { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: #fff; padding: 11px 18px; border-radius: 12px; }
+    .nota { max-width: 900px; margin: 0 auto 50px; padding: 0 16px; color: var(--txd); font-size: 13px; text-align: center; line-height: 1.6; }
+    .nota a { color: var(--azul); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="marca">Rend<em>Apps</em></div>
+    <h1>Prueba nuestras apps</h1>
+    <p>Las mismas apps que usan nuestros clientes, con una empresa ficticia y datos de prueba. Entras directo, sin crear cuenta, y eliges con qué rol mirar.</p>
+  </header>
+  <main>
+    <a class="app" href="/demo/leadyx/">
+      <div class="logo" style="background:#A78BFA">L</div>
+      <h2>Leadyx</h2>
+      <p>Captura de leads en ferias y eventos.</p>
+      <ul>
+        <li>Leads por evento, con QR y dictado</li>
+        <li>Networking: perfiles, chats y reuniones</li>
+        <li>Empresas expositoras, equipos y KPIs</li>
+      </ul>
+      <span class="ir" style="background:#7C3AED">Abrir demo de Leadyx →</span>
+    </a>
+    <a class="app" href="/demo/gatheryx/">
+      <div class="logo" style="background:#4ADE80">G</div>
+      <h2>Gatheryx</h2>
+      <p>Registro y acreditación de eventos.</p>
+      <ul>
+        <li>Inscritos, QR y acreditación por día</li>
+        <li>Clientes, entradas pagadas y VIP</li>
+        <li>Empresas expositoras y KPIs del evento</li>
+      </ul>
+      <span class="ir" style="background:#15803D">Abrir demo de Gatheryx →</span>
+    </a>
+  </main>
+  <p class="nota">Nada de lo que hagas en las demos es real: no se guarda ni se envía ningún correo. ¿Te interesa para tu empresa? Escríbenos a <a href="mailto:contacto@rendapps.cl">contacto@rendapps.cl</a> o vuelve a <a href="/">rendapps.cl</a>.</p>
+</body>
+</html>

@@ -690,6 +690,16 @@ app.get('/leadyx/baja', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'leadyx-baja.html'));
 });
 
+// Demos de Leadyx y Gatheryx (public/demo): la misma web de cada app, con
+// datos de prueba que viven en el navegador (public/demo/comun). La app
+// resuelve sus propias rutas: lo que no es un archivo carga su index.html.
+for (const demo of ['leadyx', 'gatheryx']) {
+  app.get([`/demo/${demo}`, `/demo/${demo}/*`], (req, res) => {
+    res.set('X-Robots-Tag', 'noindex');
+    res.sendFile(path.join(__dirname, 'public', 'demo', demo, 'index.html'));
+  });
+}
+
 app.use((req, res) => {
   res.status(404).render('404', { titulo: 'Página no encontrada', pagina: '' });
 });

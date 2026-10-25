@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head><script src="/demo/comun/demo-supabase.js"></script><script src="/demo/comun/demo-leadyx.js"></script>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <!--
+      viewport-fit=cover: instalada en un iPhone, la app llega hasta los bordes
+      y las pantallas respetan la muesca con sus márgenes seguros.
+      maximum-scale=1: iOS agranda la página sola al tocar un campo con letra
+      de menos de 16 px; con esto no lo hace.
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no" />
+    <title>Demo · Leadyx</title>
+    <meta name="description" content="Leadyx: captura de leads en ferias y eventos, desde el teléfono, el PC o la web." />
+    <meta name="theme-color" content="#0A0E1C" />
+
+    <!-- Para instalarla como app: en Android y PC la ofrece el navegador; en
+         iPhone, Compartir → «Agregar a inicio». -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Leadyx" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+        /* El fondo de la app desde el primer instante: sin destello blanco al abrir. */
+        background-color: #0A0E1C;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  <link rel="icon" href="/demo/leadyx/favicon.ico" /></head>
+
+  <body>
+    <noscript>
+      Leadyx necesita JavaScript para funcionar. Actívalo en tu navegador y recarga la página.
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"></div>
+  <script src="/demo/leadyx/_expo/static/js/web/entry-20ffa9b870fa3c9f21dca323154a7ab1.js" defer></script>
+</body>
+</html>
