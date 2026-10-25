@@ -170,7 +170,22 @@
               { id: 'r2', codigo: 'user', nombre: 'Usuario', descripcion: 'Registra y acredita', orden: 2 },
             ];
           },
-          expositoras_de_evento: function (a) { return a.p_evento === EV1 ? expositoras : []; },
+          expositoras_de_evento: function (a) {
+            if (a.p_app === 'leads') {
+              // Un evento creado en Leadyx por la misma empresa (las apps conectadas).
+              return a.p_evento === 'v1000000-0000-4000-8000-000000000001' ? [
+                Object.assign({}, expositoras[0], { id: 'y1000000-0000-4000-8000-000000000001', origen: 'leadyx', personas: 3, max_personas: 4, created_at: x.iso(-4) }),
+                { id: 'y1000000-0000-4000-8000-000000000002', empresa: 'Andamios Pacífico', rut: '78.210.330-5', encargado_email: 'mjara@andamiospacifico.cl',
+                  encargado_nombre: 'Mauricio Jara', encargado_sin_clave: false, personas: 2, max_personas: 3, invitados: 0, max_invitados: null, origen: 'leadyx', created_at: x.iso(-3) },
+              ] : [];
+            }
+            return a.p_evento === EV1 ? expositoras : [];
+          },
+          eventos_para_expositoras: function () {
+            if (esExpo) return [];
+            return [{ evento_id: 'v1000000-0000-4000-8000-000000000001', nombre: 'Feria Industrial del Biobío', fecha: x.dia(12), fecha_termino: x.dia(13),
+              de_gatheryx: false, terminado: false, expositoras: 2, gestiona: null }];
+          },
           personas_de_expositora: function () {
             return [
               { usuario_id: U.encargado.id, email: U.encargado.email, nombre_completo: nc(U.encargado), rol: 'encargado', sin_clave: false },
