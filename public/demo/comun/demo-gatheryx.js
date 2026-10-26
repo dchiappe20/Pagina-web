@@ -149,6 +149,18 @@
             { id: 'te1', evento_id: EV2, nombre: 'General', precio: 25000, cupo: 200, activo: true, orden: 1 },
             { id: 'te2', evento_id: EV2, nombre: 'Estudiante', precio: 12000, cupo: 50, activo: true, orden: 2 },
           ],
+          // Subeventos (sql/89) del evento principal y quién entró a cada uno.
+          subeventos: [
+            { id: 'sub00000-0000-4000-8000-000000000001', evento_id: EV1, nombre: 'Charla inaugural', orden: 0 },
+            { id: 'sub00000-0000-4000-8000-000000000002', evento_id: EV1, nombre: 'Taller de seguridad', orden: 1 },
+            { id: 'sub00000-0000-4000-8000-000000000003', evento_id: EV1, nombre: 'Cena de cierre', orden: 2 },
+          ],
+          acreditaciones_subevento: registrados.filter(function (r) { return r.evento_id === EV1; }).reduce(function (filas, r, i) {
+            if (i % 2 === 0) filas.push({ id: x.uuid(), subevento_id: 'sub00000-0000-4000-8000-000000000001', registrado_id: r.id, evento_id: EV1, acreditado_at: x.iso(0, '10:15') });
+            if (i % 3 === 0) filas.push({ id: x.uuid(), subevento_id: 'sub00000-0000-4000-8000-000000000002', registrado_id: r.id, evento_id: EV1, acreditado_at: x.iso(0, '12:30') });
+            if (i % 5 === 0) filas.push({ id: x.uuid(), subevento_id: 'sub00000-0000-4000-8000-000000000003', registrado_id: r.id, evento_id: EV1, acreditado_at: x.iso(0, '19:40') });
+            return filas;
+          }, []),
           intentos: esExpo ? [] : [0, 1, 2, 3, 4, 5, 6].map(function (i) {
             return { id: x.uuid(), evento_id: EV1, empresa_id: EMP, usuario_id: autores[i % 3], motivo: ['ya_acreditado', 'ya_acreditado', 'duplicado', 'no_encontrado', 'ya_acreditado', 'no_pagado', 'duplicado'][i], detalle: null, creado_en: x.iso(0, (10 + i) + ':05') };
           }),
