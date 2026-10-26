@@ -133,9 +133,72 @@
           correo_estado: i % 4 === 0 ? 'pendiente' : 'enviado', correo_enviado_at: i % 4 === 0 ? null : x.iso(diasAtras, '12:00'),
           correo_error: null, created_at: x.iso(diasAtras, (9 + (i % 9)) + ':' + String((i * 7) % 60).padStart(2, '0')),
           empresa_id: empresaId,
+          temperatura: ['caliente', 'tibio', 'frio', null][i % 4], origen: i % 3 === 0 ? 'qr' : i % 7 === 0 ? 'excel' : 'manual',
+          documentos_ids: i % 2 ? ['d0000000-0000-4000-8000-000000000001'] : [],
         };
       });
 
+// ── KPIs (sql/67 y sql/88), calculados sobre los leads de la demo
+      function kpisDemo(alcance, evento) {
+        var puede = alcance === 'mios' || (alcance === 'equipo' && (rol === 'admin' || rol === 'teamlead')) || (alcance === 'empresa' && (rol === 'admin' || rol === 'encargado'));
+        if (!puede) throw Object.assign(new Error('No tienes acceso a estos KPIs'), { code: '42501' });
+        var gente = alcance === 'mios' ? [yo] : alcance === 'equipo' ? (esExpo ? capturadores : [U.teamlead, U.usuario]) : capturadores;
+        var ids = gente.map(function (g) { return g.id; });
+        var ls = leads.filter(function (l) { return ids.indexOf(l.perfil_id) >= 0 && (!evento || l.evento_id === evento); });
+        var hoy = x.iso(0).slice(0, 10);
+        var lleno = function (v) { return String(v || '').trim() !== ''; };
+        var cuenta = function (f) { return ls.filter(f).length; };
+        var filas = gente.map(function (g) {
+          var m = leads.filter(function (l) { return l.perfil_id === g.id; });
+          var dias = {}; m.forEach(function (l) { var d = l.created_at.slice(0, 10); dias[d] = (dias[d] || 0) + 1; });
+          return { perfil_id: g.id, nombre: nombreCompleto(g), equipo_id: g === U.usuario2 ? EQ_SUR : EQ_NORTE, equipo_nombre: g === U.usuario2 ? 'Equipo Sur' : 'Equipo Norte',
+            total: m.length, hoy: m.filter(function (l) { return l.created_at.slice(0, 10) === hoy; }).length, semana: m.length,
+            con_email: m.filter(function (l) { return lleno(l.email); }).length, agradecidos: m.filter(function (l) { return l.correo_estado === 'enviado'; }).length,
+            eventos: 2, dias_activos: Object.keys(dias).length, mejor_dia: Math.max.apply(null, [0].concat(Object.keys(dias).map(function (k) { return dias[k]; }))),
+            ultimo: m.length ? m[m.length - 1].created_at : null };
+        });
+        var horas = {}; ls.forEach(function (l) { var h = Number(l.created_at.slice(11, 13)); horas[h] = (horas[h] || 0) + 1; });
+        var top = function (campo) {
+          var m = {}; ls.forEach(function (l) { if (lleno(l[campo])) m[l[campo]] = (m[l[campo]] || 0) + 1; });
+          return Object.keys(m).map(function (k) { return { nombre: k, n: m[k] }; }).sort(function (a, b) { return b.n - a.n; }).slice(0, 6);
+        };
+        var porEv = {}; ls.forEach(function (l) { porEv[l.evento_id] = (porEv[l.evento_id] || 0) + 1; });
+        var detalle = {
+          total: ls.length, hoy: cuenta(function (l) { return l.created_at.slice(0, 10) === hoy; }),
+          por_hora: Object.keys(horas).map(function (h) { return { h: Number(h), n: horas[h] }; }).sort(function (a, b) { return a.h - b.h; }),
+          ritmo: 3.4, ritmo_equipo: alcance === 'mios' ? 2.9 : undefined, minutos_entre: 11.5,
+          calidad: { con_email: cuenta(function (l) { return lleno(l.email); }), con_telefono: cuenta(function (l) { return lleno(l.telefono); }),
+            con_cargo: cuenta(function (l) { return lleno(l.cargo); }), con_nota: cuenta(function (l) { return lleno(l.descripcion); }),
+            completos: cuenta(function (l) { return lleno(l.email) && lleno(l.telefono) && lleno(l.cargo) && lleno(l.descripcion); }),
+            con_fotos: 0, con_docs: cuenta(function (l) { return (l.documentos_ids || []).length > 0; }) },
+          temperatura: { caliente: cuenta(function (l) { return l.temperatura === 'caliente'; }), tibio: cuenta(function (l) { return l.temperatura === 'tibio'; }),
+            frio: cuenta(function (l) { return l.temperatura === 'frio'; }), sin: cuenta(function (l) { return !l.temperatura; }) },
+          origen: { qr: cuenta(function (l) { return l.origen === 'qr'; }), manual: cuenta(function (l) { return l.origen === 'manual'; }),
+            excel: cuenta(function (l) { return l.origen === 'excel'; }), sin: 0 },
+          embudo: { con_email: cuenta(function (l) { return lleno(l.email); }), agradecidos: cuenta(function (l) { return l.correo_estado === 'enviado'; }),
+            entregados: Math.round(ls.length * 0.68), abiertos: Math.round(ls.length * 0.41), rebotados: 1, con_envio: Math.round(ls.length * 0.35), bajas: 1 },
+          cargos: top('cargo'), empresas: top('empresa'),
+          personas: filas.map(function (f) {
+            var m = ls.filter(function (l) { return l.perfil_id === f.perfil_id; });
+            return { id: f.perfil_id, nombre: f.nombre, total: m.length, con_email: m.length,
+              completos: m.filter(function (l) { return lleno(l.descripcion); }).length, calientes: m.filter(function (l) { return l.temperatura === 'caliente'; }).length };
+          }).sort(function (a, b) { return b.total - a.total; }),
+          eventos: eventos.filter(function (e) { return !e.es_bandeja && porEv[e.id]; }).map(function (e, i) {
+            return { id: e.id, nombre: e.nombre, fecha: e.fecha, leads: porEv[e.id], costo: i === 0 ? 1800000 : null, personas: gente.length, peak: 11 + i };
+          }),
+          documentos: [{ nombre: 'Catálogo 2026.pdf', n: 9 }, { nombre: 'Ficha técnica chancadores.pdf', n: 4 }],
+          envios: [{ nombre: 'Seguimiento post feria', enviados: 14, errores: 1 }, { nombre: 'Invitación a demo', enviados: 6, errores: 0 }],
+          meta_diaria: 12, puede_ajustar: rol === 'admin',
+          networking: { invitaciones: 6, aceptadas: 4, conexiones: 5, reuniones: 3, reuniones_pendientes: 1 },
+        };
+        if (alcance === 'empresa' && !esExpo) {
+          detalle.expositoras = [
+            { empresa: 'TecnoSur Ltda.', evento: 'Expo Minería Andina 2026', personas: 2, max_personas: 5, leads: 18, ultimo: x.iso(0) },
+            { empresa: 'Hidráulica Pacífico', evento: 'Expo Minería Andina 2026', personas: 1, max_personas: 3, leads: 0, ultimo: null },
+          ];
+        }
+        return { filas: filas, detalle: detalle };
+      }
       // ── Equipos
       var equipos = [
         { id: EQ_NORTE, nombre: 'Zona Norte', empresa_id: EMP, lider_id: U.teamlead.id, integrantes: 3, created_at: x.iso(-90) },
@@ -303,7 +366,10 @@
             ];
           },
           stands_de: function () { return []; },
-          kpis_agregados: function () { return null; },
+          kpis_agregados: function (a) { return kpisDemo(a.p_alcance).filas; },
+          kpis_detalle: function (a) { return kpisDemo(a.p_alcance, a.p_evento).detalle; },
+          fijar_meta_diaria: function () { return null; },
+          fijar_costo_evento: function () { return null; },
           envios_del_evento: function () { return []; },
           qr_eventos_para_llevar: function () { return []; },
           qr_para_llevar: function () { return []; },
