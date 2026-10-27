@@ -1,0 +1,134 @@
+/* ============================================================
+   Demo de Leadyx y Gatheryx en su página de producto.
+   El teléfono muestra la app real (la misma de /demo/<app>, con datos de
+   ejemplo), no una réplica: queda igual a la última versión cada vez que se
+   reexporta la demo. Prefijo .de- para no chocar con los estilos del sitio.
+   ============================================================ */
+
+.proyecto-detalle {
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr;
+  gap: 2.4rem;
+  align-items: start;
+}
+.proyecto-detalle h2 { margin-bottom: 1rem; }
+
+.ficha-proyecto {
+  background: var(--fondo-alt);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-g);
+  padding: 1.6rem;
+}
+.ficha-proyecto h3 { margin-bottom: 1rem; }
+.ficha-proyecto ul { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+.ficha-proyecto li { display: flex; flex-direction: column; font-size: 0.92rem; }
+.ficha-proyecto strong { color: var(--tinta); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.demo-nota {
+  text-align: center;
+  max-width: 44rem;
+  margin: -1.2rem auto 2rem;
+  font-size: 0.95rem;
+}
+.demo-nota-pie { margin: 1.6rem auto 0; font-size: 0.85rem; color: var(--texto-suave); }
+
+/* ---------- Escenario: teléfono + panel ---------- */
+
+.de {
+  display: grid;
+  grid-template-columns: 390px 1fr;
+  gap: 2.2rem;
+  align-items: start;
+}
+
+.de-telefono {
+  position: relative;
+  width: 390px;
+  padding: 13px;
+  border-radius: 46px;
+  background: linear-gradient(160deg, #2B3346, #0B0F1A 55%, #232B3C);
+  box-shadow: 0 40px 80px -30px rgba(10, 14, 28, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+.de-pantalla {
+  position: relative;
+  height: 760px;
+  border-radius: 34px;
+  overflow: hidden;
+  background: #0A0E1C;
+  display: flex;
+  flex-direction: column;
+}
+/* La barra de estado del teléfono, encima de la app. */
+.de-status {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  padding: 0 26px;
+  font: 600 12px/1 "Inter", "Segoe UI", sans-serif;
+  color: #F2F5FF;
+}
+.de-status i { width: 74px; height: 18px; border-radius: 12px; background: #000; }
+.de-app {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  display: block;
+  background: #0A0E1C;
+}
+.de-cargando {
+  position: absolute;
+  inset: 30px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8B96B8;
+  font-size: 0.85rem;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.de-listo .de-cargando { opacity: 0; }
+
+/* ---------- Panel lateral ---------- */
+
+.de-panel { position: sticky; top: 6rem; }
+.de-panel-titulo { font-family: var(--fuente-display); font-size: 1.05rem; color: var(--tinta); margin-bottom: 0.3rem; }
+.de-panel-sub { font-size: 0.9rem; margin-bottom: 1.3rem; }
+
+.de-lista { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.4rem; }
+.de-lista li {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.de-num {
+  width: 26px; height: 26px; border-radius: 8px;
+  background: var(--azul-claro); color: var(--azul);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.de-lista small { display: block; font-weight: 400; font-size: 0.78rem; color: var(--texto-suave); }
+
+.de-acciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.de-acciones .btn { font-size: 0.9rem; padding: 0.65rem 1.1rem; }
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 980px) {
+  .de { grid-template-columns: 1fr; justify-items: center; }
+  .de-panel { position: static; width: 100%; max-width: 460px; }
+}
+@media (max-width: 860px) {
+  .proyecto-detalle { grid-template-columns: 1fr; }
+}
+@media (max-width: 430px) {
+  .de-telefono { width: 100%; padding: 9px; border-radius: 34px; }
+  .de-pantalla { height: 680px; border-radius: 26px; }
+}
