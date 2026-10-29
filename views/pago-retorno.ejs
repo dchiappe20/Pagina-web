@@ -87,7 +87,7 @@
           <a class="btn" href="/contacto">Escribirnos <span class="btn-flecha" aria-hidden="true">→</span></a>
           <a class="btn btn-contorno" href="/">Volver al inicio</a>
         <% } else { %>
-          <a class="btn" href="/planes">Volver a intentar <span class="btn-flecha" aria-hidden="true">→</span></a>
+          <a class="btn" href="<%= planesVisibles ? '/planes' : '/contacto' %>">Volver a intentar <span class="btn-flecha" aria-hidden="true">→</span></a>
           <a class="btn btn-contorno" href="/contacto">Escribirnos</a>
         <% } %>
       </div>

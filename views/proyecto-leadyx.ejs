@@ -145,8 +145,8 @@
       <p>Cuéntanos cómo capturan hoy sus contactos y te mostramos Leadyx funcionando con tus datos.</p>
     </div>
     <div class="banda-cta-botones">
-      <a class="btn" href="/planes?app=leads">Ver planes de Leadyx <span class="btn-flecha" aria-hidden="true">→</span></a>
-      <a class="btn btn-contorno" href="/contacto">Cuéntanos de tu proyecto</a>
+      <% if (planesVisibles) { %><a class="btn" href="/planes?app=leads">Ver planes de Leadyx <span class="btn-flecha" aria-hidden="true">→</span></a><% } %>
+      <a class="btn <%= planesVisibles ? 'btn-contorno' : '' %>" href="/contacto">Cuéntanos de tu proyecto</a>
     </div>
   </div>
 </section>

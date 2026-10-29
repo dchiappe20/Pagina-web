@@ -348,6 +348,13 @@ const proceso = [
 app.locals.servicios = servicios;
 app.locals.proceso = proceso;
 
+// Planes ocultos mientras se rehacen: sin enlaces en el menú, el pie ni las
+// páginas de producto, y /planes lleva a Contacto. /pago/retorno y
+// /crear-cuenta siguen vivas para quien ya estaba pagando. Volver a `true`
+// para mostrarlos.
+const PLANES_VISIBLES = false;
+app.locals.planesVisibles = PLANES_VISIBLES;
+
 // El chatbot del sitio: la Edge Function `chat-ventas` del proyecto Supabase
 // (vive en el repo de Themein). Sin URL_CHAT el widget no se carga: así el
 // sitio se puede publicar antes de desplegar la función sin mostrar un chat
@@ -399,6 +406,8 @@ app.get('/proyectos/leadyx', (req, res) => {
 });
 
 app.get('/planes', (req, res) => {
+  if (!PLANES_VISIBLES) return res.redirect(302, '/contacto');
+
   // `?app=gatheryx` abre directamente esa pestaña. Es lo que enlazan los
   // botones de cada página de producto y el «Cambiar plan» de las apps.
   const pedida = String(req.query.app || '').trim();
