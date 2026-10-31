@@ -660,12 +660,16 @@ app.get('/descargar/:app', async (req, res) => {
   }
 });
 
-// Formulario público de registro a eventos (Registro Pro Eventos).
-// La app enlaza a https://www.rendapps.cl/registro-forms?id=<eventoId>
-app.get('/registro-forms', (req, res) => {
-  // Sin caché: el formulario cambia con frecuencia y no debe quedar cacheado.
+// Formulario público de registro a eventos (Gatheryx). Desde el 31-10-2026 vive
+// en la web de Gatheryx: https://gatheryx.rendapps.cl/registro/?id=<eventoId>
+// (repo registro-pro-eventos, public/registro/index.html). Esta dirección queda
+// para los enlaces que ya se compartieron y para la vuelta de Flow, que mientras
+// no se cambie su `URL_FORMULARIO` sigue llegando aquí: manda allá con la misma
+// consulta (?id=, ?pago=, ?compra=).
+app.get(['/registro-forms', '/registro-forms.html'], (req, res) => {
+  const i = req.originalUrl.indexOf('?');
   res.set('Cache-Control', 'no-store, must-revalidate');
-  res.sendFile(path.join(__dirname, 'public', 'registro-forms.html'));
+  res.redirect(302, 'https://gatheryx.rendapps.cl/registro/' + (i >= 0 ? req.originalUrl.slice(i) : ''));
 });
 
 // Donde el cliente de una productora carga su cuenta de Flow o sus datos de
