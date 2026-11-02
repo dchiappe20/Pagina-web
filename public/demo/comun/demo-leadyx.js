@@ -26,13 +26,15 @@
   var EQ_NORTE = 'q0000000-0000-4000-8000-000000000001';
   var EQ_SUR = 'q0000000-0000-4000-8000-000000000002';
 
+  // Los de sql/95 («Permisos de rol») van como los trae cada rol por defecto.
+  var P95 = ['leads.capturar', 'leads.sin_evento', 'leads.editar_propios', 'leads.mover', 'ia.usar', 'correos.enviar', 'kpis.ver', 'networking.usar'];
   var PERMISOS = {
     admin: ['usuarios.gestionar', 'equipos.gestionar', 'empresa.configurar', 'plantillas.gestionar', 'documentos.gestionar',
-      'eventos.gestionar', 'leads.ver_todos', 'leads.editar_todos', 'leads.eliminar', 'leads.exportar', 'kpis.empresa', 'stands.gestionar'],
-    teamlead: ['equipo.liderar', 'leads.exportar', 'eventos.gestionar'],
-    usuario: ['leads.exportar'],
-    encargado: ['expositores.equipo', 'leads.ver_todos', 'leads.editar_todos', 'leads.exportar', 'kpis.empresa'],
-    expositor: ['leads.exportar', 'kpis.empresa'],
+      'eventos.gestionar', 'leads.ver_todos', 'leads.editar_todos', 'leads.eliminar', 'leads.exportar', 'kpis.empresa', 'stands.gestionar'].concat(P95),
+    teamlead: ['equipo.liderar', 'leads.exportar', 'eventos.gestionar'].concat(P95),
+    usuario: ['leads.exportar'].concat(P95),
+    encargado: ['expositores.equipo', 'leads.ver_todos', 'leads.editar_todos', 'leads.exportar', 'kpis.empresa'].concat(P95),
+    expositor: ['leads.exportar', 'kpis.empresa'].concat(P95),
   };
   var ROL_CORE = { admin: 'admin', teamlead: 'seller', usuario: 'user', encargado: 'user', expositor: 'user' };
   var ROL_NOMBRE = { admin: 'Admin', teamlead: 'Team Lead', usuario: 'Usuario', encargado: 'Encargado expositor', expositor: 'Usuario expositor' };
