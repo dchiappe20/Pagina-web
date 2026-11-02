@@ -225,6 +225,13 @@
         { id: 'p0000000-0000-4000-8000-000000000002', empresa_id: empresaId, nombre: 'Seguimiento a 7 días', tipo: 'seguimiento',
           asunto: '¿Pudiste revisar nuestra propuesta?', cuerpo: 'Hola {nombre},\n\nTe escribimos para saber si pudiste revisar la información que te enviamos después de {evento}.\n\nQuedamos atentos.',
           activa: true, created_at: x.iso(-28) },
+        // Las dos invitaciones que trae toda empresa con Leadyx (sql/101).
+        { id: 'p0000000-0000-4000-8000-000000000003', empresa_id: empresaId, nombre: 'Invitar a líder expositor', tipo: 'invitar_lider',
+          asunto: '{empresa} es expositora en {evento}', cuerpo: 'Hola {nombre},\n\n{empresa} ha sido registrada como empresa expositora en el evento {evento} y tú has sido asignado(a) como representante para capturar los leads de su stand, junto a los {expositores} expositores de tu equipo.\n\nPara capturar leads, descarga Leadyx desde {enlace} e ingresa con el usuario y password que te indicamos abajo.',
+          firma: 'Un saludo,\n{mi_empresa}', activa: true, created_at: x.iso(-20) },
+        { id: 'p0000000-0000-4000-8000-000000000004', empresa_id: empresaId, nombre: 'Invitación a nuevo anfitrión', tipo: 'invitar_anfitrion',
+          asunto: '{anfitrion} es anfitrión con {mi_empresa}', cuerpo: 'Hola {nombre},\n\n{anfitrion} ha sido registrado como anfitrión de sus eventos con {mi_empresa} y tú has sido asignado(a) como representante para capturar los leads de esos eventos, y para sumar a las {personas} personas de tu equipo.\n\nPara capturar leads, descarga Leadyx desde {enlace} e ingresa con el usuario y password que te indicamos abajo.',
+          firma: 'Un saludo,\n{mi_empresa}', activa: true, created_at: x.iso(-20) },
       ];
       var documentos = [
         { id: 'd0000000-0000-4000-8000-000000000001', empresa_id: empresaId, evento_id: null, nombre: 'Catálogo 2026.pdf', ruta: 'demo/catalogo.pdf', tamano: 2480000, created_at: x.iso(-40) },
