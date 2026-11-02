@@ -342,6 +342,22 @@
           permiso_tl: function () { return rol === 'admin' || rol === 'teamlead'; },
           permiso_user: function () { return true; },
           permisos_efectivos: function () { return PERMISOS[rol]; },
+          // Permisos del rol Usuario (sql/95), para Mi empresa → Permisos (02-11-2026).
+          permisos_ajustables: function () {
+            if (rol !== 'admin') return [];
+            var p = function (clave, nombre, descripcion, grupo, activo) { return { clave: clave, nombre: nombre, descripcion: descripcion, grupo: grupo, activo: activo, por_defecto: activo }; };
+            return [{ rol: 'user', rol_nombre: 'Usuario', permisos: [
+              p('leads.capturar', 'Capturar leads', 'Escanear o escribir leads en los eventos.', 'Captura', true),
+              p('leads.sin_evento', 'Capturar sin evento', 'Guardar leads fuera de un evento.', 'Captura', true),
+              p('leads.mover', 'Mover leads de evento', 'Pasar un lead a otro evento.', 'Captura', true),
+              p('ia.usar', 'Dictado con IA', 'Dictar el comentario del lead.', 'Captura', true),
+              p('leads.ver_todos', 'Ver todos los leads', 'Ver los leads de toda la empresa.', 'Eventos y leads', false),
+              p('leads.editar_todos', 'Editar leads de otros', 'Cambiar leads que capturó otra persona.', 'Eventos y leads', false),
+              p('leads.exportar', 'Exportar a planilla', 'Bajar los leads a Excel.', 'Eventos y leads', true),
+              p('kpis.ver', 'Ver KPIs', 'Ver las cifras de captura.', 'Cifras', true),
+            ] }];
+          },
+          ajustar_permiso_rol: function () { return null; },
           mi_equipo: function () { return rol === 'admin' ? null : EQ_NORTE; },
           equipos_de_mi_empresa: function () { return equipos; },
           integrantes_de_mi_equipo: function () { return miembros.slice(1); },
