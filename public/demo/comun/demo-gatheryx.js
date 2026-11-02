@@ -20,12 +20,16 @@
     encargado: { id: 'b0000000-0000-4000-8000-000000000004', email: 'andres.munoz@tecnosur.cl', nombre: 'Andrés', apellido: 'Muñoz' },
     expositor: { id: 'b0000000-0000-4000-8000-000000000005', email: 'valentina.diaz@tecnosur.cl', nombre: 'Valentina', apellido: 'Díaz' },
   };
+  // Los de sql/95 (módulo Permisos) van como los trae cada rol por defecto.
+  var P95 = ['registrados.registrar', 'registrados.carga_masiva', 'registrados.editar', 'registrados.eliminar', 'vip.invitar',
+    'acreditar.usar', 'acreditar.quitar', 'correos.reenviar_qr', 'correos.agradecer', 'kpis.ver', 'cobros.marcar'];
+  var P95_EXPO = ['registrados.registrar', 'registrados.editar', 'vip.invitar', 'kpis.ver'];
   var PERMISOS = {
     admin: ['usuarios.gestionar', 'eventos.gestionar', 'registrados.ver_todos', 'clientes.gestionar', 'datos.exportar',
-      'plantillas.gestionar', 'cobros.gestionar', 'expositores.gestionar'],
-    usuario: ['registrados.ver_todos'],
-    encargado: ['expositores.equipo', 'registrados.ver_todos'],
-    expositor: ['registrados.ver_todos'],
+      'plantillas.gestionar', 'cobros.gestionar', 'expositores.gestionar'].concat(P95),
+    usuario: ['registrados.ver_todos'].concat(P95),
+    encargado: ['expositores.equipo', 'registrados.ver_todos'].concat(P95_EXPO),
+    expositor: ['registrados.ver_todos'].concat(P95_EXPO),
   };
   var ROL_CORE = { admin: 'admin', usuario: 'user', encargado: 'user', expositor: 'user' };
   var ROL_NOMBRE = { admin: 'Admin', usuario: 'Usuario', encargado: 'Encargado expositor', expositor: 'Usuario expositor' };
