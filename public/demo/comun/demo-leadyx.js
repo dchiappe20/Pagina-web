@@ -250,6 +250,14 @@
         { usuario_id: 'n0000000-0000-4000-8000-000000000004', nombre: 'Esteban Rivas', cargo: 'Jefe de Compras', empresa: 'Clínica Santa María', industria: 'Salud', pais: 'Chile', que_ofrece: 'Equipamiento médico', en_linea: false },
         { usuario_id: 'n0000000-0000-4000-8000-000000000005', nombre: 'Lucía Figueroa', cargo: 'CEO', empresa: 'Kallpa Energía', industria: 'Energía', pais: 'Perú', que_ofrece: 'Soluciones solares', en_linea: false },
         { usuario_id: 'n0000000-0000-4000-8000-000000000006', nombre: 'Marco Bustos', cargo: 'Key Account Manager', empresa: 'Hidráulica Pacífico', industria: 'Industrial', pais: 'Chile', que_ofrece: 'Bombas y válvulas', en_linea: true },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000007', nombre: 'Paula Henríquez', cargo: 'Jefa de Abastecimiento', empresa: 'Minera Centinela', industria: 'Minería', pais: 'Chile', que_ofrece: 'Contratos de suministro', en_linea: false },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000008', nombre: 'Tomás Aguirre', cargo: 'Gerente de Proyectos', empresa: 'Andes Montajes', industria: 'Construcción', pais: 'Chile', que_ofrece: 'Montaje industrial', en_linea: true },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000009', nombre: 'Valentina Soto', cargo: 'Subgerenta de Ventas', empresa: 'TecnoSur', industria: 'Tecnología', pais: 'Chile', que_ofrece: 'Software de mantenimiento', en_linea: false },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000010', nombre: 'Andrés Palma', cargo: 'Director Comercial', empresa: 'Frío Austral', industria: 'Logística', pais: 'Argentina', que_ofrece: 'Cadena de frío', en_linea: false },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000011', nombre: 'Camila Rojas', cargo: 'Ingeniera de Procesos', empresa: 'Cobre Norte', industria: 'Minería', pais: 'Chile', que_ofrece: 'Optimización de plantas', en_linea: true },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000012', nombre: 'Felipe Vargas', cargo: 'Jefe de Mantenimiento', empresa: 'Energía del Sur', industria: 'Energía', pais: 'Chile', que_ofrece: 'Servicios de subestaciones', en_linea: false },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000013', nombre: 'Isidora Molina', cargo: 'Product Manager', empresa: 'AgroVal', industria: 'Agroindustria', pais: 'Perú', que_ofrece: 'Fertilizantes de precisión', en_linea: false },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000014', nombre: 'Rodrigo Tapia', cargo: 'Socio', empresa: 'Consultora Tapia', industria: 'Servicios', pais: 'Chile', que_ofrece: 'Asesoría en compras', en_linea: true },
       ].map(function (g) { return Object.assign({ foto_ruta: null, logo_ruta: null, logo_url: null }, g); });
       var CX = ['c0000000-0000-4000-8000-000000000001', 'c0000000-0000-4000-8000-000000000002', 'c0000000-0000-4000-8000-000000000003'];
       var chats = [
@@ -502,13 +510,22 @@
               Object.assign({}, gente[4], { conexion_id: 'c0000000-0000-4000-8000-000000000005', sentido: 'enviada', mensaje: null, invitado_en: x.iso(-2, '11:00') }),
             ];
           },
-          net_directorio: function () {
-            return gente.map(function (g, i) {
+          net_directorio: function (a) {
+            var sinTildes = function (s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
+            var q = sinTildes(a.p_busqueda).split(/\s+/).filter(Boolean);
+            var filas = gente.map(function (g, i) {
               return Object.assign({}, g, { relacion: i < 3 ? 'conectado' : i === 3 ? 'recibida' : i === 4 ? 'enviada' : 'ninguna',
-                conexion_id: i < 3 ? CX[i] : null, evento_comun: i % 2 ? 'Expo Minería Andina 2026' : null, eventos_comunes: i % 2 ? 1 : 0, total: gente.length });
+                conexion_id: i < 3 ? CX[i] : null, evento_comun: i % 2 ? 'Expo Minería Andina 2026' : null, eventos_comunes: i % 2 ? 1 : 0 });
+            }).filter(function (g) {
+              var texto = sinTildes([g.nombre, g.empresa, g.cargo, g.que_ofrece].join(' '));
+              return q.every(function (w) { return texto.indexOf(w) >= 0; })
+                && (!a.p_industria || sinTildes(g.industria).indexOf(a.p_industria) >= 0)
+                && (!a.p_mis_eventos || !!g.evento_comun);
             });
+            var desde = a.p_desde || 0;
+            return filas.slice(desde, desde + (a.p_limite || 40)).map(function (g) { return Object.assign(g, { total: filas.length }); });
           },
-          net_sugeridos: function () { return gente.slice(3); },
+          net_sugeridos: function (a) { return gente.slice(3, 3 + (a.p_limite || 6)); },
           net_persona: function (a) {
             if (a.p_usuario === yo.id) {
               return Object.assign({ usuario_id: yo.id, nombre: miPerfil.nombre_completo, cargo: perfilNet.ver_cargo ? miPerfil.cargo : null, empresa: DE.nombre, industria: perfilNet.ver_industria ? DE.industria : null,
@@ -526,7 +543,8 @@
           },
           net_mis_eventos: function () { return eventosRed; },
           net_eventos_comunes: function () { return [eventosRed[0]]; },
-          net_mis_bloques: function () {
+          net_mis_bloques: function (a) {
+            if (a.p_origen === 'gatheryx') return [{ id: 'b3', dia: x.dia(9), hora_inicio: '10:00:00', hora_fin: '10:30:00', ocupado: true }, { id: 'b4', dia: x.dia(9), hora_inicio: '12:00:00', hora_fin: '12:30:00', ocupado: false }];
             return [{ id: 'b1', dia: x.dia(0), hora_inicio: '11:00:00', hora_fin: '11:30:00', ocupado: true }, { id: 'b2', dia: x.dia(0), hora_inicio: '15:00:00', hora_fin: '15:30:00', ocupado: false }];
           },
           net_horarios_de: function () {
@@ -538,6 +556,9 @@
               { id: 'm1', sentido: 'enviada', estado: 'aceptada', elige: 'invitador', origen: 'leadyx', evento_id: EV1, evento: 'Expo Minería Andina 2026',
                 dia: x.dia(0), hora_inicio: '11:30:00', hora_fin: '12:00:00', punto_encuentro: 'Stand B-14', usuario_id: gente[0].usuario_id, nombre: gente[0].nombre,
                 cargo: gente[0].cargo, empresa: gente[0].empresa, foto_ruta: null, logo_ruta: null, logo_url: null, telefono: '+56 9 8888 1234', comparto_telefono: true, creado_en: x.iso(-1) },
+              { id: 'm3', sentido: 'recibida', estado: 'aceptada', elige: 'invitado', origen: 'gatheryx', evento_id: 'g0000000-0000-4000-8000-000000000001', evento: 'Seminario Logística 4.0',
+                dia: x.dia(9), hora_inicio: '10:00:00', hora_fin: '10:30:00', punto_encuentro: 'Lobby del hotel', usuario_id: gente[2].usuario_id, nombre: gente[2].nombre,
+                cargo: gente[2].cargo, empresa: gente[2].empresa, foto_ruta: null, logo_ruta: null, logo_url: null, telefono: null, comparto_telefono: false, creado_en: x.iso(-1) },
               { id: 'm2', sentido: 'recibida', estado: 'pendiente', elige: 'invitado', origen: 'gatheryx', evento_id: 'g0000000-0000-4000-8000-000000000001', evento: 'Seminario Logística 4.0',
                 dia: null, hora_inicio: null, hora_fin: null, punto_encuentro: null, usuario_id: gente[1].usuario_id, nombre: gente[1].nombre,
                 cargo: gente[1].cargo, empresa: gente[1].empresa, foto_ruta: null, logo_ruta: null, logo_url: null, telefono: null, comparto_telefono: false, creado_en: x.iso(-2) },
