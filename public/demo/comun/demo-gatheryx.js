@@ -121,6 +121,18 @@
         max_personas: 5, personas: 2, max_invitados: 10, invitados: 4, es_pago: false,
       }] : [];
 
+      // ── Datos de la empresa (sql/104, 04-11-2026). La expositora todavía no
+      //    tiene industria ni «qué ofrecemos»: su representante entra editándolos.
+      var DE = esExpo
+        ? { id: empresaId, nombre: empresa, rut: '76543210-3', logo_url: null, industria: null, que_ofrece: null }
+        : { id: empresaId, nombre: empresa, rut: '77555666-8', logo_url: null, industria: 'Eventos y Ferias', que_ofrece: 'Producción de ferias, congresos y eventos corporativos.' };
+      var datosEmpresa = function () {
+        var faltan = [];
+        if (!DE.industria) faltan.push('industria');
+        if (!DE.que_ofrece) faltan.push('que_ofrece');
+        return { id: DE.id, nombre: DE.nombre, rut: DE.rut, logo_url: DE.logo_url, industria: DE.industria, que_ofrece: DE.que_ofrece,
+          puedo_editar: rol === 'admin' || rol === 'encargado', faltan: faltan, por: null };
+      };
       var acceso = {
         autorizado: true, rol: ROL_CORE[rol], email: yo.email, nombre: yo.nombre, apellido: yo.apellido, nombre_completo: nc(yo),
         empresa: empresa, empresa_id: empresaId, logo_url: null, password_definida: true, clave_temporal: false,
@@ -175,6 +187,13 @@
         },
         rpc: {
           verificar_acceso_app: function () { return acceso; },
+          datos_de_mi_empresa: function () { return datosEmpresa(); },
+          guardar_datos_mi_empresa: function (a) {
+            DE.nombre = a.p_nombre; DE.rut = String(a.p_rut || '').replace(/[^0-9kK]/g, '').replace(/^(\d+)([0-9kK])$/, '$1-$2').toUpperCase();
+            DE.industria = a.p_industria || null; DE.que_ofrece = a.p_que_ofrece || null;
+            return datosEmpresa();
+          },
+          fijar_logo_mi_empresa: function (a) { DE.logo_url = a.p_ruta ? DE.logo_url : null; return datosEmpresa(); },
           mi_perfil: function () {
             return { id: yo.id, email: yo.email, nombre: yo.nombre, apellido: yo.apellido, nombre_completo: nc(yo), rol: ROL_CORE[rol],
               estado: 'activo', password_definida: true, empresa_id: empresaId, empresa: empresa, logo_url: null };

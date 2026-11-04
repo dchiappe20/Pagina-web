@@ -305,6 +305,18 @@
         expositora_id: X1, evento_id: COPIA, evento: 'Expo Minería Andina 2026', organizador: 'Andes Industrial SpA', origen: 'gatheryx',
         rol: rol === 'encargado' ? 'encargado' : 'usuario', primer_dia: x.dia(0), ultimo_dia: x.dia(4), empezo: true, vigente: true,
       }] : [];
+      // ── Datos de la empresa (sql/104, 04-11-2026). La expositora todavía no
+      //    tiene industria ni «qué ofrecemos»: su representante entra editándolos.
+      var DE = esExpo
+        ? { id: empresaId, nombre: empresa, rut: '76543210-3', logo_url: null, industria: null, que_ofrece: null }
+        : { id: empresaId, nombre: empresa, rut: '76111222-8', logo_url: null, industria: 'Minería', que_ofrece: 'Equipos y repuestos para la gran minería, con servicio técnico en terreno.' };
+      var datosEmpresa = function () {
+        var faltan = [];
+        if (!DE.industria) faltan.push('industria');
+        if (!DE.que_ofrece) faltan.push('que_ofrece');
+        return { id: DE.id, nombre: DE.nombre, rut: DE.rut, logo_url: DE.logo_url, industria: DE.industria, que_ofrece: DE.que_ofrece,
+          puedo_editar: rol === 'admin' || rol === 'encargado', faltan: faltan, por: null };
+      };
       var estadoDeUso = {
         empresa_id: empresaId, es_stand: false, vence_en: null, dias_restantes: null, modo_lector: false, organizador: esExpo ? 'Andes Industrial SpA' : null,
         puede_stands: rol === 'admin', puede_configurar_qr: rol === 'admin',
@@ -342,6 +354,13 @@
           verificar_acceso_app: function () { return acceso; },
           mi_perfil: function () { return miPerfil; },
           estado_de_uso: function () { return estadoDeUso; },
+          datos_de_mi_empresa: function () { return datosEmpresa(); },
+          guardar_datos_mi_empresa: function (a) {
+            DE.nombre = a.p_nombre; DE.rut = String(a.p_rut || '').replace(/[^0-9kK]/g, '').replace(/^(\d+)([0-9kK])$/, '$1-$2').toUpperCase();
+            DE.industria = a.p_industria || null; DE.que_ofrece = a.p_que_ofrece || null;
+            return datosEmpresa();
+          },
+          fijar_logo_mi_empresa: function (a) { DE.logo_url = a.p_ruta ? DE.logo_url : null; return datosEmpresa(); },
           // La participación del expositor (llega de Gatheryx desde el 04-11-2026), para Equipo expositor.
           mis_participaciones: function () {
             return esExpo ? [{
