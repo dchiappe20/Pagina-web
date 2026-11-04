@@ -399,7 +399,7 @@
           version_disponible: function () { return { hay_actualizacion: false }; },
           notas_de_version: function () { return []; },
           historial_de_notas: function () { return []; },
-          mi_plan: function () { return { codigo: acceso.plan, nombre: esExpo ? 'Expositora' : 'Empresa', limites: acceso.limites }; },
+          mi_plan: function () { return { codigo: acceso.plan, nombre: esExpo ? 'Expositora' : 'Empresa', limites: acceso.limites, metricas: [], funciones: [] }; },
           cupo_de_app: function () { return { usados: 4, tope: 10 }; },
           puedo_seguir: function () { return true; },
           permiso_tl: function () { return rol === 'admin' || rol === 'teamlead'; },
