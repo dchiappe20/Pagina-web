@@ -222,10 +222,14 @@
         { id: 'p0000000-0000-4000-8000-000000000001', empresa_id: empresaId, nombre: 'Agradecimiento por visitar el stand', tipo: 'agradecimiento',
           asunto: 'Gracias por visitarnos en {evento}', cuerpo: 'Hola {nombre},\n\nFue un gusto conversar contigo en {evento}. Te dejamos nuestro catálogo y quedamos atentos.\n\nSaludos,\n{remitente}',
           activa: true, created_at: x.iso(-30) },
-        { id: 'p0000000-0000-4000-8000-000000000002', empresa_id: empresaId, nombre: 'Seguimiento a 7 días', tipo: 'seguimiento',
+        { id: 'p0000000-0000-4000-8000-000000000002', empresa_id: empresaId, nombre: 'Seguimiento de la feria', tipo: 'instantaneo',
           asunto: '¿Pudiste revisar nuestra propuesta?', cuerpo: 'Hola {nombre},\n\nTe escribimos para saber si pudiste revisar la información que te enviamos después de {evento}.\n\nQuedamos atentos.',
           activa: true, created_at: x.iso(-28) },
-        // Las dos invitaciones que trae toda empresa con Leadyx (sql/101).
+        // Tipos quitados el 04-11-2026 (periódico e invitaciones): siguen en la
+        // base y la app los oculta. Están aquí para probar que no rompen nada.
+        { id: 'p0000000-0000-4000-8000-000000000005', empresa_id: empresaId, nombre: 'Seguimiento a 7 días', tipo: 'periodico',
+          asunto: '¿Pudiste revisar nuestra propuesta?', cuerpo: 'Hola {nombre},\n\nTe escribimos de nuevo después de {evento}.',
+          frecuencia: 'dias', cada_dias: 7, hora: 9, activa: true, created_at: x.iso(-27) },
         { id: 'p0000000-0000-4000-8000-000000000003', empresa_id: empresaId, nombre: 'Invitar a líder expositor', tipo: 'invitar_lider',
           asunto: '{empresa} es expositora en {evento}', cuerpo: 'Hola {nombre},\n\n{empresa} ha sido registrada como empresa expositora en el evento {evento} y tú has sido asignado(a) como representante para capturar los leads de su stand, junto a los {expositores} expositores de tu equipo.\n\nPara capturar leads, descarga Leadyx desde {enlace} e ingresa con el usuario y password que te indicamos abajo.',
           firma: 'Un saludo,\n{mi_empresa}', activa: true, created_at: x.iso(-20) },
@@ -298,7 +302,7 @@
         limites: { usuarios: 10, eventos: null, stands: true, expositoras: 5, correo_automatico: true },
       };
       var usoExpo = esExpo ? [{
-        expositora_id: X1, evento_id: COPIA, evento: 'Expo Minería Andina 2026', organizador: 'Andes Industrial SpA', origen: 'leadyx',
+        expositora_id: X1, evento_id: COPIA, evento: 'Expo Minería Andina 2026', organizador: 'Andes Industrial SpA', origen: 'gatheryx',
         rol: rol === 'encargado' ? 'encargado' : 'usuario', primer_dia: x.dia(0), ultimo_dia: x.dia(4), empezo: true, vigente: true,
       }] : [];
       var estadoDeUso = {
@@ -338,7 +342,14 @@
           verificar_acceso_app: function () { return acceso; },
           mi_perfil: function () { return miPerfil; },
           estado_de_uso: function () { return estadoDeUso; },
-          mis_participaciones: function () { return []; },
+          // La participación del expositor (llega de Gatheryx desde el 04-11-2026), para Equipo expositor.
+          mis_participaciones: function () {
+            return esExpo ? [{
+              expositora_id: X1, rol: rol === 'encargado' ? 'encargado' : 'usuario', empresa: empresa, organizador: 'Andes Industrial SpA',
+              origen: 'gatheryx', gx_evento_id: 'g0000000-0000-4000-8000-000000000002', lx_espejo_id: COPIA, evento: 'Expo Minería Andina 2026',
+              ultimo_dia: x.dia(4), vigente: true, max_personas: 5, personas: 2,
+            }] : [];
+          },
           visibilidad_leads: function () { return rol === 'admin' || rol === 'encargado' ? 'todos' : rol === 'teamlead' ? 'equipo' : 'mios'; },
           version_disponible: function () { return { hay_actualizacion: false }; },
           notas_de_version: function () { return []; },
