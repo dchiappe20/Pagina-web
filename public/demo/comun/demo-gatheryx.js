@@ -5,9 +5,9 @@
  */
 (function () {
   var ROLES = [
-    { id: 'admin', titulo: 'Administrador', detalle: 'Crea y gestiona eventos, clientes, cobros, plantillas y empresas expositoras.' },
+    { id: 'admin', titulo: 'Administrador', detalle: 'Crea y gestiona eventos, hosters, cobros, plantillas y empresas expositoras.' },
     { id: 'usuario', titulo: 'Usuario', detalle: 'Registra y acredita asistentes en el evento.' },
-    { id: 'encargado', titulo: 'Encargado expositor', detalle: 'Empresa expositora: registra a sus invitados y suma a su equipo.' },
+    { id: 'encargado', titulo: 'Representante expositor', detalle: 'Empresa expositora: registra a sus invitados y suma a su equipo.' },
     { id: 'expositor', titulo: 'Usuario expositor', detalle: 'Integrante de una empresa expositora: registra invitados en su evento.' },
   ];
 
@@ -32,7 +32,7 @@
     expositor: ['registrados.ver_todos'].concat(P95_EXPO),
   };
   var ROL_CORE = { admin: 'admin', usuario: 'user', encargado: 'user', expositor: 'user' };
-  var ROL_NOMBRE = { admin: 'Admin', usuario: 'Usuario', encargado: 'Encargado expositor', expositor: 'Usuario expositor' };
+  var ROL_NOMBRE = { admin: 'Admin', usuario: 'Usuario', encargado: 'Representante expositor', expositor: 'Usuario expositor' };
   function nc(u) { return u.nombre + ' ' + u.apellido; }
 
   window.RendAppsDemo.iniciar({

@@ -9,7 +9,7 @@
     { id: 'admin', titulo: 'Administrador', detalle: 'Ve todo: eventos, leads de la empresa, equipos, plantillas, expositoras y KPIs.' },
     { id: 'teamlead', titulo: 'Team Lead', detalle: 'Lidera su equipo: ve los leads de su gente y reparte eventos.' },
     { id: 'usuario', titulo: 'Usuario', detalle: 'Captura leads en terreno y ve los suyos.' },
-    { id: 'encargado', titulo: 'Encargado expositor', detalle: 'Empresa expositora en un evento ajeno: suma a su equipo y captura en su stand.' },
+    { id: 'encargado', titulo: 'Representante expositor', detalle: 'Empresa expositora en un evento ajeno: suma a su equipo y captura en su stand.' },
     { id: 'expositor', titulo: 'Usuario expositor', detalle: 'Integrante de una empresa expositora: captura leads sólo en su evento.' },
   ];
 
@@ -37,7 +37,7 @@
     expositor: ['leads.exportar', 'kpis.empresa'].concat(P95),
   };
   var ROL_CORE = { admin: 'admin', teamlead: 'seller', usuario: 'user', encargado: 'user', expositor: 'user' };
-  var ROL_NOMBRE = { admin: 'Admin', teamlead: 'Team Lead', usuario: 'Usuario', encargado: 'Encargado expositor', expositor: 'Usuario expositor' };
+  var ROL_NOMBRE = { admin: 'Admin', teamlead: 'Team Lead', usuario: 'Usuario', encargado: 'Representante expositor', expositor: 'Usuario expositor' };
 
   function nombreCompleto(u) { return u.nombre + ' ' + u.apellido; }
 
@@ -230,11 +230,11 @@
         { id: 'p0000000-0000-4000-8000-000000000005', empresa_id: empresaId, nombre: 'Seguimiento a 7 días', tipo: 'periodico',
           asunto: '¿Pudiste revisar nuestra propuesta?', cuerpo: 'Hola {nombre},\n\nTe escribimos de nuevo después de {evento}.',
           frecuencia: 'dias', cada_dias: 7, hora: 9, activa: true, created_at: x.iso(-27) },
-        { id: 'p0000000-0000-4000-8000-000000000003', empresa_id: empresaId, nombre: 'Invitar a líder expositor', tipo: 'invitar_lider',
+        { id: 'p0000000-0000-4000-8000-000000000003', empresa_id: empresaId, nombre: 'Invitar a representante expositor', tipo: 'invitar_lider',
           asunto: '{empresa} es expositora en {evento}', cuerpo: 'Hola {nombre},\n\n{empresa} ha sido registrada como empresa expositora en el evento {evento} y tú has sido asignado(a) como representante para capturar los leads de su stand, junto a los {expositores} expositores de tu equipo.\n\nPara capturar leads, descarga Leadyx desde {enlace} e ingresa con el usuario y password que te indicamos abajo.',
           firma: 'Un saludo,\n{mi_empresa}', activa: true, created_at: x.iso(-20) },
-        { id: 'p0000000-0000-4000-8000-000000000004', empresa_id: empresaId, nombre: 'Invitación a nuevo anfitrión', tipo: 'invitar_anfitrion',
-          asunto: '{anfitrion} es anfitrión con {mi_empresa}', cuerpo: 'Hola {nombre},\n\n{anfitrion} ha sido registrado como anfitrión de sus eventos con {mi_empresa} y tú has sido asignado(a) como representante para capturar los leads de esos eventos, y para sumar a las {personas} personas de tu equipo.\n\nPara capturar leads, descarga Leadyx desde {enlace} e ingresa con el usuario y password que te indicamos abajo.',
+        { id: 'p0000000-0000-4000-8000-000000000004', empresa_id: empresaId, nombre: 'Invitación a nuevo hoster', tipo: 'invitar_anfitrion',
+          asunto: '{hoster} es hoster con {mi_empresa}', cuerpo: 'Hola {nombre},\n\n{hoster} ha sido registrado como hoster de sus eventos con {mi_empresa} y tú has sido asignado(a) como representante para capturar los leads de esos eventos, y para sumar a las {personas} personas de tu equipo.\n\nPara capturar leads, descarga Leadyx desde {enlace} e ingresa con el usuario y password que te indicamos abajo.',
           firma: 'Un saludo,\n{mi_empresa}', activa: true, created_at: x.iso(-20) },
       ];
       var documentos = [
