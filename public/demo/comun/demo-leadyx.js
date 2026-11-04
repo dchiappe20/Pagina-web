@@ -458,11 +458,20 @@
           mis_invitaciones_gx: function () { return []; },
           resumen_evento_gx: function () { return null; },
           // Networking
+          // Con localStorage rd_demo_sin_net = 1 se prueba la primera vez en Networking (sql/106).
           net_estado: function () {
-            return { modo_lector: false, cuenta: { nombre: nombreCompleto(yo), email: yo.email },
-              empresa: { id: empresaId, nombre: empresa, industria: perfilNet.industria, que_ofrece: perfilNet.que_ofrece, logo_ruta: null, logo_url: null, por: nombreCompleto(yo), por_mi: true },
-              perfil: perfilNet, cargos: ['Gerenta Comercial', 'Ejecutivo de Ventas'], conexiones: 3, invitaciones: 2, avisos_sin_leer: 2, reuniones: 1, solicitudes_reunion: 1 };
+            perfilNet.industria = DE.industria || ''; perfilNet.que_ofrece = DE.que_ofrece || '';
+            return { modo_lector: false,
+              cuenta: { nombre: miPerfil.nombre_completo, email: yo.email, cargo: miPerfil.cargo, telefono: miPerfil.telefono, pais: miPerfil.pais, foto_ruta: miPerfil.foto_ruta },
+              empresa: { id: empresaId, nombre: DE.nombre, industria: DE.industria, que_ofrece: DE.que_ofrece, logo_ruta: null, logo_url: DE.logo_url, por: nombreCompleto(yo), por_mi: true, puedo_editar: rol === 'admin' || rol === 'encargado' },
+              perfil: localStorage.getItem('rd_demo_sin_net') === '1' ? null : perfilNet, cargos: ['Gerenta Comercial', 'Ejecutivo de Ventas'], conexiones: 3, invitaciones: 2, avisos_sin_leer: 2, reuniones: 1, solicitudes_reunion: 1 };
           },
+          net_activar_perfil: function () { localStorage.removeItem('rd_demo_sin_net'); return null; },
+          net_fijar_visible: function (a) {
+            var col = { email: 'ver_email', telefono: 'ver_telefono', eventos: 'ver_eventos', cargo: 'ver_cargo', industria: 'ver_industria', pais: 'ver_pais', ofrece: 'ver_ofrece' }[a.p_campo];
+            perfilNet[col] = !!a.p_visible; return null;
+          },
+          net_fijar_portada: function (a) { perfilNet.portada_fondo = a.p_fondo; perfilNet.portada_imagen = a.p_imagen; perfilNet.portada_tamano = a.p_tamano; return null; },
           net_sin_leer: function () { return 2; },
           net_chats: function () {
             return chats.map(function (c) {
@@ -502,14 +511,15 @@
           net_sugeridos: function () { return gente.slice(3); },
           net_persona: function (a) {
             if (a.p_usuario === yo.id) {
-              return Object.assign({ usuario_id: yo.id, nombre: perfilNet.nombre, cargo: perfilNet.cargo, empresa: empresa, industria: perfilNet.industria,
-                pais: 'Chile', que_ofrece: perfilNet.que_ofrece, foto_ruta: null, logo_ruta: null, logo_url: null, en_linea: true,
+              return Object.assign({ usuario_id: yo.id, nombre: miPerfil.nombre_completo, cargo: perfilNet.ver_cargo ? miPerfil.cargo : null, empresa: DE.nombre, industria: perfilNet.ver_industria ? DE.industria : null,
+                pais: perfilNet.ver_pais ? miPerfil.pais : null, que_ofrece: perfilNet.ver_ofrece ? DE.que_ofrece : null, foto_ruta: miPerfil.foto_ruta, logo_ruta: null, logo_url: DE.logo_url, en_linea: true,
                 visto_en: null, yo: true, relacion: 'ninguna', conexion_id: null, mensaje: null, invitado_en: null, email: yo.email,
+                portada_fondo: perfilNet.portada_fondo || 'rayas', portada_imagen: perfilNet.portada_imagen || null, portada_tamano: perfilNet.portada_tamano || 1,
                 telefono: perfilNet.telefono, eventos: eventosRed.map(function (e) { return Object.assign({ comun: false }, e); }), privado: false, ver_eventos: true });
             }
             var g = gente.filter(function (p) { return p.usuario_id === a.p_usuario; })[0] || gente[0];
             var i = gente.indexOf(g);
-            return Object.assign({}, g, { visto_en: x.iso(-1), yo: false, relacion: i < 3 ? 'conectado' : i === 3 ? 'recibida' : i === 4 ? 'enviada' : 'ninguna',
+            return Object.assign({}, g, { portada_fondo: ['puntos', 'rejilla', 'circulos', 'franjas', 'liso'][i % 5], portada_imagen: null, portada_tamano: 1, visto_en: x.iso(-1), yo: false, relacion: i < 3 ? 'conectado' : i === 3 ? 'recibida' : i === 4 ? 'enviada' : 'ninguna',
               conexion_id: i < 3 ? CX[i] : null, mensaje: i === 3 ? 'Hola, me gustaría conversar sobre equipamiento para nuestra clínica.' : null,
               invitado_en: i === 3 ? x.iso(-1) : null, email: i < 3 ? g.nombre.split(' ')[0].toLowerCase() + '@demo.cl' : null,
               telefono: null, eventos_comunes: [eventosRed[0]], eventos: eventosRed.map(function (e, j) { return Object.assign({ comun: j === 0 }, e); }) });
