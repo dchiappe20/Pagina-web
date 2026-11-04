@@ -140,6 +140,14 @@
         rol_nombre: ROL_NOMBRE[rol], permisos: PERMISOS[rol], plan: esExpo ? 'expositora' : 'productora',
         limites: { eventos: null, eventos_anio: null, subcuentas: true, expositoras: 10, usuarios: 10 },
       };
+      // Con localStorage rd_demo_sin_nombre = 1 se prueba la ventana de nombre obligatorio.
+      var sinNombre = localStorage.getItem('rd_demo_sin_nombre') === '1';
+      var miPerfil = {
+        id: yo.id, email: yo.email, nombre: sinNombre ? null : yo.nombre, apellido: sinNombre ? null : yo.apellido,
+        nombre_completo: sinNombre ? null : nc(yo), rol: ROL_CORE[rol],
+        estado: 'activo', password_definida: true, empresa_id: empresaId, empresa: empresa, logo_url: null,
+      };
+      if (sinNombre) { acceso.nombre = null; acceso.apellido = null; acceso.nombre_completo = null; }
       var miembros = (esExpo ? [U.encargado, U.expositor] : [U.admin, U.usuario, U.usuario2]).map(function (u, i) {
         var k = Object.keys(U).filter(function (q) { return U[q] === u; })[0];
         return { usuario_id: u.id, id: u.id, email: u.email, nombre: u.nombre, apellido: u.apellido, nombre_completo: nc(u), estado: 'activo',
@@ -194,9 +202,16 @@
             return datosEmpresa();
           },
           fijar_logo_mi_empresa: function (a) { DE.logo_url = a.p_ruta ? DE.logo_url : null; return datosEmpresa(); },
-          mi_perfil: function () {
-            return { id: yo.id, email: yo.email, nombre: yo.nombre, apellido: yo.apellido, nombre_completo: nc(yo), rol: ROL_CORE[rol],
-              estado: 'activo', password_definida: true, empresa_id: empresaId, empresa: empresa, logo_url: null };
+          mi_perfil: function () { return miPerfil; },
+          actualizar_mi_nombre: function (a) {
+            var limpio = String(a.p_nombre || '').trim().replace(/\s+/g, ' ');
+            var i = limpio.indexOf(' ');
+            miPerfil.nombre = i < 0 ? limpio : limpio.slice(0, i);
+            miPerfil.apellido = i < 0 ? null : limpio.slice(i + 1);
+            miPerfil.nombre_completo = limpio;
+            acceso.nombre = miPerfil.nombre; acceso.apellido = miPerfil.apellido; acceso.nombre_completo = limpio;
+            localStorage.removeItem('rd_demo_sin_nombre');
+            return miPerfil;
           },
           mis_participaciones: function () { return participacion; },
           soy_admin_de_app: function () { return rol === 'admin'; },

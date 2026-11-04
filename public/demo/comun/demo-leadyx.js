@@ -323,9 +323,27 @@
         lectura_qr: { activa: rol === 'admin', origen: 'propia', tipo: 'gatheryx', nombre: 'Gatheryx de Andes', pista: '…7f3a', trae_eventos: true },
         plan: acceso.plan, es_expositor: esExpo, solo_expositora: esExpo, gestiona_eventos_gx: true, expositora: usoExpo,
       };
+      // ── Mi perfil (sql/105). Con localStorage rd_demo_sin_nombre = 1 se prueba
+      //    la ventana de nombre obligatorio.
+      var sinNombre = localStorage.getItem('rd_demo_sin_nombre') === '1';
       var miPerfil = {
-        id: yo.id, email: yo.email, nombre: yo.nombre, apellido: yo.apellido, nombre_completo: nombreCompleto(yo),
+        id: yo.id, email: yo.email, nombre: sinNombre ? null : yo.nombre, apellido: sinNombre ? null : yo.apellido,
+        nombre_completo: sinNombre ? null : nombreCompleto(yo),
+        cargo: perfilNet.cargo, telefono: perfilNet.telefono, pais: perfilNet.pais, foto_ruta: null,
         rol: ROL_CORE[rol], estado: 'activo', password_definida: true, empresa_id: empresaId, empresa: empresa, logo_url: null,
+      };
+      if (sinNombre) { acceso.nombre = null; acceso.apellido = null; acceso.nombre_completo = null; }
+      // Lo que hace la base al cambiar el nombre: lo parte por el primer espacio y Networking lo copia.
+      var fijarNombre = function (n) {
+        var limpio = String(n || '').trim().replace(/\s+/g, ' ');
+        var i = limpio.indexOf(' ');
+        miPerfil.nombre = i < 0 ? limpio : limpio.slice(0, i);
+        miPerfil.apellido = i < 0 ? null : limpio.slice(i + 1);
+        miPerfil.nombre_completo = limpio;
+        acceso.nombre = miPerfil.nombre; acceso.apellido = miPerfil.apellido; acceso.nombre_completo = limpio;
+        perfilNet.nombre = limpio;
+        localStorage.removeItem('rd_demo_sin_nombre');
+        return miPerfil;
       };
       var miembros = (esExpo ? [U.encargado, U.expositor] : [U.admin, U.teamlead, U.usuario, U.usuario2]).map(function (u, i) {
         var k = Object.keys(U).filter(function (q) { return U[q] === u; })[0];
@@ -353,6 +371,14 @@
         rpc: {
           verificar_acceso_app: function () { return acceso; },
           mi_perfil: function () { return miPerfil; },
+          actualizar_mi_nombre: function (a) { return fijarNombre(a.p_nombre); },
+          guardar_mi_perfil: function (a) {
+            fijarNombre(a.p_nombre);
+            miPerfil.cargo = a.p_cargo || null; miPerfil.telefono = a.p_telefono || null; miPerfil.pais = a.p_pais || null;
+            perfilNet.cargo = miPerfil.cargo || ''; perfilNet.telefono = miPerfil.telefono || ''; perfilNet.pais = miPerfil.pais || '';
+            return miPerfil;
+          },
+          fijar_mi_foto: function (a) { miPerfil.foto_ruta = a.p_ruta || null; perfilNet.foto_ruta = miPerfil.foto_ruta; return miPerfil; },
           estado_de_uso: function () { return estadoDeUso; },
           datos_de_mi_empresa: function () { return datosEmpresa(); },
           guardar_datos_mi_empresa: function (a) {
