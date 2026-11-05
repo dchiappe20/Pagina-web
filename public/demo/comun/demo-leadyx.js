@@ -258,6 +258,11 @@
         { usuario_id: 'n0000000-0000-4000-8000-000000000012', nombre: 'Felipe Vargas', cargo: 'Jefe de Mantenimiento', empresa: 'Energía del Sur', industria: 'Energía', pais: 'Chile', que_ofrece: 'Servicios de subestaciones', en_linea: false },
         { usuario_id: 'n0000000-0000-4000-8000-000000000013', nombre: 'Isidora Molina', cargo: 'Product Manager', empresa: 'AgroVal', industria: 'Agroindustria', pais: 'Perú', que_ofrece: 'Fertilizantes de precisión', en_linea: false },
         { usuario_id: 'n0000000-0000-4000-8000-000000000014', nombre: 'Rodrigo Tapia', cargo: 'Socio', empresa: 'Consultora Tapia', industria: 'Servicios', pais: 'Chile', que_ofrece: 'Asesoría en compras', en_linea: true },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000015', nombre: 'Sofía Lagos', cargo: 'Ejecutiva de Ventas', empresa: 'Retail Sur', industria: 'Retail', pais: 'Chile', que_ofrece: 'Compras al por mayor', en_linea: false },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000016', nombre: 'Diego Fuentes', cargo: 'Jefe de Operaciones', empresa: 'Minera Atacama', industria: 'Minería', pais: 'Chile', que_ofrece: 'Operación de faenas', en_linea: true },
+        { usuario_id: 'n0000000-0000-4000-8000-000000000017', nombre: 'Javiera Núñez', cargo: 'Gerenta de Ventas', empresa: 'Seguros Andes', industria: 'Seguros', pais: 'Chile', que_ofrece: 'Seguros industriales', en_linea: false },
+        // Con perfil oculto: Sugeridos nunca la muestra aunque calce (sql/107).
+        { usuario_id: 'n0000000-0000-4000-8000-000000000018', nombre: 'Persona Oculta', cargo: 'Gerenta Comercial', empresa: 'Minera Oculta', industria: 'Minería', pais: 'Chile', que_ofrece: '', en_linea: false, privado: true },
       ].map(function (g) { return Object.assign({ foto_ruta: null, logo_ruta: null, logo_url: null }, g); });
       var CX = ['c0000000-0000-4000-8000-000000000001', 'c0000000-0000-4000-8000-000000000002', 'c0000000-0000-4000-8000-000000000003'];
       var chats = [
@@ -290,6 +295,7 @@
             transcripcion: null, enviado_en: t, recibido_en: t, leido_en: m[0] ? t : (i === c.msgs.length - 1 && c.cx === CX[0] ? null : t) };
         });
       });
+      var prefsNet = { industrias: [], cargos: [] };
       var perfilNet = {
         usuario_id: yo.id, empresa_id: empresaId, nombre: nombreCompleto(yo), cargo: esExpo ? 'Jefe Comercial' : 'Gerenta Comercial',
         email: yo.email, telefono: '+56 9 7123 4567', industria: esExpo ? 'Tecnología' : 'Industrial', pais: 'Chile',
@@ -513,7 +519,7 @@
           net_directorio: function (a) {
             var sinTildes = function (s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
             var q = sinTildes(a.p_busqueda).split(/\s+/).filter(Boolean);
-            var filas = gente.map(function (g, i) {
+            var filas = gente.filter(function (g) { return !g.privado; }).map(function (g, i) {
               return Object.assign({}, g, { relacion: i < 3 ? 'conectado' : i === 3 ? 'recibida' : i === 4 ? 'enviada' : 'ninguna',
                 conexion_id: i < 3 ? CX[i] : null, evento_comun: i % 2 ? 'Expo Minería Andina 2026' : null, eventos_comunes: i % 2 ? 1 : 0 });
             }).filter(function (g) {
@@ -525,7 +531,43 @@
             var desde = a.p_desde || 0;
             return filas.slice(desde, desde + (a.p_limite || 40)).map(function (g) { return Object.assign(g, { total: filas.length }); });
           },
-          net_sugeridos: function (a) { return gente.slice(3, 3 + (a.p_limite || 6)); },
+          // Igual que sql/107: con preferencias, quienes las cumplen; sin ellas, la afinidad.
+          net_sugeridos: function (a) {
+            var n = function (s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); };
+            var area = function (c) {
+              var t = n(c);
+              if (!t) return null;
+              var reglas = [['marketing', /marketing|community/], ['comercial', /comercial|ventas|key account|negocios|representante|asesor|exportaciones/],
+                ['finanzas', /finanzas|financier|contador|administracion/], ['personas', /rr\.?hh|personas/], ['compras', /compras|comprador|abastecimiento/],
+                ['tecnologia', /\bti\b|\bcto\b|sistemas|desarrollador|software/], ['proyectos', /proyectos|product |procesos/],
+                ['operaciones', /operaciones|logistica|bodega|produccion|planta|calidad|mantenimiento/], ['direccion', /gerente general|gerenta general|\bceo\b|director|socio|fundador|dueno/]];
+              for (var i = 0; i < reglas.length; i++) if (reglas[i][1].test(t)) return reglas[i][0];
+              return null;
+            };
+            var neutro = function (c) {
+              return n(c).replace(/\/a\b/g, '').replace(/\b(sub)?gerenta\b/g, '$1gerente').replace(/\bjefa\b/g, 'jefe')
+                .replace(/\b(ejecutiv|encargad|ingenier|abogad|arquitect|tecnic|academic|soci)a\b/g, '$1o')
+                .replace(/\b(direct|supervis|ases|contad|comprad|disenad|investigad|consult|desarrollad|fundad|vended)ora\b/g, '$1or');
+            };
+            var miInd = n(DE.industria), miCargo = neutro(miPerfil.cargo), miArea = area(miCargo);
+            var pi = prefsNet.industrias.map(n), pc = prefsNet.cargos.map(neutro);
+            var filas = gente.slice(3).filter(function (g) { return !g.privado; }).map(function (g) {
+              var ind = !!miInd && n(g.industria) === miInd;
+              var car = (!!miCargo && neutro(g.cargo) === miCargo) || (!!miArea && area(g.cargo) === miArea);
+              return { g: g, puntos: (ind ? 1 : 0) + (car ? 1 : 0),
+                cumple: pi.length + pc.length > 0
+                  ? (!pi.length || pi.some(function (p) { return n(g.industria).indexOf(p) >= 0; })) && (!pc.length || pc.some(function (p) { return neutro(g.cargo).indexOf(p) >= 0; }))
+                  : ind || car };
+            }).filter(function (f) { return f.cumple; }).sort(function (x1, x2) { return x2.puntos - x1.puntos; });
+            var desde = a.p_desde || 0;
+            return filas.slice(desde, desde + (a.p_limite || 6)).map(function (f) { return Object.assign({}, f.g, { total: filas.length }); });
+          },
+          net_mis_preferencias: function () { return { industrias: prefsNet.industrias.slice(), cargos: prefsNet.cargos.slice() }; },
+          net_guardar_preferencias: function (a) {
+            prefsNet.industrias = (a.p_industrias || []).slice();
+            prefsNet.cargos = (a.p_cargos || []).slice();
+            return { industrias: prefsNet.industrias.slice(), cargos: prefsNet.cargos.slice() };
+          },
           net_persona: function (a) {
             if (a.p_usuario === yo.id) {
               return Object.assign({ usuario_id: yo.id, nombre: miPerfil.nombre_completo, cargo: perfilNet.ver_cargo ? miPerfil.cargo : null, empresa: DE.nombre, industria: perfilNet.ver_industria ? DE.industria : null,
