@@ -215,6 +215,11 @@
       }
       return json(filas, 200, extra);
     }
+    // La validación ocurre antes de mutar la tabla; un rechazo no consume cupo.
+    if (CTX && CTX.antesDeEscribir && ['POST', 'PATCH', 'DELETE'].indexOf(metodo) >= 0) {
+      var fallo = CTX.antesDeEscribir(nombre, metodo, cuerpo, consultar(nombre, params));
+      if (fallo) return json({ code: fallo.code || '23514', message: fallo.message }, fallo.code === '23505' ? 409 : 400);
+    }
     if (metodo === 'POST') {
       var nuevas = Array.isArray(cuerpo) ? cuerpo : [cuerpo || {}];
       var t = tabla(nombre);
@@ -230,18 +235,21 @@
         return fila;
       });
       if (CTX && CTX.alEscribir) CTX.alEscribir(nombre, 'insert', hechas);
+      if (CTX && CTX.persistir) CTX.persistir();
       if (/return=representation/.test(prefer)) return json(unObjeto ? hechas[0] : hechas, 201);
       return new Response(null, { status: 201 });
     }
     if (metodo === 'PATCH') {
       var cambiadas = consultar(nombre, params);
       cambiadas.forEach(function (f) { Object.assign(f, cuerpo || {}); });
+      if (CTX && CTX.persistir) CTX.persistir();
       if (/return=representation/.test(prefer)) return json(unObjeto ? cambiadas[0] || null : cambiadas, 200);
       return new Response(null, { status: 204 });
     }
     if (metodo === 'DELETE') {
       var fuera = consultar(nombre, params);
       DB[nombre] = tabla(nombre).filter(function (f) { return fuera.indexOf(f) < 0; });
+      if (CTX && CTX.persistir) CTX.persistir();
       if (/return=representation/.test(prefer)) return json(fuera, 200);
       return new Response(null, { status: 204 });
     }
@@ -309,6 +317,17 @@
       return json(res);
     }
     if (ruta.indexOf('/storage/v1/') === 0) {
+      // Las portadas de prueba se conservan como data URL local, sin Storage real.
+      if (metodo === 'POST' && ruta.indexOf('/storage/v1/object/') === 0 && crudo) {
+        var buffer = crudo instanceof ArrayBuffer ? crudo : crudo.arrayBuffer ? await crudo.arrayBuffer() : null;
+        if (buffer) {
+          var bytes = new Uint8Array(buffer), binario = '';
+          for (var bi = 0; bi < bytes.length; bi++) binario += String.fromCharCode(bytes[bi]);
+          CTX.imagenesDemo = CTX.imagenesDemo || {};
+          CTX.imagenesDemo[u.origin + '/storage/v1/object/public/' + ruta.slice('/storage/v1/object/'.length)] =
+            'data:' + (cabeceras.get('Content-Type') || 'image/jpeg') + ';base64,' + btoa(binario);
+        }
+      }
       if (metodo === 'GET' && /\/object\//.test(ruta)) {
         var bin = Uint8Array.from(atob(PNG), function (c) { return c.charCodeAt(0); });
         return new Response(bin, { status: 200, headers: { 'Content-Type': 'image/png' } });
@@ -428,7 +447,8 @@
   window.RendAppsDemo = {
     util: { uuid: uuid, iso: iso, dia: dia, hoy: hoy },
     iniciar: function (cfg) {
-      var rol = localStorage.getItem('rd_demo_' + cfg.app + '_rol');
+      var publico = location.pathname === '/registro/' && cfg.app === 'gatheryx';
+      var rol = localStorage.getItem('rd_demo_' + cfg.app + '_rol') || (publico ? 'admin' : null);
       instalarFetch();
       if (!rol || !cfg.roles.some(function (r) { return r.id === rol; })) {
         // Sin rol todavía: la app espera detrás, sin sesión, hasta que se elija.
@@ -444,7 +464,7 @@
       FUNCIONES = datos.funciones || {};
       localStorage.setItem(CLAVE_SESION, JSON.stringify(sesion()));
       if (datos.antes) datos.antes(localStorage);
-      botonCambiar(cfg, rol);
+      if (!publico) botonCambiar(cfg, rol);
     },
   };
 })();

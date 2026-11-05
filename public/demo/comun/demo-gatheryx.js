@@ -55,7 +55,7 @@
       var X1 = 'y0000000-0000-4000-8000-000000000001';
       var CLI = 'k0000000-0000-4000-8000-000000000001';
 
-      var base = { pais: 'Chile', activo: true, tipo_registro: 'cliente', imagen_url: null, form_usar_imagen: false, form_bg_color: '#0f5132',
+      var base = { pais: 'Chile', activo: true, tipo_registro: 'cliente', imagen_url: null, imagen_pc_url: null, form_usar_imagen: false, form_bg_color: '#0f5132',
         form_campos: null, limite_asistentes: null, limite_acreditacion: null, es_pago: false, precio: null, cobra: null,
         acreditacion_diaria: false, vip_activo: true, vip_con_limite: true, expositores_max_personas: 5, expositores_max_invitados: 10,
         expositoras_en_leadyx: true, empresa_id: EMP };
@@ -92,15 +92,29 @@
           ingresado_por: deExpo ? (i % 2 ? U.encargado.id : U.expositor.id) : autores[i % 4], acreditado: acreditado,
           acreditado_at: acreditado ? x.iso(ev === EV3 ? -20 : 0, (9 + (i % 8)) + ':' + String((i * 11) % 60).padStart(2, '0')) : null,
           acreditado_por: acreditado ? autores[i % 3] : null, email_confirmacion_enviado: true, agradecimiento_enviado_at: ev === EV3 ? x.iso(-19) : null,
-          created_at: x.iso(ev === EV3 ? -40 : -(i % 10) - 1, '11:00'), codigo: 'G' + String(4821 + i * 37).slice(-5),
+          created_at: x.iso(ev === EV3 ? -40 : -(i % 10) - 1, '11:00'), codigo: 'G' + String(48210 + i * 37).slice(-5),
           expositora_id: deExpo ? X1 : null, es_vip: deExpo, estado_pago: ev === EV2 ? (i % 2 ? 'pagado' : 'pendiente') : null,
           metodo_pago: ev === EV2 ? (i % 2 ? 'plataforma' : 'transferencia') : null, monto_pagado: ev === EV2 && i % 2 ? 25000 : null,
           tipo_entrada: ev === EV2 ? (i % 3 ? 'General' : 'Estudiante') : null, precio_entrada: ev === EV2 ? (i % 3 ? 25000 : 12000) : null,
           vip: deExpo || i % 7 === 0, acreditado_puerta: acreditado ? ['Puerta norte', 'Puerta sur', 'Mesón VIP'][i % 3] : null,
           datos_extra: { 'Rubro': ['Minería', 'Construcción', 'Energía', 'Logística'][i % 4], '¿Cómo te enteraste?': ['LinkedIn', 'Correo', 'Un colega', 'Prensa'][(i * 3) % 4] },
+          es_expositor: false, expositor_usuario_id: null,
         };
       });
-      if (esExpo) registrados = registrados.filter(function (r) { return r.expositora_id === X1; });
+      // El equipo de TecnoSur entra con su QR (sql/109): credenciales marcadas
+      // como expositor, sin ingresado_por (la crea el servidor) y sin cupo.
+      [U.encargado, U.expositor].forEach(function (u, j) {
+        registrados.push({
+          id: 'r' + String(90 + j).padStart(7, '0') + '-0000-4000-8000-000000000000', evento_id: EV1, nombre_completo: nc(u),
+          rut: null, empresa: 'TecnoSur Ltda.', cargo: j ? 'Expositor' : 'Representante', telefono: null, email: u.email, patente: null,
+          ingresado_por: null, acreditado: j === 0, acreditado_at: j === 0 ? x.iso(0, '08:40') : null, acreditado_por: j === 0 ? autores[0] : null,
+          email_confirmacion_enviado: true, agradecimiento_enviado_at: null, created_at: x.iso(-15, '10:00'), codigo: j ? 'TX4K7M' : 'TX9R3P',
+          expositora_id: X1, es_vip: false, estado_pago: null, metodo_pago: null, monto_pagado: null, tipo_entrada: null, precio_entrada: null,
+          vip: false, acreditado_puerta: j === 0 ? 'Puerta norte' : null, datos_extra: {}, es_expositor: true, expositor_usuario_id: u.id,
+        });
+      });
+      // Como la base (sql/81): la expositora ve sólo lo que registró ella.
+      if (esExpo) registrados = registrados.filter(function (r) { return r.expositora_id === X1 && !r.es_expositor; });
 
       var acreditaciones = registrados.filter(function (r) { return r.acreditado; }).map(function (r) {
         return { id: x.uuid(), registrado_id: r.id, evento_id: r.evento_id, dia: r.acreditado_at.slice(0, 10), acreditado_por: r.acreditado_por, created_at: r.acreditado_at };
@@ -109,12 +123,18 @@
 
       var expositoras = [
         { id: X1, empresa: 'TecnoSur Ltda.', rut: '76.543.210-3', encargado_email: U.encargado.email, encargado_nombre: nc(U.encargado), encargado_sin_clave: false,
-          personas: 2, max_personas: 5, invitados: 4, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(-15) },
+          personas: 2, max_personas: 5, invitados: 4, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(-15), industria: 'Tecnología' },
         { id: 'y0000000-0000-4000-8000-000000000002', empresa: 'Hidráulica Pacífico', rut: '77.123.456-7', encargado_email: 'contacto@hidraulicapacifico.cl',
-          encargado_nombre: 'Lorena Fuentes', encargado_sin_clave: true, personas: 1, max_personas: 3, invitados: 0, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(-6) },
+          encargado_nombre: 'Lorena Fuentes', encargado_sin_clave: true, personas: 1, max_personas: 3, invitados: 0, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(-6), industria: null },
         { id: 'y0000000-0000-4000-8000-000000000003', empresa: 'Seguridad Minera Norte', rut: '76.888.120-K', encargado_email: 'ventas@segminera.cl',
-          encargado_nombre: 'Pablo Tapia', encargado_sin_clave: false, personas: 4, max_personas: 5, invitados: 7, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(-9) },
+          encargado_nombre: 'Pablo Tapia', encargado_sin_clave: false, personas: 4, max_personas: 5, invitados: 7, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(-9), industria: 'Minería' },
       ];
+      // Las expositoras de cada evento (Fase 20: se invitan y cargan a otros).
+      var expoPorEvento = {};
+      expoPorEvento[EV1] = expositoras;
+      function expoDe(id) { return expoPorEvento[id] || (expoPorEvento[id] = []); }
+      var nDemo = 0;
+      function uuidDemo() { nDemo++; return 'y9000000-0000-4000-8000-' + String(100000000000 + nDemo); }
       var participacion = esExpo ? [{
         expositora_id: X1, rol: rol === 'encargado' ? 'encargado' : 'usuario', empresa: 'TecnoSur Ltda.', organizador: 'Minera Andina Eventos',
         origen: 'gatheryx', gx_evento_id: EV1, lx_espejo_id: null, evento: 'Expo Minería Andina 2026', ultimo_dia: x.dia(4), vigente: true,
@@ -155,7 +175,7 @@
           clave_temporal: false, ultimo_acceso: x.iso(-i) };
       });
 
-      return {
+      var estado = {
         usuario: { id: yo.id, email: yo.email, nombre: nc(yo) },
         tablas: {
           eventos: esExpo ? eventos.filter(function (e) { return e.id === EV1; }) : eventos,
@@ -175,9 +195,9 @@
           ],
           // Subeventos (sql/89) del evento principal y quién entró a cada uno.
           subeventos: [
-            { id: 'sub00000-0000-4000-8000-000000000001', evento_id: EV1, nombre: 'Charla inaugural', orden: 0 },
-            { id: 'sub00000-0000-4000-8000-000000000002', evento_id: EV1, nombre: 'Taller de seguridad', orden: 1 },
-            { id: 'sub00000-0000-4000-8000-000000000003', evento_id: EV1, nombre: 'Cena de cierre', orden: 2 },
+            { id: 'sub00000-0000-4000-8000-000000000001', evento_id: EV1, nombre: 'Charla inaugural', cupo: null, orden: 0 },
+            { id: 'sub00000-0000-4000-8000-000000000002', evento_id: EV1, nombre: 'Taller de seguridad', cupo: 10, orden: 1 },
+            { id: 'sub00000-0000-4000-8000-000000000003', evento_id: EV1, nombre: 'Cena de cierre', cupo: 6, orden: 2 },
           ],
           acreditaciones_subevento: registrados.filter(function (r) { return r.evento_id === EV1; }).reduce(function (filas, r, i) {
             if (i % 2 === 0) filas.push({ id: x.uuid(), subevento_id: 'sub00000-0000-4000-8000-000000000001', registrado_id: r.id, evento_id: EV1, acreditado_at: x.iso(0, '10:15') });
@@ -194,6 +214,7 @@
           codigos_descuento: [], compras: [], reembolsos: [], solicitudes_cobro: [], cuentas_cobro: [], datos_transferencia: [], imagenes: [],
         },
         rpc: {
+          evento_publico: function (a, ctx) { return ctx.tablas.eventos.filter(function (e) { return e.id === a.p_id; })[0] || null; },
           verificar_acceso_app: function () { return acceso; },
           datos_de_mi_empresa: function () { return datosEmpresa(); },
           guardar_datos_mi_empresa: function (a) {
@@ -235,10 +256,24 @@
               return a.p_evento === 'v1000000-0000-4000-8000-000000000001' ? [
                 Object.assign({}, expositoras[0], { id: 'y1000000-0000-4000-8000-000000000001', origen: 'leadyx', personas: 3, max_personas: 4, created_at: x.iso(-4) }),
                 { id: 'y1000000-0000-4000-8000-000000000002', empresa: 'Andamios Pacífico', rut: '78.210.330-5', encargado_email: 'mjara@andamiospacifico.cl',
-                  encargado_nombre: 'Mauricio Jara', encargado_sin_clave: false, personas: 2, max_personas: 3, invitados: 0, max_invitados: null, origen: 'leadyx', created_at: x.iso(-3) },
+                  encargado_nombre: 'Mauricio Jara', encargado_sin_clave: false, personas: 2, max_personas: 3, invitados: 0, max_invitados: null, origen: 'leadyx', created_at: x.iso(-3), industria: 'Construcción' },
               ] : [];
             }
-            return a.p_evento === EV1 ? expositoras : [];
+            return expoDe(a.p_evento);
+          },
+          // Quitar una expositora de ESTE evento (Fase 19) y cambiar su máximo.
+          quitar_expositora: function (a) {
+            Object.keys(expoPorEvento).forEach(function (k) {
+              var l = expoPorEvento[k];
+              for (var i = l.length - 1; i >= 0; i--) if (l[i].id === a.p_expositora) l.splice(i, 1);
+            });
+            return null;
+          },
+          ajustar_expositora: function (a) {
+            Object.keys(expoPorEvento).forEach(function (k) {
+              expoPorEvento[k].forEach(function (e) { if (e.id === a.p_expositora) e.max_personas = a.p_max_personas; });
+            });
+            return null;
           },
           eventos_para_expositoras: function () {
             if (esExpo) return [];
@@ -291,7 +326,28 @@
         },
         funciones: {
           'alta-usuarios': function (b) {
-            if (b.accion === 'expositora') return { ok: true, mensaje: 'Listo: ' + (b.nombre || 'la empresa') + ' es expositora (demo: no se envió correo).', correo_enviado: true };
+            // Fase 20: queda de verdad en el evento (invitar y carga masiva), con
+            // el tope del plan y las repetidas como en la base (sql/84).
+            if (b.accion === 'consultar_expositora') {
+              var buscado = String(b.rut || '').replace(/[^0-9kK]/g, '').toUpperCase();
+              var encontrada = Object.keys(expoPorEvento).reduce(function (a, k) { return a.concat(expoPorEvento[k]); }, []).filter(function (e) { return String(e.rut).replace(/[^0-9kK]/g, '').toUpperCase() === buscado; })[0];
+              return { empresa: encontrada ? { nombre: encontrada.empresa, industria: encontrada.industria || null, que_ofrece: encontrada.que_ofrece || null } : null };
+            }
+            if (b.accion === 'expositora') {
+              var lista = expoDe(b.evento_id);
+              var rut = String(b.rut || '').replace(/[^0-9kK]/g, '').toUpperCase();
+              var esta = lista.filter(function (e) { return String(e.rut).replace(/[^0-9kK]/g, '').toUpperCase() === rut; })[0];
+              if (esta) return { __error: esta.empresa + ' ya es expositora en este evento.', estado: 409 };
+              var tope = acceso.limites.expositoras || 5;
+              if (lista.length >= tope) return { __error: 'Tu plan permite ' + tope + ' empresas expositoras por evento y este ya tiene ' + lista.length + '. Para más, escríbenos a contacto@rendapps.cl.', estado: 409 };
+              var antes = Object.keys(expoPorEvento).map(function (k) { return expoPorEvento[k]; }).reduce(function (a, l) { return a.concat(l); }, [])
+                .filter(function (e) { return String(e.rut).replace(/[^0-9kK]/g, '').toUpperCase() === rut; })[0];
+              lista.push({ id: uuidDemo(), empresa: antes ? antes.empresa : b.nombre, rut: b.rut, encargado_email: b.email,
+                encargado_nombre: (antes && antes.encargado_nombre) || b.nombre_representante || null, encargado_sin_clave: !antes,
+                personas: 1, max_personas: b.max_personas || 5, invitados: 0, max_invitados: 10, origen: 'gatheryx', created_at: x.iso(0),
+                industria: (antes && antes.industria) || b.industria || null, que_ofrece: (antes && antes.que_ofrece) || b.que_ofrece || null });
+              return { ok: true, mensaje: 'Listo: ' + (b.nombre || 'la empresa') + ' es expositora (demo: no se envió correo).', correo_enviado: true };
+            }
             return { resultados: (b.personas || []).map(function (p) { return { email: p.email, estado: 'creado', mensaje: 'Demo: cuenta creada (sin correo).', correo_enviado: true }; }), agregados: (b.personas || []).length };
           },
           'asistente-app': function () { return { respuesta: 'Soy Jester, el asistente de Gatheryx. En esta demo no respondo de verdad, pero en la app te ayudo con cualquier duda.' }; },
@@ -300,6 +356,45 @@
         },
         rpcPorDefecto: function () { return null; },
       };
+      var claveEstado = 'rd_demo_gatheryx_estado_' + rol;
+      try {
+        var guardado = JSON.parse(localStorage.getItem(claveEstado) || 'null');
+        if (guardado) ['eventos', 'subeventos', 'acreditaciones_subevento'].forEach(function (t) {
+          if (Array.isArray(guardado[t])) estado.tablas[t] = guardado[t];
+        });
+      } catch (e) { /* Un estado viejo no impide abrir la demo. */ }
+      estado.persistir = function () {
+        var datos = {};
+        ['eventos', 'subeventos', 'acreditaciones_subevento'].forEach(function (t) { datos[t] = estado.tablas[t]; });
+        localStorage.setItem(claveEstado, JSON.stringify(datos));
+      };
+      estado.antesDeEscribir = function (tabla, metodo, cuerpo, actuales) {
+        var nuevas = Array.isArray(cuerpo) ? cuerpo : [cuerpo || {}];
+        if (tabla === 'eventos') nuevas.forEach(function (e) {
+          ['imagen_url', 'imagen_pc_url'].forEach(function (k) { if (estado.imagenesDemo && estado.imagenesDemo[e[k]]) e[k] = estado.imagenesDemo[e[k]]; });
+        });
+        if (tabla === 'subeventos' && metodo !== 'DELETE') {
+          var invalido = nuevas.some(function (s) { return s.cupo != null && (!Number.isInteger(s.cupo) || s.cupo <= 0 || s.cupo > 2147483647); });
+          if (invalido) return { message: 'El cupo del subevento debe ser un entero positivo o quedar vacío.' };
+        }
+        if (tabla === 'acreditaciones_subevento' && metodo === 'POST') {
+          var candidatas = estado.tablas.acreditaciones_subevento.slice();
+          for (var i = 0; i < nuevas.length; i++) {
+            var a = nuevas[i];
+            var s = estado.tablas.subeventos.filter(function (s) { return s.id === a.subevento_id; })[0];
+            if (!s) return { code: '23503', message: 'El subevento no existe' };
+            if (!estado.tablas.registrados.some(function (r) { return r.id === a.registrado_id && r.evento_id === s.evento_id; })) return { message: 'Esta persona no está registrada en el evento del subevento.' };
+            if (esExpo) return { code: '42501', message: 'No tienes permiso para acreditar en este evento.' };
+            if (candidatas.some(function (b) { return b.subevento_id === s.id && b.registrado_id === a.registrado_id; })) return { code: '23505', message: 'Ya acreditado' };
+            var n = candidatas.filter(function (b) { return b.subevento_id === s.id; }).length;
+            if (s.cupo != null && n >= s.cupo) return { message: 'El subevento «' + s.nombre + '» está lleno (' + n + ' de ' + s.cupo + ').' };
+            a.evento_id = s.evento_id; a.acreditado_por = yo.id; a.acreditado_at = new Date().toISOString();
+            candidatas.push(a);
+          }
+        }
+        return null;
+      };
+      return estado;
     },
   });
 })();

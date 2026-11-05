@@ -221,7 +221,7 @@
       var plantillas = [
         { id: 'p0000000-0000-4000-8000-000000000001', empresa_id: empresaId, nombre: 'Agradecimiento por visitar el stand', tipo: 'agradecimiento',
           asunto: 'Gracias por visitarnos en {evento}', cuerpo: 'Hola {nombre},\n\nFue un gusto conversar contigo en {evento}. Te dejamos nuestro catálogo y quedamos atentos.\n\nSaludos,\n{remitente}',
-          activa: true, created_at: x.iso(-30) },
+          activa: true, en_uso: true, equipo_id: null, created_at: x.iso(-30), actualizada_at: x.iso(-30) },
         { id: 'p0000000-0000-4000-8000-000000000002', empresa_id: empresaId, nombre: 'Seguimiento de la feria', tipo: 'instantaneo',
           asunto: '¿Pudiste revisar nuestra propuesta?', cuerpo: 'Hola {nombre},\n\nTe escribimos para saber si pudiste revisar la información que te enviamos después de {evento}.\n\nQuedamos atentos.',
           activa: true, created_at: x.iso(-28) },
@@ -367,6 +367,7 @@
       });
       var conteoLeads = function (ev) { return leads.filter(function (l) { return l.evento_id === ev; }).length; };
 
+      var bloquesGuardados = {};
       return {
         usuario: { id: yo.id, email: yo.email, nombre: nombreCompleto(yo) },
         antes: function (ls) {
@@ -401,6 +402,27 @@
             return datosEmpresa();
           },
           fijar_logo_mi_empresa: function (a) { DE.logo_url = a.p_ruta ? DE.logo_url : null; return datosEmpresa(); },
+          // Como guardar_plantilla (sql/79 y 100): «en uso» sólo en agradecimiento;
+          // la primera de su alcance queda en uso sola y marcar otra la quita de la anterior.
+          guardar_plantilla: function (a) {
+            var p = a.p_id ? plantillas.find(function (x) { return x.id === a.p_id; }) : null;
+            var alcance = a.p_equipo || null;
+            var mismas = plantillas.filter(function (x) { return x !== p && (x.equipo_id || null) === alcance && x.en_uso; });
+            var enUso = a.p_tipo !== 'agradecimiento' ? false
+              : a.p_en_uso != null ? !!a.p_en_uso
+              : (p && p.en_uso) || mismas.length === 0;
+            if (enUso) mismas.forEach(function (x) { x.en_uso = false; });
+            if (!p) {
+              p = { id: 'p' + Math.random().toString(16).slice(2, 10) + '-0000-4000-8000-' + String(Date.now()).slice(-12), empresa_id: empresaId, created_at: x.iso(0), activa: true };
+              plantillas.push(p);
+            }
+            Object.assign(p, {
+              equipo_id: alcance, nombre: a.p_nombre, tipo: a.p_tipo, en_uso: enUso, remitente_nombre: a.p_remitente || null,
+              titulo: a.p_titulo || null, color: a.p_color || null, asunto: a.p_asunto, cuerpo: a.p_cuerpo, firma: a.p_firma || null,
+              docs_posicion: a.p_docs_posicion || 'final', actualizada_at: x.iso(0),
+            });
+            return p.id;
+          },
           // La participación del expositor (llega de Gatheryx desde el 04-11-2026), para Equipo expositor.
           mis_participaciones: function () {
             return esExpo ? [{
@@ -586,8 +608,23 @@
           net_mis_eventos: function () { return eventosRed; },
           net_eventos_comunes: function () { return [eventosRed[0]]; },
           net_mis_bloques: function (a) {
+            var clave = a.p_origen + ':' + a.p_evento;
+            if (bloquesGuardados[clave]) return bloquesGuardados[clave];
             if (a.p_origen === 'gatheryx') return [{ id: 'b3', dia: x.dia(9), hora_inicio: '10:00:00', hora_fin: '10:30:00', ocupado: true }, { id: 'b4', dia: x.dia(9), hora_inicio: '12:00:00', hora_fin: '12:30:00', ocupado: false }];
             return [{ id: 'b1', dia: x.dia(0), hora_inicio: '11:00:00', hora_fin: '11:30:00', ocupado: true }, { id: 'b2', dia: x.dia(0), hora_inicio: '15:00:00', hora_fin: '15:30:00', ocupado: false }];
+          },
+          net_guardar_bloques: function (a, ctx) {
+            var lista = a.p_bloques || [], clave = a.p_origen + ':' + a.p_evento;
+            var minutos = function (h) { var p = h.split(':'); return +p[0] * 60 + +p[1]; };
+            if (lista.some(function (b) { return !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(b.inicio) || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(b.fin) || minutos(b.fin) <= minutos(b.inicio) || minutos(b.fin) - minutos(b.inicio) > 30; })) return { __error: 'Revisa las horas y la duración de los bloques.' };
+            if (lista.some(function (b, i) { return lista.some(function (c, j) { return i < j && minutos(b.inicio) < minutos(c.fin) && minutos(c.inicio) < minutos(b.fin); }); })) return { __error: 'Dos bloques se cruzan.' };
+            var actuales = ctx.rpc.net_mis_bloques(a);
+            if (actuales.some(function (b) { return b.dia === a.p_dia && b.ocupado && !lista.some(function (c) { return c.inicio === b.hora_inicio.slice(0, 5) && c.fin === b.hora_fin.slice(0, 5); }); })) return { __error: 'El bloque tiene una reunión agendada.' };
+            bloquesGuardados[clave] = actuales.filter(function (b) { return b.dia !== a.p_dia; }).concat(lista.map(function (b) {
+              var antes = actuales.filter(function (c) { return c.dia === a.p_dia && c.hora_inicio.slice(0, 5) === b.inicio && c.hora_fin.slice(0, 5) === b.fin; })[0];
+              return { id: x.uuid(), dia: a.p_dia, hora_inicio: b.inicio + ':00', hora_fin: b.fin + ':00', ocupado: !!(antes && antes.ocupado) };
+            }));
+            return null;
           },
           net_horarios_de: function () {
             return [{ dia: x.dia(1), hora_inicio: '10:00:00', hora_fin: '10:30:00', choca: false }, { dia: x.dia(1), hora_inicio: '16:00:00', hora_fin: '16:30:00', choca: false }];

@@ -398,13 +398,14 @@ function aplicarFondo(ev){
   const bg = document.querySelector('.bg');
   if(!bg) return;
 
-  if(ev.form_usar_imagen && ev.imagen_url){
-    // Imagen del evento con el encuadre configurado para este formato.
-    const esPC = window.innerWidth >= 768;
+  const esPC = window.innerWidth >= 768;
+  const imagen = esPC ? (ev.imagen_pc_url || ev.imagen_url) : (ev.imagen_url || ev.imagen_pc_url);
+  if(ev.form_usar_imagen && imagen){
+    // La condición, el fondo y su medida usan la misma portada elegida.
     const cfg = esPC ? ev.form_img_pc : ev.form_img_movil;
 
     bg.classList.add('con-imagen');
-    bg.style.background = "url('" + ev.imagen_url + "')";
+    bg.style.background = "url('" + imagen + "')";
     bg.style.backgroundRepeat = 'no-repeat';
     bg.style.backgroundColor = '#070c18'; // relleno si la imagen no cubre todo
 
@@ -438,7 +439,7 @@ function aplicarFondo(ev){
         ? (zoom * 100) + '% auto'
         : 'auto ' + (zoom * 100) + '%';
     };
-    probe.src = ev.imagen_url;
+    probe.src = imagen;
     return;
   }
 
@@ -465,10 +466,14 @@ function resolverConfig(ev){
         etiqueta: String(g.etiqueta || etiqueta).trim() || etiqueta
       };
     }
+    // Industria y «Qué ofrece» (Fase 22) van siempre obligatorios y no cuentan
+    // en el tope de 3 propios, como en lib/camposFormulario.ts.
+    let propios = 0;
     const extra = (Array.isArray(cfg.extra) ? cfg.extra : [])
       .map((e) => ({ etiqueta: String((e && e.etiqueta) || '').trim(), obligatorio: !!(e && e.obligatorio) }))
       .filter((e) => e.etiqueta)
-      .slice(0, 3);
+      .map((e) => esExtraFijo(e.etiqueta) ? { ...e, obligatorio: true } : e)
+      .filter((e) => esExtraFijo(e.etiqueta) || ++propios <= 3);
     return { base, extra };
   }
   for(const { key, etiqueta } of CAMPOS_BASE) base[key] = { pedir: true, obligatorio: FIJOS.includes(key), etiqueta };
@@ -489,12 +494,30 @@ function pintarCampos(){
     inp.placeholder = c.etiqueta + (c.obligatorio ? ' *' : '');
     inp.required = c.pedir && c.obligatorio;
   }
-  $('campos-extra').replaceChildren(...config.extra.map((e, i) => el('input', {
+  // Industria lleva la lista de industrias de las apps como sugerencias
+  // (se puede escribir otra).
+  const nodos = config.extra.map((e, i) => el('input', {
     id: 'extra-' + i,
     placeholder: e.etiqueta + (e.obligatorio ? ' *' : ''),
+    ...(normalizar(e.etiqueta) === 'industria' ? { list: 'lista-industrias', autocomplete: 'off' } : {}),
     ...(e.obligatorio ? { required: '' } : {})
-  })));
+  }));
+  if(config.extra.some((e) => normalizar(e.etiqueta) === 'industria')){
+    nodos.push(el('datalist', { id: 'lista-industrias' }, INDUSTRIAS.map((n) => el('option', { value: n }))));
+  }
+  $('campos-extra').replaceChildren(...nodos);
 }
+
+// La misma lista de lib/industrias.ts (Leadyx y Gatheryx).
+const INDUSTRIAS = ['Agroindustria', 'Alimentos y Bebidas', 'Automotriz', 'Banca y Finanzas', 'Comercio Exterior',
+  'Construcción', 'Consultoría', 'Educación', 'Energía y Utilities', 'Energías Renovables',
+  'Eventos y Ferias', 'Forestal y Madera', 'Gobierno y Sector Público', 'Inmobiliaria', 'Legal',
+  'Logística y Transporte', 'Manufactura', 'Medios y Publicidad', 'Minería', 'ONG y Fundaciones',
+  'Pesca y Acuicultura', 'Química y Petroquímica', 'Retail', 'Salud', 'Seguridad',
+  'Seguros', 'Servicios Profesionales', 'Tecnología y Software', 'Telecomunicaciones', 'Turismo y Hotelería',
+  'Vitivinícola'];
+function normalizar(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase(); }
+function esExtraFijo(s){ const n = normalizar(s); return n === 'industria' || n === 'que ofrece'; }
 
 // AAAA-MM-DD → DD-MM-AAAA.
 function fechaCorta(f){

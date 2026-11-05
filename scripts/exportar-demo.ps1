@@ -2,7 +2,7 @@
 # exportada bajo /demo/<app>, con los datos de prueba de public/demo/comun delante.
 # Uso: powershell -ExecutionPolicy Bypass -File scripts\exportar-demo.ps1 -Cual leadyx|gatheryx
 # Las rutas de los repos son las del PC prestado (Documents\Rendapps): ajustarlas en otro PC.
-param([string]$Cual)
+param([Parameter(Mandatory=$true)][ValidateSet('leadyx', 'gatheryx')][string]$Cual)
 # Exporta la web de una app bajo /demo/<app> y la deja en Pagina web/public/demo/<app>,
 # con los scripts de la demo delante de la app.
 $ErrorActionPreference = 'Stop'
@@ -13,11 +13,17 @@ $repos = @{
 $repo = $repos[$Cual]
 $tmp = Join-Path $env:TEMP "rendapps-demo-$Cual"
 $destino = "C:\Users\jasan\Documents\Rendapps\Pagina web\public\demo\$Cual"
-if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
+# Comprobar los destinos absolutos antes de borrar exportaciones anteriores.
+$raizTemporal = [IO.Path]::GetFullPath($env:TEMP).TrimEnd('\') + '\'
+$raizDemo = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\public\demo')).TrimEnd('\') + '\'
+$tmp = [IO.Path]::GetFullPath($tmp)
+$destino = [IO.Path]::GetFullPath($destino)
+if ($tmp -ne (Join-Path $raizTemporal "rendapps-demo-$Cual") -or $destino -ne (Join-Path $raizDemo $Cual)) { throw 'Destino de exportación inesperado.' }
+if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Recurse -Force }
 $env:EXPO_DEMO_BASE = "/demo/$Cual"
 Push-Location $repo
 try {
-  cmd /c "npx expo export --platform web --clear --output-dir `"$tmp`""
+  & npx.cmd expo export --platform web --clear --output-dir $tmp
   if ($LASTEXITCODE -ne 0) { throw "expo export falló ($LASTEXITCODE)" }
 } finally { Pop-Location; Remove-Item Env:\EXPO_DEMO_BASE }
 
@@ -35,7 +41,7 @@ Get-ChildItem $tmp -Recurse -File -Include *.js,*.html,*.json,*.css | ForEach-Ob
   }
   if ($n -ne $t) { [IO.File]::WriteAllText($_.FullName, $n, $u) }
 }
-if (Test-Path $destino) { Remove-Item $destino -Recurse -Force }
+if (Test-Path -LiteralPath $destino) { Remove-Item -LiteralPath $destino -Recurse -Force }
 Copy-Item $tmp $destino -Recurse
 $mb = [math]::Round(((Get-ChildItem $destino -Recurse -File | Measure-Object Length -Sum).Sum / 1MB), 1)
 "$Cual listo en $destino ($mb MB)"

@@ -17,6 +17,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Sólo al verificar localmente: el formulario público real con el simulador delante.
+if (process.env.RENDAPPS_DEMO_LOCAL === '1') {
+  app.get('/registro/', (req, res) => {
+    const archivo = path.resolve(__dirname, '../Registro pro eventos/registro-pro-eventos/public/registro/index.html');
+    const html = require('fs').readFileSync(archivo, 'utf8');
+    res.type('html').send(html.replace('<head>', '<head><script src="/demo/comun/demo-supabase.js"></script><script src="/demo/comun/demo-gatheryx.js"></script>'));
+  });
+}
 app.use(express.static(path.join(__dirname, 'public'), { etag: false, lastModified: false }));
 app.use(express.urlencoded({ extended: true }));
 
