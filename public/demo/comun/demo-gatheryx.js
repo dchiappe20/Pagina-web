@@ -139,6 +139,7 @@
         expositora_id: X1, rol: rol === 'encargado' ? 'encargado' : 'usuario', empresa: 'TecnoSur Ltda.', organizador: 'Minera Andina Eventos',
         origen: 'gatheryx', gx_evento_id: EV1, lx_espejo_id: null, evento: 'Expo Minería Andina 2026', ultimo_dia: x.dia(4), vigente: true,
         max_personas: 5, personas: 2, max_invitados: 10, invitados: 4, es_pago: false,
+        vip_activo: false, vip_con_limite: false, max_no_vip: 20,
       }] : [];
 
       // ── Datos de la empresa (sql/104, 04-11-2026). La expositora todavía no
@@ -151,7 +152,7 @@
         if (!DE.industria) faltan.push('industria');
         if (!DE.que_ofrece) faltan.push('que_ofrece');
         return { id: DE.id, nombre: DE.nombre, rut: DE.rut, logo_url: DE.logo_url, industria: DE.industria, que_ofrece: DE.que_ofrece,
-          puedo_editar: rol === 'admin' || rol === 'encargado', faltan: faltan, por: null };
+          puedo_editar: rol === 'admin' || rol === 'encargado', puedo_editar_identidad: rol === 'admin', faltan: faltan, por: null };
       };
       var acceso = {
         autorizado: true, rol: ROL_CORE[rol], email: yo.email, nombre: yo.nombre, apellido: yo.apellido, nombre_completo: nc(yo),
@@ -266,6 +267,20 @@
             Object.keys(expoPorEvento).forEach(function (k) {
               var l = expoPorEvento[k];
               for (var i = l.length - 1; i >= 0; i--) if (l[i].id === a.p_expositora) l.splice(i, 1);
+            });
+            return null;
+          },
+          permisos_ajustables: function () {
+            var p = function (clave, nombre, grupo) { return { clave: clave, nombre: nombre, descripcion: nombre + '.', grupo: grupo, activo: true, por_defecto: true }; };
+            if (rol === 'admin') return [{ rol: 'user', rol_nombre: 'Usuario', permisos: [p('registrados.registrar', 'Registrar asistentes', 'Registro'), p('kpis.ver', 'Ver KPIs', 'Cifras')] }];
+            if (rol === 'encargado') return [{ rol: 'usuario_expositor', rol_nombre: 'Usuario expositor', permisos: [p('registrados.registrar', 'Registrar invitados', 'Registro')] }];
+            return [];
+          },
+          ajustar_limites_expositora: function (a) {
+            Object.keys(expoPorEvento).forEach(function (k) {
+              expoPorEvento[k].forEach(function (e) {
+                if (e.id === a.p_expositora) { e.max_personas = a.p_max_personas; e.max_invitados = a.p_max_invitados; e.max_no_vip = a.p_max_no_vip; }
+              });
             });
             return null;
           },

@@ -466,13 +466,12 @@ function resolverConfig(ev){
         etiqueta: String(g.etiqueta || etiqueta).trim() || etiqueta
       };
     }
-    // Industria y «Qué ofrece» (Fase 22) van siempre obligatorios y no cuentan
+    // Industria y «Qué ofrece» (Fase 27) los configura cada evento y no cuentan
     // en el tope de 3 propios, como en lib/camposFormulario.ts.
     let propios = 0;
     const extra = (Array.isArray(cfg.extra) ? cfg.extra : [])
       .map((e) => ({ etiqueta: String((e && e.etiqueta) || '').trim(), obligatorio: !!(e && e.obligatorio) }))
       .filter((e) => e.etiqueta)
-      .map((e) => esExtraFijo(e.etiqueta) ? { ...e, obligatorio: true } : e)
       .filter((e) => esExtraFijo(e.etiqueta) || ++propios <= 3);
     return { base, extra };
   }

@@ -329,7 +329,7 @@
         if (!DE.industria) faltan.push('industria');
         if (!DE.que_ofrece) faltan.push('que_ofrece');
         return { id: DE.id, nombre: DE.nombre, rut: DE.rut, logo_url: DE.logo_url, industria: DE.industria, que_ofrece: DE.que_ofrece,
-          puedo_editar: rol === 'admin' || rol === 'encargado', faltan: faltan, por: null };
+          puedo_editar: rol === 'admin' || rol === 'encargado', puedo_editar_identidad: rol === 'admin', faltan: faltan, por: null };
       };
       var estadoDeUso = {
         empresa_id: empresaId, es_stand: false, vence_en: null, dias_restantes: null, modo_lector: false, organizador: esExpo ? 'Andes Industrial SpA' : null,
