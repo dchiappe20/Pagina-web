@@ -1,0 +1,26 @@
+<%- include('partials/header') %>
+
+<%# Los eventos de RendApps con su formulario de registro (Gatheryx). El código
+    es el de «Formulario en tu web» de Gatheryx (empresa RendApps, HE5MY5JH):
+    cada evento activo de la empresa aparece solo, y su formulario se abre aquí
+    mismo. Los enlaces de los eventos apuntan a esta página
+    (https://www.rendapps.cl/eventos?gx=<evento>), porque es la «página web»
+    guardada en Gatheryx. Con ?gxtipo=<tipo> abre el formulario de un tipo de
+    entrada. %>
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <p class="eyebrow">Eventos</p>
+    <h1>Inscríbete en nuestros eventos</h1>
+    <p class="cabecera-sub">Elige el evento, completa el formulario y te llega tu código QR de acceso por correo.</p>
+  </div>
+</section>
+
+<section class="seccion eventos-gatheryx">
+  <div class="contenedor">
+    <div id="gatheryx"></div>
+    <script src="https://gatheryx.rendapps.cl/embed.js" data-empresa="HE5MY5JH"></script>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

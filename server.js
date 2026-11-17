@@ -469,6 +469,13 @@ app.get('/soporte', (req, res) => {
   res.render('soporte', { titulo: 'Soporte', pagina: 'soporte' });
 });
 
+// Los eventos de RendApps con su formulario de registro (Gatheryx, «Formulario
+// en tu web»). Es la página web guardada en Gatheryx para la empresa RendApps:
+// los enlaces de sus eventos llegan aquí con ?gx=<evento> (y ?gxtipo=<tipo>).
+app.get('/eventos', (req, res) => {
+  res.render('eventos', { titulo: 'Eventos', pagina: 'eventos' });
+});
+
 // La URL que se declara en Google Play como política de privacidad, y
 // /privacidad#eliminar-cuenta como la de eliminación de cuenta.
 app.get('/privacidad', (req, res) => {
